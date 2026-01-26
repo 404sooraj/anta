@@ -1,2 +1,16 @@
 server/.venv/
 *env
+
+# Python
+__pycache__/
+*.pyc
+.python-version
+
+# Env
+.env
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
