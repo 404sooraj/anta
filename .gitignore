@@ -1,1 +1,13 @@
 server/.venv/
+server/__pycache__/
+server/api/stt/__pycache__/
+server/api/__pycache__/
+*.pyc
+*.pyo
+*.env
+.env
+.DS_Store
+node_modules/
+dist/
+build/
+*.log
