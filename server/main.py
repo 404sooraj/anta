@@ -1,7 +1,5 @@
 """Main application entry point for BatterySmart API."""
 
-import os
-import logging
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -17,15 +15,9 @@ server_dir = Path(__file__).parent
 if str(server_dir) not in sys.path:
     sys.path.insert(0, str(server_dir))
 
-# Import using importlib to handle module names with dots
-import importlib.util
+from modules.tts import routes as tts_routes
 
-# Load the routes module directly from file path
-routes_path = server_dir / "modules" / "tts" / "tts.routes.py"
-spec = importlib.util.spec_from_file_location("tts_routes", routes_path)
-_routes_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(_routes_module)
-tts_router = _routes_module.router
+tts_router = tts_routes.router
 
 app = FastAPI(
     title="Antaryami TTS Server",

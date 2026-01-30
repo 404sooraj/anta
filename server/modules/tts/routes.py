@@ -1,18 +1,9 @@
 """
 TTS Routes - FastAPI router definitions for TTS endpoints.
 """
-import sys
-import importlib.util
-from pathlib import Path
 from fastapi import APIRouter, WebSocket
 
-# Load controller module from file path
-_current_dir = Path(__file__).parent
-controller_path = _current_dir / "tts.controller.py"
-spec = importlib.util.spec_from_file_location("tts_controller", controller_path)
-_controller_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(_controller_module)
-handle_tts_websocket = _controller_module.handle_tts_websocket
+from .controller import handle_tts_websocket
 
 router = APIRouter()
 

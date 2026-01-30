@@ -2,21 +2,10 @@
 TTS Controller - Handles WebSocket connections for TTS streaming.
 """
 import json
-from typing import Optional
 
 from fastapi import WebSocket, WebSocketDisconnect
 
-import sys
-import importlib.util
-from pathlib import Path
-
-# Load service module from file path
-_current_dir = Path(__file__).parent
-service_path = _current_dir / "tts.service.py"
-spec = importlib.util.spec_from_file_location("tts_service", service_path)
-_service_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(_service_module)
-get_tts_service = _service_module.get_tts_service
+from .service import get_tts_service
 
 
 async def handle_tts_websocket(websocket: WebSocket):

@@ -1,0 +1,5 @@
+{
+  "venvPath": "server",
+  "venv": ".venv",
+  "extraPaths": ["server"]
+}

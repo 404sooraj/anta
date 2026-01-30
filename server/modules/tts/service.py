@@ -10,19 +10,7 @@ from cartesia.tts import OutputFormat_RawParams
 from cartesia.tts.types import WebSocketResponse, WebSocketResponse_Done, WebSocketResponse_Error
 from cartesia.core.pydantic_utilities import parse_obj_as
 
-import sys
-import importlib.util
-from pathlib import Path
-
-# Load utils module from file path
-_current_dir = Path(__file__).parent
-utils_path = _current_dir / "tts.utils.py"
-spec = importlib.util.spec_from_file_location("tts_utils", utils_path)
-_utils_module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(_utils_module)
-detect_language = _utils_module.detect_language
-get_default_voice_id = _utils_module.get_default_voice_id
-split_mixed_text = _utils_module.split_mixed_text
+from . import utils
 
 
 class TTSService:
@@ -65,13 +53,13 @@ class TTSService:
         
         # Determine language
         if language == "auto":
-            detected_lang = detect_language(text)
+            detected_lang = utils.detect_language(text)
         else:
             detected_lang = language
         
         # Get voice ID
         if not voice_id:
-            voice_id = get_default_voice_id(detected_lang)
+            voice_id = utils.get_default_voice_id(detected_lang)
         
         # Connect to Cartesia WebSocket
         ws = await self.client.tts.websocket()
@@ -118,14 +106,14 @@ class TTSService:
         Yields:
             Audio chunks as bytes
         """
-        segments = split_mixed_text(text)
+        segments = utils.split_mixed_text(text)
         
         for segment_text, segment_lang in segments:
             if not segment_text.strip():
                 continue
             
             # Get voice for this language
-            segment_voice_id = voice_id or get_default_voice_id(segment_lang)
+            segment_voice_id = voice_id or utils.get_default_voice_id(segment_lang)
             
             # Stream TTS for this segment
             async for audio_chunk in self.stream_tts(
@@ -159,13 +147,13 @@ class TTSService:
         """
         # Determine language
         if language == "auto":
-            detected_lang = detect_language(transcript)
+            detected_lang = utils.detect_language(transcript)
         else:
             detected_lang = language
         
         # Get voice ID
         if not voice_id:
-            voice_id = get_default_voice_id(detected_lang)
+            voice_id = utils.get_default_voice_id(detected_lang)
         
         # Configure output format for low-latency streaming
         output_format: OutputFormat_RawParams = {
