@@ -1,3 +1,9 @@
+"""Main application entry point for BatterySmart API."""
+
+import os
+import logging
+from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 from fastapi import FastAPI
 import sys
 from pathlib import Path
