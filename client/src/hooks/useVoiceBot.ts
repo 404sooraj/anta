@@ -72,7 +72,7 @@ export function useVoiceBot(): UseVoiceBotReturn {
         if (!audioData) break;
 
         const audioBuffer = ctx.createBuffer(1, audioData.length, OUTPUT_SAMPLE_RATE);
-        audioBuffer.copyToChannel(audioData, 0);
+        audioBuffer.copyToChannel(new Float32Array(audioData), 0);
 
         const source = ctx.createBufferSource();
         source.buffer = audioBuffer;
