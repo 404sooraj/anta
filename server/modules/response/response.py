@@ -1,0 +1,197 @@
+"""Main response pipeline orchestrator."""
+
+import json
+import logging
+from typing import Dict, Any, Optional
+from pathlib import Path
+
+from .intent_detector import IntentDetector
+from .llm_client import LLMClient
+from .tool_registry import get_registry
+
+logger = logging.getLogger(__name__)
+
+
+class ResponsePipeline:
+    """Main pipeline for processing text through intent detection, LLM, and tool calls."""
+    
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        model_name: str = "gemini-2.5-flash",
+        temperature: float = 0.7,
+    ):
+        """
+        Initialize the response pipeline.
+        
+        Args:
+            api_key: Google Gemini API key.
+            model_name: Name of the Gemini model to use.
+            temperature: Sampling temperature for LLM.
+        """
+        self.intent_detector = IntentDetector(api_key=api_key)
+        self.llm_client = LLMClient(
+            api_key=api_key,
+            model_name=model_name,
+            temperature=temperature,
+        )
+        self.tool_registry = get_registry()
+    
+    async def process_text(self, text: str) -> Dict[str, Any]:
+        """
+        Process text through the complete pipeline.
+        
+        Pipeline flow:
+        1. Intent Detection
+        2. LLM Processing (with tool definitions)
+        3. Tool Execution (if needed)
+        4. LLM Response Generation
+        5. Text Output
+        
+        Args:
+            text: Input text to process.
+            
+        Returns:
+            Dictionary containing the final response and metadata.
+        """
+        try:
+            logger.info(f"Processing text: {text[:100]}...")
+            
+            # Step 1: Intent Detection
+            logger.info("Step 1: Intent Detection")
+            intent_result = await self.intent_detector.detect_intent(text)
+            logger.info(f"Detected intent: {intent_result.get('intent')}")
+            
+            # Step 2: LLM Processing with tool definitions
+            logger.info("Step 2: LLM Processing with tools")
+            tool_schemas = self.tool_registry.get_tool_schemas()
+            
+            llm_response = await self.llm_client.generate_with_tools(
+                prompt=text,
+                tool_schemas=tool_schemas,
+            )
+            
+            # Step 3: Tool Execution (if LLM requested tools)
+            tool_results = []
+            if llm_response.get("tool_calls"):
+                logger.info(f"Step 3: Executing {len(llm_response['tool_calls'])} tool(s)")
+                
+                for tool_call in llm_response["tool_calls"]:
+                    tool_name = tool_call.get("name")
+                    tool_args = tool_call.get("arguments", {})
+                    call_id = tool_call.get("call_id")
+                    
+                    try:
+                        result = await self.tool_registry.execute_tool(
+                            name=tool_name,
+                            arguments=tool_args,
+                        )
+                        tool_results.append({
+                            "tool_name": tool_name,
+                            "arguments": tool_args,
+                            "call_id": call_id,
+                            "result": result,
+                        })
+                        logger.info(f"Tool {tool_name} executed successfully")
+                    except Exception as e:
+                        logger.error(f"Error executing tool {tool_name}: {e}")
+                        tool_results.append({
+                            "tool_name": tool_name,
+                            "arguments": tool_args,
+                            "call_id": call_id,
+                            "result": {
+                                "status": "error",
+                                "error": str(e),
+                            },
+                        })
+            
+            # Step 4: Generate final LLM response
+            logger.info("Step 4: Generating final response")
+            if tool_results:
+                # If tools were called, generate response with tool results
+                final_response = await self.llm_client.generate_final_response(
+                    prompt=text,
+                    tool_results=tool_results,
+                    interaction_id=llm_response.get("interaction_id"),
+                )
+            else:
+                # If no tools were called, use the initial response
+                final_response = llm_response.get("text", "")
+            
+            # Step 5: Return text output
+            logger.info("Step 5: Pipeline complete")
+            
+            return {
+                "response": final_response,
+                "intent": intent_result,
+                "tool_calls": [tc.get("name") for tc in llm_response.get("tool_calls", [])],
+                "tool_results": tool_results,
+                "metadata": {
+                    "model": self.llm_client.model_name,
+                    "temperature": self.llm_client.temperature,
+                },
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in response pipeline: {e}")
+            return {
+                "response": f"I encountered an error processing your request: {str(e)}",
+                "error": str(e),
+                "intent": {"intent": "general", "confidence": 0.0},
+                "tool_calls": [],
+                "tool_results": [],
+            }
+    
+    def load_test_prompts(self, file_path: Optional[str] = None) -> list:
+        """
+        Load test prompts from JSON file.
+        
+        Args:
+            file_path: Path to test prompts file. Defaults to data/test-prompts.json.
+            
+        Returns:
+            List of test prompts.
+        """
+        if file_path is None:
+            # Default to data/test-prompts.json relative to this file
+            current_dir = Path(__file__).parent
+            file_path = current_dir / "data" / "test-prompts.json"
+        
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                # Handle both list and dict formats
+                if isinstance(data, list):
+                    return data
+                elif isinstance(data, dict) and "prompts" in data:
+                    return data["prompts"]
+                elif isinstance(data, dict) and "prompt" in data:
+                    return [data["prompt"]]
+                else:
+                    return [str(data)]
+        except FileNotFoundError:
+            logger.warning(f"Test prompts file not found: {file_path}")
+            return []
+        except json.JSONDecodeError as e:
+            logger.error(f"Error parsing test prompts JSON: {e}")
+            return []
+
+
+# Global pipeline instance
+_pipeline: Optional[ResponsePipeline] = None
+
+
+def get_pipeline(api_key: Optional[str] = None) -> ResponsePipeline:
+    """
+    Get the global response pipeline instance.
+    
+    Args:
+        api_key: Optional API key to initialize pipeline.
+        
+    Returns:
+        The global ResponsePipeline instance.
+    """
+    global _pipeline
+    if _pipeline is None:
+        _pipeline = ResponsePipeline(api_key=api_key)
+    return _pipeline
