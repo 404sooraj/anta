@@ -26,7 +26,7 @@ class LLMService:
         # Initialize the response pipeline (model name from GEMINI_MODEL_NAME in .env)
         self.pipeline = ResponsePipeline(
             api_key=self.api_key,
-            model_name=os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash"),
+            model_name=os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite"),
             temperature=float(os.getenv("GEMINI_TEMPERATURE", "0.7"))
         )
         logger.info("✓ LLM Service initialized with response pipeline")

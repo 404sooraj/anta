@@ -30,7 +30,7 @@ class ResponsePipeline:
             model_name: Name of the Gemini model. If not provided, reads from GEMINI_MODEL_NAME env var.
             temperature: Sampling temperature for LLM.
         """
-        _model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash")
+        _model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
         self.intent_detector = IntentDetector(api_key=api_key)
         self.llm_client = LLMClient(
             api_key=api_key,

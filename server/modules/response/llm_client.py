@@ -32,7 +32,7 @@ class LLMClient:
             raise ValueError("GEMINI_API_KEY must be provided or set as environment variable")
         
         self.client = genai.Client(api_key=self.api_key)
-        self.model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash")
+        self.model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
         self.temperature = temperature
         self.max_tokens = max_tokens
     

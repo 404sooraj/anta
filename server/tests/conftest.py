@@ -48,7 +48,7 @@ def mock_pipeline():
         "intent": {"intent": "general", "confidence": 0.9, "reasoning": "Test"},
         "tool_calls": [],
         "tool_results": [],
-        "metadata": {"model": "gemini-1.5-flash", "temperature": 0.7}
+        "metadata": {"model": "gemini-2.5-flash-lite", "temperature": 0.7}
     }
     mock.process_text = async_mock_process_text
     
