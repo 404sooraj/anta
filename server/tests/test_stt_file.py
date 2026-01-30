@@ -44,8 +44,17 @@ async def send_wav_file(filepath):
                             message = await ws.recv()
                             data = json.loads(message)
                             
-                            if data.get("type") == "transcript":
-                                print(f"\n🎤 TRANSCRIPT: {data.get('text')}\n")
+                            if data.get("type") == "llm_response":
+                                print(f"\n{'='*70}")
+                                print(f"🎤 TRANSCRIPT: {data.get('transcript')}")
+                                print(f"🎯 INTENT: {data.get('intent', {}).get('intent', 'unknown')}")
+                                
+                                # Show tool usage if any
+                                if data.get('tool_calls'):
+                                    print(f"🔧 TOOLS USED: {', '.join(data.get('tool_calls', []))}")
+                                
+                                print(f"\n🤖 RESPONSE:\n{data.get('response')}")
+                                print(f"{'='*70}\n")
                     except websockets.exceptions.ConnectionClosed:
                         pass
                 

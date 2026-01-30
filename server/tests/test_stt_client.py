@@ -11,7 +11,7 @@ import json
 # =========================
 # Configuration
 # =========================
-WEBSOCKET_URL = "ws://localhost:8000/stt/ws/audio"
+WEBSOCKET_URL = "ws://127.0.0.1:8000/stt/ws/audio"
 SAMPLE_RATE = 16000
 CHANNELS = 1
 CHUNK_SIZE = 512  # Silero VAD requires exactly 512 samples for 16kHz (32ms chunks)
@@ -41,14 +41,23 @@ class AudioStreamer:
                 print(f"Error sending audio: {e}")
     
     async def receive_transcripts(self):
-        """Listen for transcripts from server"""
+        """Listen for transcripts and LLM responses from server"""
         try:
             while self.running:
                 message = await self.websocket.recv()
                 data = json.loads(message)
                 
-                if data.get("type") == "transcript":
-                    print(f"\n🎤 Transcript: {data.get('text')}\n")
+                if data.get("type") == "llm_response":
+                    print(f"\n" + "="*70)
+                    print(f"🎤 TRANSCRIPT: {data.get('transcript')}")
+                    print(f"🎯 INTENT: {data.get('intent', {}).get('intent', 'unknown')}")
+                    
+                    # Show tool usage if any
+                    if data.get('tool_calls'):
+                        print(f"🔧 TOOLS USED: {', '.join(data.get('tool_calls', []))}")
+                    
+                    print(f"\n🤖 RESPONSE:\n{data.get('response')}")
+                    print("="*70 + "\n")
         except websockets.exceptions.ConnectionClosed:
             print("Connection closed by server")
         except Exception as e:
@@ -99,13 +108,22 @@ class AudioStreamer:
                     send_task = asyncio.create_task(self.send_audio(audio_queue))
                     receive_task = asyncio.create_task(self.receive_transcripts())
                     
-                    # Wait for both tasks
-                    await asyncio.gather(send_task, receive_task)
+                    # Wait for both tasks (cancel on first exception)
+                    try:
+                        await asyncio.gather(send_task, receive_task)
+                    except Exception as e:
+                        print(f"Task error: {e}")
+                        send_task.cancel()
+                        receive_task.cancel()
                     
         except KeyboardInterrupt:
             print("\n\n👋 Stopping...")
+        except websockets.exceptions.ConnectionClosed as e:
+            print(f"Connection closed: {e}")
         except Exception as e:
             print(f"Error: {e}")
+            import traceback
+            traceback.print_exc()
         finally:
             self.running = False
     
