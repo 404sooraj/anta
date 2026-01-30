@@ -1,5 +1,6 @@
 """Main response pipeline orchestrator."""
 
+import os
 import json
 import logging
 from typing import Dict, Any, Optional
@@ -18,7 +19,7 @@ class ResponsePipeline:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model_name: str = "gemini-2.5-flash",
+        model_name: Optional[str] = None,
         temperature: float = 0.7,
     ):
         """
@@ -26,13 +27,14 @@ class ResponsePipeline:
         
         Args:
             api_key: Google Gemini API key.
-            model_name: Name of the Gemini model to use.
+            model_name: Name of the Gemini model. If not provided, reads from GEMINI_MODEL_NAME env var.
             temperature: Sampling temperature for LLM.
         """
+        _model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash")
         self.intent_detector = IntentDetector(api_key=api_key)
         self.llm_client = LLMClient(
             api_key=api_key,
-            model_name=model_name,
+            model_name=_model_name,
             temperature=temperature,
         )
         self.tool_registry = get_registry()

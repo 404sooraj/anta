@@ -14,9 +14,9 @@ class Config:
     # API Keys
     GEMINI_API_KEY: Optional[str] = os.getenv("GEMINI_API_KEY")
     
-    # Model Configuration
-    # Options: gemini-2.0-flash-exp, gemini-1.5-pro, gemini-1.5-flash, etc.
-    GEMINI_MODEL_NAME: str = os.getenv("GEMINI_MODEL_NAME", "gemini-2.0-flash-exp")
+    # Model Configuration (set GEMINI_MODEL_NAME in .env)
+    # Options: gemini-1.5-flash, gemini-1.5-pro, gemini-2.5-flash, etc.
+    GEMINI_MODEL_NAME: str = os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash")
     GEMINI_TEMPERATURE: float = float(os.getenv("GEMINI_TEMPERATURE", "0.7"))
     GEMINI_MAX_TOKENS: Optional[int] = (
         int(os.getenv("GEMINI_MAX_TOKENS")) if os.getenv("GEMINI_MAX_TOKENS") else None

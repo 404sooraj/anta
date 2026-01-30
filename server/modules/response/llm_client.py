@@ -14,7 +14,7 @@ class LLMClient:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model_name: str = "gemini-2.5-flash",
+        model_name: Optional[str] = None,
         temperature: float = 0.7,
         max_tokens: Optional[int] = None,
     ):
@@ -23,7 +23,7 @@ class LLMClient:
         
         Args:
             api_key: Google Gemini API key. If not provided, reads from GEMINI_API_KEY env var.
-            model_name: Name of the Gemini model to use.
+            model_name: Name of the Gemini model. If not provided, reads from GEMINI_MODEL_NAME env var.
             temperature: Sampling temperature (0.0 to 1.0).
             max_tokens: Maximum number of tokens in response.
         """
@@ -32,7 +32,7 @@ class LLMClient:
             raise ValueError("GEMINI_API_KEY must be provided or set as environment variable")
         
         self.client = genai.Client(api_key=self.api_key)
-        self.model_name = model_name
+        self.model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash")
         self.temperature = temperature
         self.max_tokens = max_tokens
     

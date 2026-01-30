@@ -24,7 +24,7 @@ async def test_llm_client_initialization():
     
     assert client is not None
     assert client.api_key == "test_api_key"
-    assert client.model_name == "gemini-2.5-flash"
+    assert client.model_name == "gemini-1.5-flash"
     assert client.temperature == 0.7
     assert client.client is not None
 

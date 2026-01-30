@@ -23,11 +23,11 @@ class LLMService:
         if not self.api_key:
             logger.warning("GEMINI_API_KEY not found in environment variables")
         
-        # Initialize the response pipeline
+        # Initialize the response pipeline (model name from GEMINI_MODEL_NAME in .env)
         self.pipeline = ResponsePipeline(
             api_key=self.api_key,
-            model_name="gemini-2.5-flash",
-            temperature=0.7
+            model_name=os.getenv("GEMINI_MODEL_NAME", "gemini-1.5-flash"),
+            temperature=float(os.getenv("GEMINI_TEMPERATURE", "0.7"))
         )
         logger.info("✓ LLM Service initialized with response pipeline")
     
