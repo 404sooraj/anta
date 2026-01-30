@@ -55,8 +55,11 @@ class STTService:
         
         def on_turn(self: Type[StreamingClient], event: TurnEvent):
             # Only process final transcripts (not partial updates)
+            # Filter out empty or whitespace-only transcripts
             if event.transcript and event.end_of_turn and transcript_callback:
-                transcript_callback(event.transcript)
+                cleaned = event.transcript.strip()
+                if cleaned:
+                    transcript_callback(cleaned)
         
         def on_error(self: Type[StreamingClient], error: StreamingError):
             if error_callback:

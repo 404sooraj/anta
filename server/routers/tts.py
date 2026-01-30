@@ -1,28 +1,53 @@
 """
-TTS Controller - Handles WebSocket connections for TTS streaming.
+TTS Router - WebSocket endpoint for text-to-speech streaming
 """
 import json
+import logging
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from fastapi import WebSocket, WebSocketDisconnect
+from services.tts import TTSService
 
-from .service import get_tts_service
+logger = logging.getLogger(__name__)
+
+# =========================
+# Router Setup
+# =========================
+router = APIRouter(prefix="/tts", tags=["tts"])
+
+# =========================
+# Initialize TTS Service
+# =========================
+_tts_service = None
+
+def get_tts_service() -> TTSService:
+    """Get or create TTS service instance"""
+    global _tts_service
+    if _tts_service is None:
+        _tts_service = TTSService()
+    return _tts_service
 
 
-async def handle_tts_websocket(websocket: WebSocket):
+# =========================
+# WebSocket Endpoint
+# =========================
+@router.websocket("/ws")
+async def tts_websocket(websocket: WebSocket):
     """
-    Handle WebSocket connection for streaming TTS.
+    WebSocket endpoint for streaming TTS.
     
-    Protocol:
-    - New format (with context): {"transcript": "...", "context_id": "...", "continue": true/false, "language": "...", "voice_id": "..."}
-    - Legacy format (backward compatible): {"text": "...", "language": "auto|hi|en", "voice_id": "..."}
-    - Server streams audio chunks back as bytes
-    - Client can send multiple text chunks
-    - Client closes connection when done
+    Endpoint: ws://localhost:8000/tts/ws
     
-    Args:
-        websocket: WebSocket connection
+    Client sends:
+    - New format: {"transcript": "...", "context_id": "...", "continue": true/false, "language": "...", "voice_id": "..."}
+    - Legacy format: {"text": "...", "language": "auto|hi|en", "voice_id": "..."}
+    
+    Server responds:
+    - Status messages: {"status": "processing|complete", "type": "status", "chunks": N}
+    - Audio chunks: raw bytes (PCM float32, 44100 Hz, mono)
+    - Error messages: {"error": "...", "type": "error"}
     """
     await websocket.accept()
+    logger.info("TTS WebSocket connected")
     
     tts_service = get_tts_service()
     
@@ -49,7 +74,6 @@ async def handle_tts_websocket(websocket: WebSocket):
                     
                     # Allow empty transcript for closing context
                     if transcript == "" and not continue_flag:
-                        # Closing context with empty transcript
                         await websocket.send_json({
                             "status": "complete",
                             "type": "status"
@@ -78,7 +102,6 @@ async def handle_tts_websocket(websocket: WebSocket):
                         language=language,
                         voice_id=voice_id,
                     ):
-                        # Send audio chunk
                         await websocket.send_bytes(audio_chunk)
                         chunk_count += 1
                     
@@ -107,14 +130,13 @@ async def handle_tts_websocket(websocket: WebSocket):
                         "type": "status"
                     })
                     
-                    # Stream TTS audio chunks using legacy method
+                    # Stream TTS audio chunks
                     chunk_count = 0
                     async for audio_chunk in tts_service.stream_tts(
                         text=text,
                         language=language,
                         voice_id=voice_id,
                     ):
-                        # Send audio chunk
                         await websocket.send_bytes(audio_chunk)
                         chunk_count += 1
                     
@@ -126,48 +148,50 @@ async def handle_tts_websocket(websocket: WebSocket):
                     })
             
             except json.JSONDecodeError:
-                # If not JSON, treat as plain text (legacy format)
-                if data.strip():
-                    await websocket.send_json({
-                        "status": "processing",
-                        "type": "status"
-                    })
-                    
-                    chunk_count = 0
-                    async for audio_chunk in tts_service.stream_tts(text=data):
-                        await websocket.send_bytes(audio_chunk)
-                        chunk_count += 1
-                    
-                    await websocket.send_json({
-                        "status": "complete",
-                        "chunks": chunk_count,
-                        "type": "status"
-                    })
+                # Treat as plain text (legacy support)
+                text = data.strip()
+                if not text:
+                    continue
+                
+                # Send acknowledgment
+                await websocket.send_json({
+                    "status": "processing",
+                    "type": "status"
+                })
+                
+                # Stream TTS with auto-detected language
+                chunk_count = 0
+                async for audio_chunk in tts_service.stream_tts(text=text, language="auto"):
+                    await websocket.send_bytes(audio_chunk)
+                    chunk_count += 1
+                
+                # Send completion message
+                await websocket.send_json({
+                    "status": "complete",
+                    "chunks": chunk_count,
+                    "type": "status"
+                })
             
             except Exception as e:
-                # Send error message
+                logger.error(f"Error processing TTS request: {e}")
                 await websocket.send_json({
                     "error": str(e),
                     "type": "error"
                 })
     
     except WebSocketDisconnect:
-        # Client disconnected normally
-        pass
-    
+        logger.info("TTS WebSocket disconnected")
     except Exception as e:
-        # Unexpected error
-        try:
-            await websocket.send_json({
-                "error": f"Server error: {str(e)}",
-                "type": "error"
-            })
-        except:
-            pass  # Connection may already be closed
-    
+        logger.error(f"TTS WebSocket error: {e}")
     finally:
-        # Cleanup if needed
-        try:
-            await websocket.close()
-        except:
-            pass
+        # Cleanup any active contexts for this connection
+        logger.info("TTS WebSocket closed")
+
+
+# =========================
+# Health Check
+# =========================
+@router.get("/health")
+async def health_check():
+    """Health check endpoint for TTS service"""
+    return {"status": "ok", "service": "tts"}

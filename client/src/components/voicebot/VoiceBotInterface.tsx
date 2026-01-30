@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useWebRTC } from "@/hooks/useWebRTC";
+import { useVoiceBot } from '@/hooks/useVoiceBot';
 import {
   CallButton,
   CallStatusDisplay,
@@ -10,7 +10,7 @@ import {
 } from "@/components/voicebot";
 
 export function VoiceBotInterface() {
-  const { callState, audioLevel, startCall, endCall, toggleMute } = useWebRTC();
+  const { callState, audioLevel, startCall, endCall, toggleMute, transcript, response } = useVoiceBot();
 
   const [mounted, setMounted] = useState(false);
 
@@ -73,6 +73,32 @@ export function VoiceBotInterface() {
           disabled={!isConnected}
         />
       </div>
+
+      {/* Transcript and Response Display */}
+      {(transcript || response) && (
+        <div className="w-full max-w-2xl space-y-4 mt-8">
+          {transcript && (
+            <div className="p-4 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
+                You said:
+              </p>
+              <p className="text-base text-zinc-900 dark:text-zinc-100">
+                {transcript}
+              </p>
+            </div>
+          )}
+          {response && (
+            <div className="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900/20">
+              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 mb-1">
+                Response:
+              </p>
+              <p className="text-base text-emerald-900 dark:text-emerald-100">
+                {response}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

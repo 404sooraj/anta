@@ -10,7 +10,7 @@ from cartesia.tts import OutputFormat_RawParams
 from cartesia.tts.types import WebSocketResponse, WebSocketResponse_Done, WebSocketResponse_Error
 from cartesia.core.pydantic_utilities import parse_obj_as
 
-from . import utils
+from services.tts import utils
 
 
 class TTSService:
