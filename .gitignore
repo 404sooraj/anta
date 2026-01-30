@@ -6,3 +6,15 @@ server/.env
 *pycache*
 *__pycache__*
 *__pycache__*
+server/__pycache__/
+server/api/stt/__pycache__/
+server/api/__pycache__/
+*.pyc
+*.pyo
+*.env
+.env
+.DS_Store
+node_modules/
+dist/
+build/
+*.log

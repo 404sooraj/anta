@@ -5,6 +5,10 @@ import logging
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from api.stt import routes as stt_routes
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from api.routes import router
 from modules.response.response import ResponsePipeline
@@ -54,6 +58,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
+app.include_router(stt_routes.router)
 
 @app.get("/")
 async def root():
