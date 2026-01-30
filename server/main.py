@@ -1,4 +1,4 @@
-"""Main application entry point for BatterySmart API."""
+"""Main application entry point for the Antaryami TTS Server (Hindi/English Text-to-Speech)."""
 
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
