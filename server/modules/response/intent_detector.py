@@ -19,6 +19,7 @@ class IntentDetector:
         "service_request",  # Request for service
         "problem_report",  # Reporting a problem
         "location_query",  # Asking about location
+        "station_query",  # Asking about nearest station or where to swap
         "service_center_query",  # Asking about service center visits
         "swap_attempt_query",  # Asking about swap attempts
         "general",  # General conversation
@@ -55,6 +56,18 @@ class IntentDetector:
 User input: "{text}"
 
 Intent categories: {categories_str}
+
+Category definitions:
+- user_query: User asking about their personal info, name, profile, account details
+- service_request: User requesting a service or help
+- problem_report: User reporting an issue or problem
+- location_query: User asking specifically about their own current location or where they are
+- station_query: User asking about nearest station, where to swap battery, finding a swap station, stations with available batteries
+- service_center_query: User asking about service center visits or history
+- swap_attempt_query: User asking about their swap attempts or swap history
+- general: General conversation not fitting other categories
+
+IMPORTANT: If the user mentions "station", "swap station", "nearest station", or "where to swap", classify as station_query, NOT location_query.
 
 Respond with a JSON object in this exact format:
 {{

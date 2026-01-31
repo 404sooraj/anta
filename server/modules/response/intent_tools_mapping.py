@@ -20,6 +20,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getUserInfo",
         "getCurrentLocation",
         "getLastServiceCenterVisit",
+        "getNearestStation",
     ],
     
     # User reporting a problem or issue
@@ -34,23 +35,35 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
     "location_query": [
         "getUserInfo",
         "getCurrentLocation",
+        "getNearestStation",  # Often follows location queries
     ],
     
     # User asking about service center visits
     "service_center_query": [
         "getUserInfo",
         "getLastServiceCenterVisit",
+        "getNearestStation",
     ],
     
     # User asking about swap attempts
     "swap_attempt_query": [
         "getUserInfo",
         "getLastSwapAttempt",
+        "getNearestStation",  # May need to find a station after failed swap
+    ],
+    
+    # User looking for nearest station or where to swap battery
+    "station_query": [
+        "getUserInfo",
+        "getCurrentLocation",
+        "getNearestStation",
     ],
     
     # General conversation - provide basic tools
     "general": [
         "getUserInfo",
+        "getCurrentLocation",
+        "getNearestStation",  # Station queries are common
     ],
 }
 

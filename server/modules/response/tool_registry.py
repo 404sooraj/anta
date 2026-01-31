@@ -9,6 +9,7 @@ from .tools import (
     GetUserInfoTool,
     GetCurrentLocationTool,
     GetLastServiceCenterVisitTool,
+    GetNearestStationTool,
     GetProblemContextTool,
     GetLastSwapAttemptTool,
 )
@@ -32,6 +33,7 @@ class ToolRegistry:
             GetUserInfoTool(),
             GetCurrentLocationTool(),
             GetLastServiceCenterVisitTool(),
+            GetNearestStationTool(),
             GetProblemContextTool(),
             GetLastSwapAttemptTool(),
         ]

@@ -14,6 +14,7 @@ from routers.tts import router as tts_router
 from routers.twilio import router as twilio_router
 from routers.batteries import router as batteries_router
 from routers.auth import router as auth_router
+from routers.location import router as location_router
 from db.connection import get_db, close_client
 from db.indexes import create_indexes
 
@@ -83,6 +84,7 @@ app.include_router(tts_router)
 app.include_router(twilio_router)
 app.include_router(batteries_router)
 app.include_router(auth_router)
+app.include_router(location_router)
 
 
 @app.get("/")

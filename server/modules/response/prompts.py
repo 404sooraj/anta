@@ -51,8 +51,10 @@ def build_system_prompt(
             "\n3. When the user asks about a recent swap or swap history, use the getLastSwapAttempt tool."
             "\n4. When the user asks about service center visits, use the getLastServiceCenterVisit tool."
             "\n5. When the user reports a problem or issue, use the getProblemContext tool to analyze it."
-            "\n6. Always use the provided user_id when calling tools that require userId."
-            "\n7. If a tool returns an error or 'not found', inform the user politely."
+            "\n6. When the user asks about the nearest station, where to swap, or finding a station, use the getNearestStation tool."
+            "\n7. If the user specifically asks for stations with available batteries, call getNearestStation with requireAvailableBatteries=true."
+            "\n8. Always use the provided user_id when calling tools that require userId."
+            "\n9. If a tool returns an error or 'not found', inform the user politely."
         )
     
     # Response guidelines
