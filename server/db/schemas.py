@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from site import USER_BASE
+# from site import USER_BASE
 from typing import Literal, Optional
 
 from bson import ObjectId
@@ -145,7 +145,7 @@ class BatteryIssue(BaseModel):
 class Battery(BaseModel):
     battery_id: str
     station_id: Optional[str] = None
-    issues: List[BatteryIssue] = Field(default_factory=list)
+    issues: list[BatteryIssue] = Field(default_factory=list)
 
 
 class ConversationMessage(BaseModel):
@@ -166,7 +166,7 @@ class CallTranscript(BaseModel):
     duration_seconds: int
     
     # Conversation data
-    messages: List[ConversationMessage] = Field(default_factory=list)
+    messages: list[ConversationMessage] = Field(default_factory=list)
     detected_language: str = "en"
     
     # AI-generated insights
