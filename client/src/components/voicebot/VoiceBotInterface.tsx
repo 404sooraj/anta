@@ -34,6 +34,7 @@ export function VoiceBotInterface() {
     response,
     streamingResponse,
     conversationHistory,
+    handoffStatus,
   } = useVoiceBot({
     token: authToken,
     userId: authUserId,
@@ -90,6 +91,30 @@ export function VoiceBotInterface() {
           </div>
         )}
       </div>
+
+      {/* Handoff Status Indicator */}
+      {handoffStatus !== "none" && (
+        <div
+          className={`px-4 py-2 rounded-lg text-center ${
+            handoffStatus === "queued"
+              ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300"
+              : "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+          }`}
+        >
+          <div className="flex items-center justify-center gap-2">
+            <span
+              className={`w-2 h-2 rounded-full animate-pulse ${
+                handoffStatus === "queued" ? "bg-amber-500" : "bg-purple-500"
+              }`}
+            />
+            <span className="text-sm font-medium">
+              {handoffStatus === "queued"
+                ? "📞 Waiting for agent..."
+                : "🎧 Connected to human agent"}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Audio Visualizer */}
       <div className="relative">
@@ -157,18 +182,18 @@ export function VoiceBotInterface() {
                   // that haven't been responded to yet
                   const userMessages: string[] = [];
                   for (let i = conversationHistory.length - 1; i >= 0; i--) {
-                    if (conversationHistory[i].role === 'user') {
+                    if (conversationHistory[i].role === "user") {
                       userMessages.unshift(conversationHistory[i].text);
                     } else {
                       break; // Stop at the last agent message
                     }
                   }
-                  
+
                   // If we have user messages from history, concatenate them
                   // Otherwise show current transcript or partial
-                  return userMessages.length > 0 
-                    ? userMessages.join(' ')
-                    : (transcript || partialTranscript);
+                  return userMessages.length > 0
+                    ? userMessages.join(" ")
+                    : transcript || partialTranscript;
                 })()}
                 {partialTranscript && !transcript && (
                   <span className="inline-block ml-1 w-1 h-4 bg-zinc-400 animate-pulse" />

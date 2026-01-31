@@ -48,6 +48,14 @@ class NearestStationInput(BaseModel):
         default=False, 
         description="If true, only return stations that have batteries available for swap"
     )
+    latitude: Optional[float] = Field(
+        default=None,
+        description="Optional explicit latitude. Use this when user provides their location verbally (e.g., phone calls). Takes precedence over user's stored location."
+    )
+    longitude: Optional[float] = Field(
+        default=None,
+        description="Optional explicit longitude. Use this when user provides their location verbally (e.g., phone calls). Takes precedence over user's stored location."
+    )
 
 
 class GetLastServiceCenterVisitTool(BaseTool):
@@ -103,12 +111,16 @@ Use this when the user asks about:
         Args:
             userId: The unique identifier of the user.
             requireAvailableBatteries: If true, filter to stations with available batteries.
+            latitude: Optional explicit latitude (for phone calls where GPS unavailable).
+            longitude: Optional explicit longitude (for phone calls where GPS unavailable).
             
         Returns:
             Dictionary containing nearest station information.
         """
         userId = kwargs.get("userId")
         require_available = kwargs.get("requireAvailableBatteries", False)
+        explicit_lat = kwargs.get("latitude")
+        explicit_lon = kwargs.get("longitude")
         
         if not userId:
             return {
@@ -119,37 +131,44 @@ Use this when the user asks about:
         try:
             db = get_db()
             
-            # Get user's current location
-            user = await db.users.find_one(
-                {"user_id": userId},
-                {"location": 1}
-            )
-            
-            if not user:
-                return {
-                    "status": "error",
-                    "data": {"message": f"User {userId} not found"},
-                }
-            
-            user_location = user.get("location")
-            if not user_location or not user_location.get("coordinates"):
-                return {
-                    "status": "error",
-                    "data": {
-                        "message": "User's location is not available. Please enable location services.",
-                    },
-                }
-            
-            # User coordinates (GeoJSON format: [longitude, latitude])
-            user_coords = user_location.get("coordinates", [])
-            user_lon = user_coords[0] if len(user_coords) > 0 else None
-            user_lat = user_coords[1] if len(user_coords) > 1 else None
-            
-            if user_lat is None or user_lon is None:
-                return {
-                    "status": "error",
-                    "data": {"message": "Invalid user location coordinates"},
-                }
+            # Use explicit coordinates if provided (for Twilio calls)
+            if explicit_lat is not None and explicit_lon is not None:
+                user_lat = explicit_lat
+                user_lon = explicit_lon
+                user_address = "User-provided location"
+            else:
+                # Get user's stored location
+                user = await db.users.find_one(
+                    {"user_id": userId},
+                    {"location": 1}
+                )
+                
+                if not user:
+                    return {
+                        "status": "error",
+                        "data": {"message": f"User {userId} not found"},
+                    }
+                
+                user_location = user.get("location")
+                if not user_location or not user_location.get("coordinates"):
+                    return {
+                        "status": "error",
+                        "data": {
+                            "message": "User's location is not available. Please ask the user for their location and use geocodeAddress tool to get coordinates.",
+                        },
+                    }
+                
+                # User coordinates (GeoJSON format: [longitude, latitude])
+                user_coords = user_location.get("coordinates", [])
+                user_lon = user_coords[0] if len(user_coords) > 0 else None
+                user_lat = user_coords[1] if len(user_coords) > 1 else None
+                user_address = user_location.get("address")
+                
+                if user_lat is None or user_lon is None:
+                    return {
+                        "status": "error",
+                        "data": {"message": "Invalid user location coordinates"},
+                    }
             
             # Get all stations (exclude offline stations by default)
             query = {"status": {"$ne": "offline"}}  # Only show available stations
@@ -250,7 +269,7 @@ Use this when the user asks about:
                     "user_location": {
                         "latitude": user_lat,
                         "longitude": user_lon,
-                        "address": user_location.get("address"),
+                        "address": user_address if 'user_address' in dir() else None,
                     },
                 },
             }

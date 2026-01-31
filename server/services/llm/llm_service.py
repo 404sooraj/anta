@@ -34,6 +34,7 @@ class LLMService:
         conversation_history: list = None,
         session_id: str = None,
         user_id: str = None,
+        is_twilio_call: bool = False,
     ) -> dict:
         """
         Process transcript through the complete pipeline.
@@ -49,6 +50,7 @@ class LLMService:
             conversation_history: Previous conversation turns for context
             session_id: Optional; when set, conversation and intent_log are persisted
             user_id: Optional; used for conversation.user_id when persisting
+            is_twilio_call: Whether this is a Twilio phone call (no GPS available)
 
         Returns:
             Dictionary containing:
@@ -58,6 +60,7 @@ class LLMService:
             - tool_results: Results from tool execution
         """
         logger.info(f"Processing transcript: {transcript[:100]}...")
+        logger.info(f"[LLMService] user_id: {user_id}, is_twilio_call: {is_twilio_call}")
 
         try:
             result = await self.pipeline.process_text(
@@ -65,6 +68,7 @@ class LLMService:
                 conversation_history=conversation_history,
                 session_id=session_id,
                 user_id=user_id,
+                is_twilio_call=is_twilio_call,
             )
             
             logger.info(f"LLM processing complete. Response: {result.get('response', '')[:100]}...")
@@ -86,21 +90,29 @@ class LLMService:
         transcript: str,
         conversation_history: list = None,
         user_id: str | None = None,
+        is_twilio_call: bool = False,
     ) -> dict:
         """
         Process transcript and stream the LLM response.
+
+        Args:
+            transcript: The transcribed text to process
+            conversation_history: Previous conversation turns for context
+            user_id: Optional; used for tool calls requiring user identification
+            is_twilio_call: Whether this is a Twilio phone call (no GPS available)
 
         Returns:
             Dictionary containing metadata and an async generator under "stream".
         """
         logger.info(f"Processing transcript (streaming): {transcript[:100]}...")
-        logger.info(f"[LLMService] user_id received: {user_id}")
+        logger.info(f"[LLMService] user_id received: {user_id}, is_twilio_call: {is_twilio_call}")
 
         try:
             result = await self.pipeline.process_text_streaming(
                 transcript,
                 conversation_history,
                 user_id=user_id,
+                is_twilio_call=is_twilio_call,
             )
             return result
         except Exception as e:

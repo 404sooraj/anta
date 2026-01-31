@@ -51,6 +51,7 @@ class ResponsePipeline:
         conversation_history: list = None,
         session_id: Optional[str] = None,
         user_id: Optional[str] = None,
+        is_twilio_call: bool = False,
     ) -> Dict[str, Any]:
         """
         Process text through the complete pipeline.
@@ -67,12 +68,14 @@ class ResponsePipeline:
             conversation_history: Previous conversation for context.
             session_id: Optional; when set, conversation and intent_log are persisted.
             user_id: Optional; used for conversation.user_id when persisting.
+            is_twilio_call: Whether this is a Twilio phone call (no GPS available).
 
         Returns:
             Dictionary containing the final response and metadata.
         """
         try:
             logger.info(f"Processing text: {text[:100]}...")
+            logger.info(f"Context: user_id={user_id}, is_twilio_call={is_twilio_call}")
 
             # Build context from conversation history
             context_prompt = text
@@ -124,7 +127,11 @@ class ResponsePipeline:
             logger.info(f"Loaded {len(langchain_tools)} tools for intent '{detected_intent}'")
 
             # Build system prompt with user context and tool instructions
-            system_prompt = build_system_prompt(user_id=user_id, tools=langchain_tools)
+            system_prompt = build_system_prompt(
+                user_id=user_id, 
+                tools=langchain_tools,
+                is_twilio_call=is_twilio_call,
+            )
             tool_conversation = [{"role": "system", "content": system_prompt}]
             tool_conversation.extend(conversation_history or [])
 
@@ -212,16 +219,23 @@ class ResponsePipeline:
         text: str,
         conversation_history: list = None,
         user_id: Optional[str] = None,
+        is_twilio_call: bool = False,
     ) -> Dict[str, Any]:
         """
         Process text and stream the final LLM response.
+
+        Args:
+            text: Input text to process.
+            conversation_history: Previous conversation for context.
+            user_id: Optional; used for tool calls requiring user identification.
+            is_twilio_call: Whether this is a Twilio phone call (no GPS available).
 
         Returns:
             Dictionary containing metadata and an async generator under "stream".
         """
         try:
             logger.info(f"Processing text (streaming): {text[:100]}...")
-            logger.info(f"[Pipeline] user_id received: {user_id}")
+            logger.info(f"[Pipeline] user_id received: {user_id}, is_twilio_call: {is_twilio_call}")
 
             # Step 1: Intent Detection (optional for streaming latency)
             intent_detection_enabled = ConfigEnv.INTENT_DETECTION_ENABLED
@@ -240,8 +254,12 @@ class ResponsePipeline:
             logger.info(f"Loaded {len(langchain_tools)} tools for intent '{detected_intent}'")
 
             # Build system prompt with user context and tool instructions
-            logger.info(f"[Pipeline] Building system prompt with user_id={user_id}")
-            system_prompt = build_system_prompt(user_id=user_id, tools=langchain_tools)
+            logger.info(f"[Pipeline] Building system prompt with user_id={user_id}, is_twilio_call={is_twilio_call}")
+            system_prompt = build_system_prompt(
+                user_id=user_id, 
+                tools=langchain_tools,
+                is_twilio_call=is_twilio_call,
+            )
             logger.info(f"[Pipeline] System prompt (first 500 chars): {system_prompt[:500]}...")
             tool_conversation = [{"role": "system", "content": system_prompt}]
             tool_conversation.extend(conversation_history or [])

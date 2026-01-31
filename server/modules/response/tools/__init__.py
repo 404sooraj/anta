@@ -8,6 +8,9 @@ from .problem_context import GetProblemContextTool
 from .swap_attempt import GetLastSwapAttemptTool
 from .battery_info import GetBatteryInfoTool
 from .battery_issue_reporter import ReportBatteryIssueTool
+from .human_handoff import RequestHumanAgentTool
+from .subscription_info import GetSubscriptionInfoTool
+from .geocoding import GeocodeAddressTool, ReverseGeocodeTool
 
 __all__ = [
     "BaseTool",
@@ -19,4 +22,8 @@ __all__ = [
     "GetLastSwapAttemptTool",
     "GetBatteryInfoTool",
     "ReportBatteryIssueTool",
+    "RequestHumanAgentTool",
+    "GetSubscriptionInfoTool",
+    "GeocodeAddressTool",
+    "ReverseGeocodeTool",
 ]

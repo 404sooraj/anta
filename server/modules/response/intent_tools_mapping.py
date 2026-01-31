@@ -8,12 +8,20 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
     # Tools available for all intents (always included)
     "all": [
         "getUserInfo",  # User can always ask about their account
+        "requestHumanAgent",  # User can always request to speak to a human
     ],
     
     # User asking about their profile, name, account details
     "user_query": [
         "getUserInfo",
         "getBatteryInfo",  # Battery is part of user profile
+        "getSubscriptionInfo",  # Subscription is part of user profile
+    ],
+    
+    # User asking about their subscription/plan
+    "subscription_query": [
+        "getUserInfo",
+        "getSubscriptionInfo",
     ],
     
     # User requesting a service
@@ -23,6 +31,8 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getLastServiceCenterVisit",
         "getNearestStation",
         "getBatteryInfo",
+        "getSubscriptionInfo",  # May need subscription info for service
+        "geocodeAddress",  # For Twilio calls - convert spoken location
     ],
     
     # User reporting a problem or issue
@@ -40,6 +50,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getUserInfo",
         "getCurrentLocation",
         "getNearestStation",  # Often follows location queries
+        "geocodeAddress",  # For Twilio calls - convert spoken location to coordinates
     ],
     
     # User asking about service center visits
@@ -47,6 +58,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getUserInfo",
         "getLastServiceCenterVisit",
         "getNearestStation",
+        "geocodeAddress",  # For Twilio calls
     ],
     
     # User asking about swap attempts
@@ -55,6 +67,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getLastSwapAttempt",
         "getNearestStation",  # May need to find a station after failed swap
         "getBatteryInfo",
+        "geocodeAddress",  # For Twilio calls
     ],
     
     # User looking for nearest station or where to swap battery
@@ -63,6 +76,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getCurrentLocation",
         "getNearestStation",
         "getBatteryInfo",  # Check battery before swapping
+        "geocodeAddress",  # For Twilio calls - convert spoken location to coordinates
     ],
     
     # User asking about their battery status/health/issues
@@ -80,6 +94,13 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getCurrentLocation",
         "getNearestStation",  # Station queries are common
         "getBatteryInfo",
+        "geocodeAddress",  # For Twilio calls - convert spoken location
+    ],
+    
+    # User wants to speak to a human agent
+    "human_handoff": [
+        "getUserInfo",
+        "requestHumanAgent",  # Primary tool for handoff
     ],
 }
 
