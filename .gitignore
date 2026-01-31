@@ -18,4 +18,3 @@ node_modules/
 dist/
 build/
 *.log
-server/uv.lock
