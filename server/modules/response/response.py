@@ -27,10 +27,12 @@ class ResponsePipeline:
         
         Args:
             api_key: Google Gemini API key.
-            model_name: Name of the Gemini model. If not provided, reads from GEMINI_MODEL_NAME env var.
+            model_name: Name of the Bedrock model. If not provided, reads from BEDROCK_MODEL_ID env var.
             temperature: Sampling temperature for LLM.
         """
-        _model_name = model_name or os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
+        _model_name = model_name or os.getenv("BEDROCK_MODEL_ID")
+        if not _model_name:
+            raise ValueError("BEDROCK_MODEL_ID must be set in environment variables or provided")
         self.intent_detector = IntentDetector(api_key=api_key)
         self.llm_client = LLMClient(
             api_key=api_key,
@@ -66,11 +68,11 @@ class ResponsePipeline:
             
             # Step 2: LLM Processing with tool definitions
             logger.info("Step 2: LLM Processing with tools")
-            tool_schemas = self.tool_registry.get_tool_schemas()
-            
+            langchain_tools = self.tool_registry.get_langchain_tools()
+
             llm_response = await self.llm_client.generate_with_tools(
                 prompt=text,
-                tool_schemas=tool_schemas,
+                tool_schemas=langchain_tools,
             )
             
             # Step 3: Tool Execution (if LLM requested tools)
@@ -115,6 +117,8 @@ class ResponsePipeline:
                     prompt=text,
                     tool_results=tool_results,
                     interaction_id=llm_response.get("interaction_id"),
+                    messages=llm_response.get("messages"),
+                    tools=langchain_tools,
                 )
             else:
                 # If no tools were called, use the initial response

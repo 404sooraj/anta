@@ -4,7 +4,8 @@ import os
 import json
 import logging
 from typing import Dict, Any, Optional
-from google import genai
+
+from langchain_aws import ChatBedrockConverse
 
 logger = logging.getLogger(__name__)
 
@@ -22,19 +23,25 @@ class IntentDetector:
         "general",  # General conversation
     ]
     
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, region_name: Optional[str] = None):
         """
         Initialize the intent detector.
         
         Args:
-            api_key: Google Gemini API key. If not provided, reads from GEMINI_API_KEY env var.
+            api_key: Unused for Bedrock. Present for backward compatibility.
+            region_name: AWS region. If not provided, reads from BEDROCK_REGION or AWS_REGION.
         """
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        if not self.api_key:
-            raise ValueError("GEMINI_API_KEY must be provided or set as environment variable")
-        
-        self.client = genai.Client(api_key=self.api_key)
-        self.model_name = os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite")
+        self.api_key = api_key
+        self.model_name = os.getenv("BEDROCK_MODEL_ID")
+        if not self.model_name:
+            raise ValueError("BEDROCK_MODEL_ID must be set in environment variables")
+        self.region_name = region_name or os.getenv("BEDROCK_REGION") or os.getenv("AWS_REGION")
+        self.model = ChatBedrockConverse(
+            model=self.model_name,
+            temperature=0,
+            max_tokens=512,
+            region_name=self.region_name,
+        )
     
     def _get_intent_prompt(self, text: str) -> str:
         """Generate the prompt for intent detection."""
@@ -67,20 +74,8 @@ Only respond with the JSON object, no additional text."""
         try:
             prompt = self._get_intent_prompt(text)
             
-            # Generate response using Interactions API
-            interaction = self.client.interactions.create(
-                model=self.model_name,
-                input=prompt
-            )
-            
-            # Extract text response
-            response_text = ""
-            for output in interaction.outputs:
-                if output.type == "text":
-                    response_text = output.text
-                    break
-            
-            response_text = response_text.strip()
+            response = await self.model.ainvoke(prompt)
+            response_text = (response.content or "").strip()
             
             # Try to extract JSON if wrapped in markdown code blocks
             if "```json" in response_text:

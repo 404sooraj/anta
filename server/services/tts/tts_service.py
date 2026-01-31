@@ -18,18 +18,32 @@ class TTSService:
     
     def __init__(self):
         """Initialize Cartesia client."""
+        self.enabled = self._is_tts_enabled()
+
         # Try both possible environment variable names
         api_key = os.getenv("CARTESIA_API_KEY") or os.getenv("CARTESIAN_PRODUCT_API_KEY")
-        
-        if not api_key:
+
+        if self.enabled and not api_key:
             raise ValueError(
                 "Cartesia API key not found. Set CARTESIA_API_KEY or CARTESIAN_PRODUCT_API_KEY environment variable."
             )
-        
-        self.client = AsyncCartesia(api_key=api_key)
+
+        self.client = AsyncCartesia(api_key=api_key) if self.enabled else None
         self.model_id = "sonic-2"  # Cartesia model for TTS
         # Track active WebSocket contexts: {context_id: {"ws": websocket, "config": {...}}}
         self.active_contexts: Dict[str, Dict[str, Any]] = {}
+
+    @staticmethod
+    def _is_tts_enabled() -> bool:
+        value = os.getenv("CARTESIA_TTS_ENABLED", "true").strip().lower()
+        return value not in {"0", "false", "no", "off"}
+
+    def set_enabled(self, enabled: bool) -> None:
+        """Enable or disable TTS at runtime."""
+        self.enabled = enabled
+
+    def ensure_enabled(self) -> bool:
+        return self.enabled
     
     async def stream_tts(
         self,
@@ -49,6 +63,9 @@ class TTSService:
             Audio chunks as bytes (PCM float32 little-endian format)
         """
         if not text or not text.strip():
+            return
+
+        if not self.ensure_enabled():
             return
         
         # Determine language
@@ -107,6 +124,9 @@ class TTSService:
             Audio chunks as bytes
         """
         segments = utils.split_mixed_text(text)
+
+        if not self.ensure_enabled():
+            return
         
         for segment_text, segment_lang in segments:
             if not segment_text.strip():
@@ -145,6 +165,8 @@ class TTSService:
         Yields:
             Audio chunks as bytes (PCM float32 little-endian format)
         """
+        if not self.ensure_enabled():
+            return
         # Determine language
         if language == "auto":
             detected_lang = utils.detect_language(transcript)

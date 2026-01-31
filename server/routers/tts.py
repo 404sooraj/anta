@@ -3,7 +3,7 @@ TTS Router - WebSocket endpoint for text-to-speech streaming
 """
 import json
 import logging
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
 
 from services.tts import TTSService
 
@@ -95,15 +95,22 @@ async def tts_websocket(websocket: WebSocket):
                     
                     # Stream TTS audio chunks using context-based method
                     chunk_count = 0
-                    async for audio_chunk in tts_service.stream_tts_chunk(
-                        transcript=transcript,
-                        context_id=context_id,
-                        continue_flag=continue_flag,
-                        language=language,
-                        voice_id=voice_id,
-                    ):
-                        await websocket.send_bytes(audio_chunk)
-                        chunk_count += 1
+                    try:
+                        async for audio_chunk in tts_service.stream_tts_chunk(
+                            transcript=transcript,
+                            context_id=context_id,
+                            continue_flag=continue_flag,
+                            language=language,
+                            voice_id=voice_id,
+                        ):
+                            await websocket.send_bytes(audio_chunk)
+                            chunk_count += 1
+                    except RuntimeError as e:
+                        await websocket.send_json({
+                            "error": str(e),
+                            "type": "error"
+                        })
+                        continue
                     
                     # Send completion message
                     await websocket.send_json({
@@ -132,13 +139,20 @@ async def tts_websocket(websocket: WebSocket):
                     
                     # Stream TTS audio chunks
                     chunk_count = 0
-                    async for audio_chunk in tts_service.stream_tts(
-                        text=text,
-                        language=language,
-                        voice_id=voice_id,
-                    ):
-                        await websocket.send_bytes(audio_chunk)
-                        chunk_count += 1
+                    try:
+                        async for audio_chunk in tts_service.stream_tts(
+                            text=text,
+                            language=language,
+                            voice_id=voice_id,
+                        ):
+                            await websocket.send_bytes(audio_chunk)
+                            chunk_count += 1
+                    except RuntimeError as e:
+                        await websocket.send_json({
+                            "error": str(e),
+                            "type": "error"
+                        })
+                        continue
                     
                     # Send completion message
                     await websocket.send_json({
@@ -161,9 +175,16 @@ async def tts_websocket(websocket: WebSocket):
                 
                 # Stream TTS with auto-detected language
                 chunk_count = 0
-                async for audio_chunk in tts_service.stream_tts(text=text, language="auto"):
-                    await websocket.send_bytes(audio_chunk)
-                    chunk_count += 1
+                try:
+                    async for audio_chunk in tts_service.stream_tts(text=text, language="auto"):
+                        await websocket.send_bytes(audio_chunk)
+                        chunk_count += 1
+                except RuntimeError as e:
+                    await websocket.send_json({
+                        "error": str(e),
+                        "type": "error"
+                    })
+                    continue
                 
                 # Send completion message
                 await websocket.send_json({
@@ -195,3 +216,22 @@ async def tts_websocket(websocket: WebSocket):
 async def health_check():
     """Health check endpoint for TTS service"""
     return {"status": "ok", "service": "tts"}
+
+
+@router.get("/config")
+async def get_tts_config():
+    """Get current TTS configuration."""
+    tts_service = get_tts_service()
+    return {"enabled": tts_service.enabled}
+
+
+@router.post("/config")
+async def set_tts_config(payload: dict):
+    """Enable or disable TTS at runtime to save credits."""
+    enabled = payload.get("enabled")
+    if not isinstance(enabled, bool):
+        raise HTTPException(status_code=400, detail="'enabled' must be a boolean")
+
+    tts_service = get_tts_service()
+    tts_service.set_enabled(enabled)
+    return {"enabled": tts_service.enabled}

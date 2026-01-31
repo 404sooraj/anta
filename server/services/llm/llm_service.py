@@ -19,15 +19,14 @@ class LLMService:
     
     def __init__(self):
         """Initialize LLM service with response pipeline"""
-        self.api_key = os.getenv("GEMINI_API_KEY", "")
-        if not self.api_key:
-            logger.warning("GEMINI_API_KEY not found in environment variables")
+        self.api_key = os.getenv("BEDROCK_API_KEY", "")
+        # Bedrock uses AWS credentials; keep api_key for backward compatibility only
         
         # Initialize the response pipeline (model name from GEMINI_MODEL_NAME in .env)
         self.pipeline = ResponsePipeline(
             api_key=self.api_key,
-            model_name=os.getenv("GEMINI_MODEL_NAME", "gemini-2.5-flash-lite"),
-            temperature=float(os.getenv("GEMINI_TEMPERATURE", "0.7"))
+            model_name=os.getenv("BEDROCK_MODEL_ID"),
+            temperature=float(os.getenv("BEDROCK_TEMPERATURE", "0.7"))
         )
         logger.info("✓ LLM Service initialized with response pipeline")
     
