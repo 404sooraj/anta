@@ -1,0 +1,28 @@
+{
+  "name": "data-ingestion",
+  "version": "1.0.0",
+  "description": "Offline ingestion of call records into Pinecone for AI get-insights",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "ingest": "tsx src/index.ts",
+    "ingest:dir": "tsx src/index.ts -- --dir ../data-normalization/output",
+    "ingest:dir:verbose": "tsx src/index.ts -- --dir ../data-normalization/output --verbose",
+    "ingest:file": "tsx src/index.ts -- --file",
+    "lint": "eslint src/**/*.ts",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@langchain/aws": "^1.0.0",
+    "@langchain/core": "^1.0.0",
+    "@pinecone-database/pinecone": "^4.0.0",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}
