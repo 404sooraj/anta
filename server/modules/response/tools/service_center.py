@@ -151,8 +151,8 @@ Use this when the user asks about:
                     "data": {"message": "Invalid user location coordinates"},
                 }
             
-            # Get all stations
-            query = {}
+            # Get all stations (exclude offline stations by default)
+            query = {"status": {"$ne": "offline"}}  # Only show available stations
             if require_available:
                 query["available_batteries"] = {"$gt": 0}
             
@@ -195,6 +195,8 @@ Use this when the user asks about:
                         "station_id": station.get("station_id"),
                         "name": station.get("name"),
                         "available_batteries": station.get("available_batteries", 0),
+                        "total_capacity": station.get("total_capacity", 0),
+                        "status": station.get("status", "unknown"),
                         "distance_km": round(distance_km, 2),
                         "latitude": station_lat,
                         "longitude": station_lon,

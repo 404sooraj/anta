@@ -6,6 +6,8 @@ from .location import GetCurrentLocationTool
 from .service_center import GetLastServiceCenterVisitTool, GetNearestStationTool
 from .problem_context import GetProblemContextTool
 from .swap_attempt import GetLastSwapAttemptTool
+from .battery_info import GetBatteryInfoTool
+from .battery_issue_reporter import ReportBatteryIssueTool
 
 __all__ = [
     "BaseTool",
@@ -15,4 +17,6 @@ __all__ = [
     "GetNearestStationTool",
     "GetProblemContextTool",
     "GetLastSwapAttemptTool",
+    "GetBatteryInfoTool",
+    "ReportBatteryIssueTool",
 ]

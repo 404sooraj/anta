@@ -13,6 +13,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
     # User asking about their profile, name, account details
     "user_query": [
         "getUserInfo",
+        "getBatteryInfo",  # Battery is part of user profile
     ],
     
     # User requesting a service
@@ -21,6 +22,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getCurrentLocation",
         "getLastServiceCenterVisit",
         "getNearestStation",
+        "getBatteryInfo",
     ],
     
     # User reporting a problem or issue
@@ -29,6 +31,8 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getProblemContext",
         "getLastSwapAttempt",
         "getLastServiceCenterVisit",
+        "getBatteryInfo",  # Battery issues are common problems
+        "reportBatteryIssue",  # Allow reporting battery issues
     ],
     
     # User asking about their location
@@ -50,6 +54,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getUserInfo",
         "getLastSwapAttempt",
         "getNearestStation",  # May need to find a station after failed swap
+        "getBatteryInfo",
     ],
     
     # User looking for nearest station or where to swap battery
@@ -57,6 +62,16 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getUserInfo",
         "getCurrentLocation",
         "getNearestStation",
+        "getBatteryInfo",  # Check battery before swapping
+    ],
+    
+    # User asking about their battery status/health/issues
+    "battery_query": [
+        "getUserInfo",
+        "getBatteryInfo",
+        "getLastSwapAttempt",
+        "getNearestStation",  # Suggest swap if battery health is low
+        "reportBatteryIssue",  # Allow reporting battery issues
     ],
     
     # General conversation - provide basic tools
@@ -64,6 +79,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getUserInfo",
         "getCurrentLocation",
         "getNearestStation",  # Station queries are common
+        "getBatteryInfo",
     ],
 }
 

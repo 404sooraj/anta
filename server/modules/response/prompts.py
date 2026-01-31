@@ -50,11 +50,17 @@ def build_system_prompt(
             "\n2. When the user asks about their location or where they are, use the getCurrentLocation tool."
             "\n3. When the user asks about a recent swap or swap history, use the getLastSwapAttempt tool."
             "\n4. When the user asks about service center visits, use the getLastServiceCenterVisit tool."
-            "\n5. When the user reports a problem or issue, use the getProblemContext tool to analyze it."
+            "\n5. When the user reports a general problem, use the getProblemContext tool to analyze it."
             "\n6. When the user asks about the nearest station, where to swap, or finding a station, use the getNearestStation tool."
             "\n7. If the user specifically asks for stations with available batteries, call getNearestStation with requireAvailableBatteries=true."
-            "\n8. Always use the provided user_id when calling tools that require userId."
-            "\n9. If a tool returns an error or 'not found', inform the user politely."
+            "\n8. IMPORTANT - Battery tools distinction:"
+            "\n   - getBatteryInfo: Use ONLY when user ASKS/QUERIES about battery (e.g., 'what is my battery health?', 'battery status?')"
+            "\n   - reportBatteryIssue: Use when user COMPLAINS/REPORTS a problem (e.g., 'battery garam ho rahi hai', 'battery heating', 'battery not charging', 'drains fast')"
+            "\n   - If user says their battery IS having a problem, use reportBatteryIssue, NOT getBatteryInfo."
+            "\n9. Always use the provided user_id when calling tools that require userId."
+            "\n10. For reportBatteryIssue, pass the user's exact complaint as issueDescription."
+            "\n11. If a tool returns an error or 'not found', inform the user politely."
+            "\n12. For critical battery issues (overheating, swelling, leakage), emphasize safety and urgency in your response."
         )
     
     # Response guidelines
@@ -64,6 +70,10 @@ def build_system_prompt(
         "\n- If you need to use a tool to answer, use it before responding."
         "\n- After receiving tool results, incorporate the information naturally into your response."
         "\n- Don't mention that you're using tools; just provide the information."
+        "\n- IMPORTANT: When a complaint/issue is reported using reportBatteryIssue tool:"
+        "\n  1. FIRST confirm that the complaint has been registered/recorded"
+        "\n  2. THEN provide any safety advice or next steps"
+        "\n  3. Example: 'Your complaint has been registered. [Then safety advice if applicable]'"
     )
     
     return "\n".join(prompt_parts)
