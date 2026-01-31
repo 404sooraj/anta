@@ -41,12 +41,18 @@ def get_default_voice_id(language: Literal["hi", "en"]) -> str:
         
     Returns:
         Default voice ID for the language
+        
+    Note:
+        To get actual voice IDs:
+        1. List available voices: client.voices.list()
+        2. Or localize an English voice to Hindi using client.voices.localize()
     """
-    # Default voice IDs - these are example IDs, you may need to replace with actual Cartesia voice IDs
-    # You can list available voices using Cartesia API
+    # Default voice IDs - REPLACE THESE with actual Cartesia voice IDs
+    # To list available voices, use: client.voices.list()
+    # To localize a voice to Hindi: client.voices.localize(voice_id="...", language="hi", ...)
     default_voices = {
-        "en": "f9836c6e-a0bd-460e-9d3c-f7299fa60f94",  # Example English voice
-        "hi": "47f3bbb1-e98f-4e0c-92c5-5f0325e1e206",  # Hindi voice
+        "en": "f9836c6e-a0bd-460e-9d3c-f7299fa60f94",  # Example English voice - REPLACE
+        "hi": "faf0731e-dfb9-4cfc-8119-259a79b27e12",  # Use same voice for now - Cartesia supports multilingual
     }
     
     return default_voices.get(language, default_voices["en"])

@@ -67,6 +67,7 @@ async def audio_websocket(ws: WebSocket):
     processing_llm = False  # Track if LLM is currently processing
     waiting_for_transcript = False  # Flag to indicate we're waiting for final transcript
     vad_buffer = b""  # Buffer for VAD (needs at least VAD_MIN_BYTES per call)
+    detected_language = "en"  # Track detected language from STT
     
     # Get event loop for scheduling tasks from callback thread
     loop = asyncio.get_event_loop()
@@ -77,28 +78,36 @@ async def audio_websocket(ws: WebSocket):
     tts_service = TTSService()
     
     # STT service with callbacks
-    def on_partial_transcript(text: str):
+    def on_partial_transcript(text: str, language: str):
         """Handle streaming partial transcripts for real-time feedback"""
+        nonlocal detected_language
+        # Store detected language
+        detected_language = language
+        
         # Send partial transcripts to client for real-time display
-        # Use call_soon_threadsafe since this callback runs in AssemblyAI's thread
+        # Use call_soon_threadsafe since this callback runs in Soniox's thread
         async def send_partial():
             await ws.send_json({
                 "type": "partial_transcript",
-                "text": text
+                "text": text,
+                "language": language
             })
         
         loop.call_soon_threadsafe(lambda: asyncio.create_task(send_partial()))
     
-    def on_transcript(text: str):
-        nonlocal waiting_for_transcript, tts_task
+    def on_transcript(text: str, language: str):
+        nonlocal waiting_for_transcript, tts_task, detected_language
+        
+        # Store detected language
+        detected_language = language
         
         # Deduplicate - only add if not already the last item
         if not transcript_buffer or transcript_buffer[-1] != text:
-            print(f"📝 Final Transcript: {text}")
+            print(f"📝 Final Transcript ({language}): {text}")
             transcript_buffer.append(text)
             
             # If we're waiting for transcript after silence, process now
-            # Use call_soon_threadsafe since this callback runs in AssemblyAI's thread
+            # Use call_soon_threadsafe since this callback runs in Soniox's thread
             if waiting_for_transcript and not processing_llm:
                 print(f"✅ Transcript received after silence - Processing now!")
                 waiting_for_transcript = False
@@ -121,9 +130,9 @@ async def audio_websocket(ws: WebSocket):
         on_error=on_error
     )
     
-    # Connect to AssemblyAI
+    # Connect to Soniox
     await asyncio.to_thread(stt_service.connect)
-    print("🎙️  Connected to AssemblyAI - Ready to receive audio")
+    print("🎙️  Connected to Soniox - Ready to receive audio")
 
     async def process_and_respond():
         """Process transcript with LLM and stream TTS response"""
@@ -222,7 +231,7 @@ async def audio_websocket(ws: WebSocket):
                                 transcript=text_chunk,
                                 context_id=tts_context_id,
                                 continue_flag=not is_last,
-                                language="auto",
+                                language=detected_language,
                             ):
                                 current_task = asyncio.current_task()
                                 if current_task and current_task.cancelled():
@@ -314,7 +323,6 @@ async def audio_websocket(ws: WebSocket):
                     print(f"\n🔕 Silence threshold reached - Waiting for transcript...")
 
                     speaking = False
-                    silence_chunks = 0
                     waiting_for_transcript = True
 
                     # If transcript already in buffer, process immediately
@@ -322,6 +330,9 @@ async def audio_websocket(ws: WebSocket):
                         print(f"📋 Transcript already available - Processing now!")
                         waiting_for_transcript = False
                         tts_task = asyncio.create_task(process_and_respond())
+                    
+                    # Reset silence_chunks to prevent infinite counting
+                    silence_chunks = 0
 
     except WebSocketDisconnect:
         print("✋ Client disconnected")
@@ -337,9 +348,9 @@ async def audio_websocket(ws: WebSocket):
         # Cleanup
         try:
             await asyncio.to_thread(stt_service.disconnect)
-            print("🔌 Disconnected from AssemblyAI")
+            print("🔌 Disconnected from Soniox")
         except Exception as e:
-            print(f"⚠️  Error disconnecting from AssemblyAI: {e}")
+            print(f"⚠️  Error disconnecting from Soniox: {e}")
 
 
 # =========================
