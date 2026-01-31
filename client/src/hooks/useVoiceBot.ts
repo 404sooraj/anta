@@ -16,11 +16,28 @@ interface UseVoiceBotReturn {
   conversationHistory: Array<{role: string, text: string}>;
 }
 
-const WS_URL = 'ws://localhost:8000/stt/ws/audio';
+interface UseVoiceBotOptions {
+  token?: string;
+  userId?: string;
+}
+
+const WS_BASE_URL = 'ws://localhost:8000/stt/ws/audio';
 const INPUT_SAMPLE_RATE = 16000;
 const OUTPUT_SAMPLE_RATE = 44100;
 
-export function useVoiceBot(): UseVoiceBotReturn {
+export function useVoiceBot(options: UseVoiceBotOptions = {}): UseVoiceBotReturn {
+  const { token, userId } = options;
+  
+  // Store auth options in refs to ensure they're always current when startCall is called
+  const tokenRef = useRef(token);
+  const userIdRef = useRef(userId);
+  
+  // Keep refs in sync with props
+  useEffect(() => {
+    tokenRef.current = token;
+    userIdRef.current = userId;
+  }, [token, userId]);
+  
   const [callState, setCallState] = useState<CallState>({
     status: 'idle',
     error: null,
@@ -215,10 +232,71 @@ export function useVoiceBot(): UseVoiceBotReturn {
     processor.connect(ctx.destination);
   }, [callState.isMuted]);
 
+  // Update user location on backend (backend handles reverse geocoding)
+  const updateUserLocation = useCallback(async () => {
+    if (!userIdRef.current && !tokenRef.current) {
+      console.log('📍 Skipping location update - not logged in');
+      return;
+    }
+
+    try {
+      // Get current position from browser
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 60000, // Accept cached location up to 1 minute old
+        });
+      });
+
+      const { latitude, longitude, accuracy } = position.coords;
+      console.log(`📍 Got location: ${latitude}, ${longitude} (accuracy: ${accuracy}m)`);
+
+      // Send coordinates to backend - backend will do reverse geocoding
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (tokenRef.current) {
+        headers['Authorization'] = `Bearer ${tokenRef.current}`;
+      }
+      if (userIdRef.current) {
+        headers['X-User-ID'] = userIdRef.current;
+      }
+
+      const response = await fetch('http://localhost:8000/api/location/update', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          latitude,
+          longitude,
+          accuracy,
+          // No address - backend will geocode using secure API key
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Location updated on server:', data.location?.address || 'No address');
+      } else {
+        console.warn('⚠️ Failed to update location:', await response.text());
+      }
+    } catch (error) {
+      // Don't fail the call if location fails
+      if (error instanceof GeolocationPositionError) {
+        console.warn('📍 Geolocation error:', error.message);
+      } else {
+        console.warn('📍 Location update failed:', error);
+      }
+    }
+  }, []);
+
   // Start the call
   const startCall = useCallback(async () => {
     try {
       updateStatus('connecting');
+
+      // Update location before connecting (don't await - let it run in parallel)
+      updateUserLocation();
 
       // Request microphone access
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -234,8 +312,20 @@ export function useVoiceBot(): UseVoiceBotReturn {
 
       localStreamRef.current = stream;
 
+      // Build WebSocket URL with auth params (use refs to get current values)
+      const params = new URLSearchParams();
+      if (tokenRef.current) {
+        params.set('token', tokenRef.current);
+      }
+      if (userIdRef.current) {
+        params.set('user_id', userIdRef.current);
+      }
+      const wsUrl = params.toString() ? `${WS_BASE_URL}?${params.toString()}` : WS_BASE_URL;
+      console.log('🔗 Connecting to WebSocket:', wsUrl.replace(/token=[^&]+/, 'token=***'));
+      console.log('🔑 Auth - token:', tokenRef.current ? 'present' : 'missing', ', userId:', userIdRef.current || 'missing');
+
       // Connect to WebSocket
-      const ws = new WebSocket(WS_URL);
+      const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
       ws.onopen = () => {

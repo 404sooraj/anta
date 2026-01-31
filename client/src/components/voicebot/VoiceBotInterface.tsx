@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useVoiceBot } from '@/hooks/useVoiceBot';
+import { useVoiceBot } from "@/hooks/useVoiceBot";
 import {
   CallButton,
   CallStatusDisplay,
@@ -10,23 +10,87 @@ import {
 } from "@/components/voicebot";
 
 export function VoiceBotInterface() {
-  const { callState, audioLevel, startCall, endCall, toggleMute, transcript, partialTranscript, response, streamingResponse, conversationHistory } = useVoiceBot();
+  const [authToken, setAuthToken] = useState<string | undefined>(undefined);
+  const [authUserId, setAuthUserId] = useState<string | undefined>(undefined);
+
+  // Load auth from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("auth_token") || undefined;
+      const userId = localStorage.getItem("user_id") || undefined;
+      setAuthToken(token);
+      setAuthUserId(userId);
+    }
+  }, []);
+
+  const {
+    callState,
+    audioLevel,
+    startCall,
+    endCall,
+    toggleMute,
+    transcript,
+    partialTranscript,
+    response,
+    streamingResponse,
+    conversationHistory,
+  } = useVoiceBot({
+    token: authToken,
+    userId: authUserId,
+  });
 
   const [mounted, setMounted] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
 
   // Prevent hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Load user name from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const name = localStorage.getItem("user_name");
+      setUserName(name);
+    }
+  }, [authUserId]);
+
   if (!mounted) {
     return <VoiceBotSkeleton />;
   }
 
   const isConnected = callState.status === "connected";
+  const isLoggedIn = !!authToken && !!authUserId;
 
   return (
     <div className="flex flex-col items-center justify-center gap-8 p-8">
+      {/* Auth status indicator */}
+      <div className="text-center">
+        {isLoggedIn ? (
+          <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>
+              Logged in as <strong>{userName || authUserId}</strong>
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span>
+                Not logged in - Tool calls won&apos;t have user context
+              </span>
+            </div>
+            <a
+              href="/login"
+              className="text-xs text-emerald-600 hover:underline"
+            >
+              Login to enable personalized responses
+            </a>
+          </div>
+        )}
+      </div>
+
       {/* Audio Visualizer */}
       <div className="relative">
         {/* Glow effect behind the button when active */}
@@ -75,7 +139,11 @@ export function VoiceBotInterface() {
       </div>
 
       {/* Transcript and Response Display */}
-      {(transcript || partialTranscript || response || streamingResponse || conversationHistory.length > 0) && (
+      {(transcript ||
+        partialTranscript ||
+        response ||
+        streamingResponse ||
+        conversationHistory.length > 0) && (
         <div className="w-full max-w-2xl space-y-4 mt-8">
           {/* Current Transcript */}
           {(transcript || partialTranscript) && (
@@ -91,7 +159,7 @@ export function VoiceBotInterface() {
               </p>
             </div>
           )}
-          
+
           {/* Streaming or Final Response */}
           {(response || streamingResponse) && (
             <div className="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900/20">
@@ -106,7 +174,7 @@ export function VoiceBotInterface() {
               </p>
             </div>
           )}
-          
+
           {/* Conversation History */}
           {conversationHistory.length > 0 && (
             <div className="space-y-2">
@@ -118,12 +186,15 @@ export function VoiceBotInterface() {
                   <div
                     key={idx}
                     className={`p-3 rounded-lg text-sm ${
-                      msg.role === 'user'
-                        ? 'bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200'
-                        : 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-800 dark:text-emerald-200'
+                      msg.role === "user"
+                        ? "bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200"
+                        : "bg-emerald-50 dark:bg-emerald-900/10 text-emerald-800 dark:text-emerald-200"
                     }`}
                   >
-                    <span className="font-semibold">{msg.role === 'user' ? 'You' : 'Agent'}:</span> {msg.text}
+                    <span className="font-semibold">
+                      {msg.role === "user" ? "You" : "Agent"}:
+                    </span>{" "}
+                    {msg.text}
                   </div>
                 ))}
               </div>
