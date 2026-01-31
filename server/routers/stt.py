@@ -7,14 +7,20 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import asyncio
 import json
 import uuid
+import logging
+from typing import Literal, cast
+
+import jwt
 
 from services.stt import STTService, VADService
 from services.llm import LLMService
 from services.tts import TTSService
-
-from typing import Literal, cast
+from modules.config import ConfigEnv
+from modules.response.tool_registry import get_registry
 
 TTSLanguage = Literal["hi", "en", "auto"]
+
+logger = logging.getLogger(__name__)
 
 def normalize_tts_language(lang: str) -> TTSLanguage:
     if lang in ("hi", "en"):
@@ -67,6 +73,48 @@ async def audio_websocket(ws: WebSocket):
     """
     await ws.accept()
     print("✅ WebSocket connected")
+
+    async def send_user_info():
+        """Fetch basic user info via tool call when the call connects."""
+        token = ws.query_params.get("token")
+        user_id = ws.query_params.get("user_id")
+
+        if token and ConfigEnv.AUTH_JWT_SECRET:
+            try:
+                payload = jwt.decode(
+                    token,
+                    ConfigEnv.AUTH_JWT_SECRET,
+                    algorithms=["HS256"],
+                )
+                user_id = payload.get("sub") or user_id
+            except Exception as exc:
+                logger.warning("Failed to decode JWT token: %s", exc)
+
+        if not user_id:
+            await ws.send_json({
+                "type": "user_info",
+                "status": "error",
+                "message": "Missing user identifier",
+            })
+            return
+
+        try:
+            registry = get_registry()
+            result = await registry.execute_tool("getUserInfo", {"userId": user_id})
+            await ws.send_json({
+                "type": "user_info",
+                "user_id": user_id,
+                "result": result,
+            })
+        except Exception as exc:
+            await ws.send_json({
+                "type": "user_info",
+                "user_id": user_id,
+                "status": "error",
+                "message": str(exc),
+            })
+
+    await send_user_info()
 
     # State tracking
     speaking = False
