@@ -14,6 +14,7 @@ from .tools import (
     GetLastSwapAttemptTool,
     GetBatteryInfoTool,
     ReportBatteryIssueTool,
+    GetCallInsightsTool,
 )
 from .tools.base import BaseTool
 from .intent_tools_mapping import get_tools_for_intent
@@ -40,6 +41,7 @@ class ToolRegistry:
             GetLastSwapAttemptTool(),
             GetBatteryInfoTool(),
             ReportBatteryIssueTool(),
+            GetCallInsightsTool(),
         ]
         
         for tool in tools:

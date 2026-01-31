@@ -8,6 +8,7 @@ from .problem_context import GetProblemContextTool
 from .swap_attempt import GetLastSwapAttemptTool
 from .battery_info import GetBatteryInfoTool
 from .battery_issue_reporter import ReportBatteryIssueTool
+from .call_insights import GetCallInsightsTool
 
 __all__ = [
     "BaseTool",
@@ -19,4 +20,5 @@ __all__ = [
     "GetLastSwapAttemptTool",
     "GetBatteryInfoTool",
     "ReportBatteryIssueTool",
+    "GetCallInsightsTool",
 ]
