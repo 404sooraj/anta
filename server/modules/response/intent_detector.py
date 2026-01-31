@@ -19,6 +19,8 @@ class IntentDetector:
         "service_request",  # Request for service
         "problem_report",  # Reporting a problem
         "location_query",  # Asking about location
+        "station_query",  # Asking about nearest station or where to swap
+        "battery_query",  # Asking about battery status/health/issues
         "service_center_query",  # Asking about service center visits
         "swap_attempt_query",  # Asking about swap attempts
         "general",  # General conversation
@@ -55,6 +57,32 @@ class IntentDetector:
 User input: "{text}"
 
 Intent categories: {categories_str}
+
+Category definitions:
+- user_query: User asking about their personal info, name, profile, account details
+- service_request: User requesting a service or help (not a complaint)
+- problem_report: User COMPLAINING about something or REPORTING an issue they are experiencing. Examples:
+  * "Battery garam ho rahi hai" (battery getting hot) = problem_report
+  * "Battery charge nahi ho rahi" (battery not charging) = problem_report  
+  * "Bahut jaldi discharge ho jati hai" (drains too fast) = problem_report
+  * "Scooter slow chal raha hai" (scooter running slow) = problem_report
+  * "Kuch problem hai" (there's some problem) = problem_report
+  * Any statement describing something IS wrong/broken/not working = problem_report
+- location_query: User asking specifically about their own current location
+- station_query: User asking about nearest station, where to swap battery, finding a swap station
+- battery_query: User ASKING about their battery (query/question), NOT complaining. Examples:
+  * "Meri battery ki health kya hai?" (what is my battery health?) = battery_query
+  * "Battery status batao" (tell me battery status) = battery_query
+- service_center_query: User asking about service center visits or history
+- swap_attempt_query: User asking about their swap attempts or swap history
+- general: Greetings, thanks, or conversation not fitting other categories
+
+CRITICAL RULES:
+1. If user describes something IS wrong/broken/hot/slow/not working → problem_report (even without words like "complaint" or "report")
+2. If user ASKS a question about battery status → battery_query
+3. "Battery garam hoti hai" (battery gets hot) = problem_report, NOT battery_query
+4. "Battery ki health kya hai?" (what is battery health) = battery_query, NOT problem_report
+5. When in doubt between problem_report and general, prefer problem_report if user mentions any issue
 
 Respond with a JSON object in this exact format:
 {{

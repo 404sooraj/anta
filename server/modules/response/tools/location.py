@@ -17,7 +17,7 @@ class GetCurrentLocationTool(BaseTool):
     """Get the current location of a user by user ID."""
 
     name: str = "getCurrentLocation"
-    description: str = "Retrieves the current geographical location (latitude, longitude, address) of a user based on their user ID. Use this when the user asks about their location or where they are."
+    description: str = "Retrieves the current geographical location (latitude, longitude, address) of a user based on their user ID. Use this when the user asks about their location, where they are, or their current position."
     args_schema = LocationInput
 
     async def execute(self, **kwargs) -> Dict[str, Any]:
@@ -58,12 +58,40 @@ class GetCurrentLocationTool(BaseTool):
                     "data": {
                         "userId": userId,
                         "location": None,
-                        "message": "No location on file",
+                        "message": "No location on file for this user",
                     },
                 }
+            
+            # Extract coordinates from GeoJSON format
+            coords = location.get("coordinates", [])
+            longitude = coords[0] if len(coords) > 0 else None
+            latitude = coords[1] if len(coords) > 1 else None
+            address = location.get("address")
+            
+            # Build user-friendly location data
+            location_data = {
+                "latitude": latitude,
+                "longitude": longitude,
+                "accuracy_meters": location.get("accuracy"),
+                "address": address,
+                "updated_at": location.get("updated_at").isoformat() if location.get("updated_at") else None,
+            }
+            
+            # Build descriptive message for the AI to use in response
+            if address:
+                message = f"The user is currently located at: {address}"
+            elif latitude and longitude:
+                message = f"The user's coordinates are: latitude {latitude}, longitude {longitude} (no address available)"
+            else:
+                message = "Location coordinates are incomplete"
+            
             return {
                 "status": "ok",
-                "data": {"userId": userId, "location": location},
+                "data": {
+                    "userId": userId,
+                    "location": location_data,
+                    "message": message,
+                },
             }
         except Exception as e:
             return {

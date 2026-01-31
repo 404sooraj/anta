@@ -1,0 +1,68 @@
+[
+  {
+    "swap_id": "swap_001",
+    "user_id": "user_001",
+    "station_id": "station_001",
+    "date": "2025-01-10T10:30:00Z",
+    "amount": 1,
+    "battery_available_count": 12,
+    "battery_id_taken": "battery_001",
+    "battery_id_returned": "battery_007",
+    "status": "completed"
+  },
+  {
+    "swap_id": "swap_002",
+    "user_id": "user_002",
+    "station_id": "station_002",
+    "date": "2025-01-12T14:15:00Z",
+    "amount": 1,
+    "battery_available_count": 8,
+    "battery_id_taken": "battery_003",
+    "battery_id_returned": null,
+    "status": "completed"
+  },
+  {
+    "swap_id": "swap_003",
+    "user_id": "user_001",
+    "station_id": "station_002",
+    "date": "2025-01-15T09:00:00Z",
+    "amount": 1,
+    "battery_available_count": 7,
+    "battery_id_taken": "battery_004",
+    "battery_id_returned": "battery_001",
+    "status": "completed"
+  },
+  {
+    "swap_id": "swap_004",
+    "user_id": "user_004",
+    "station_id": "station_001",
+    "date": "2025-01-18T16:45:00Z",
+    "amount": 1,
+    "battery_available_count": 11,
+    "battery_id_taken": "battery_006",
+    "battery_id_returned": null,
+    "status": "completed"
+  },
+  {
+    "swap_id": "swap_005",
+    "user_id": "user_003",
+    "station_id": "station_003",
+    "date": "2025-01-20T11:30:00Z",
+    "amount": 1,
+    "battery_available_count": 5,
+    "battery_id_taken": null,
+    "battery_id_returned": null,
+    "status": "pending"
+  },
+  {
+    "swap_id": "swap_006",
+    "user_id": "user_002",
+    "station_id": "station_004",
+    "date": "2025-01-19T08:00:00Z",
+    "amount": 1,
+    "battery_available_count": 0,
+    "battery_id_taken": null,
+    "battery_id_returned": null,
+    "status": "cancelled"
+  }
+]
