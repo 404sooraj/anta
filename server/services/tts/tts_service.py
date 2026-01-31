@@ -1,7 +1,6 @@
 """
 TTS Service - Business logic for text-to-speech generation using Cartesia.
 """
-import os
 import asyncio
 from typing import AsyncGenerator, Literal, Optional, Any, Dict
 
@@ -10,18 +9,18 @@ from cartesia.tts import OutputFormat_RawParams
 from cartesia.tts.types import WebSocketResponse, WebSocketResponse_Done, WebSocketResponse_Error
 from cartesia.core.pydantic_utilities import parse_obj_as
 
+from modules.config import ConfigEnv
 from services.tts import utils
 
 
 class TTSService:
     """Service for handling TTS operations with Cartesia."""
-    
+
     def __init__(self):
         """Initialize Cartesia client."""
-        self.enabled = self._is_tts_enabled()
+        self.enabled = bool(ConfigEnv.CARTESIA_TTS_ENABLED)
 
-        # Try both possible environment variable names
-        api_key = os.getenv("CARTESIA_API_KEY") or os.getenv("CARTESIAN_PRODUCT_API_KEY")
+        api_key = ConfigEnv.get_cartesia_api_key()
 
         if self.enabled and not api_key:
             raise ValueError(
@@ -32,11 +31,6 @@ class TTSService:
         self.model_id = "sonic-2"  # Cartesia model for TTS
         # Track active WebSocket contexts: {context_id: {"ws": websocket, "config": {...}}}
         self.active_contexts: Dict[str, Dict[str, Any]] = {}
-
-    @staticmethod
-    def _is_tts_enabled() -> bool:
-        value = os.getenv("CARTESIA_TTS_ENABLED", "true").strip().lower()
-        return value not in {"0", "false", "no", "off"}
 
     def set_enabled(self, enabled: bool) -> None:
         """Enable or disable TTS at runtime."""

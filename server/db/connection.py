@@ -1,10 +1,11 @@
 """MongoDB connection using Motor (async driver)."""
 
-import os
 import logging
 from typing import Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+
+from modules.config import ConfigEnv
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ def get_client() -> AsyncIOMotorClient:
     """Return the global Motor client. Creates it if not yet connected."""
     global _client
     if _client is None:
-        url = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
+        url = ConfigEnv.MONGODB_URL or "mongodb://localhost:27017"
         _client = AsyncIOMotorClient(url)
         logger.info("MongoDB client created")
     return _client

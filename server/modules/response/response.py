@@ -1,6 +1,5 @@
 """Main response pipeline orchestrator."""
 
-import os
 import json
 import logging
 from typing import Dict, Any, Optional, AsyncGenerator
@@ -9,6 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from db.connection import get_db
+from modules.config import ConfigEnv
 from .intent_detector import IntentDetector
 from .llm_client import LLMClient
 from .tool_registry import get_registry
@@ -33,7 +33,7 @@ class ResponsePipeline:
             model_name: Name of the Bedrock model. If not provided, reads from BEDROCK_MODEL_ID env var.
             temperature: Sampling temperature for LLM.
         """
-        _model_name = model_name or os.getenv("BEDROCK_MODEL_ID")
+        _model_name = model_name or ConfigEnv.BEDROCK_MODEL_ID
         if not _model_name:
             raise ValueError("BEDROCK_MODEL_ID must be set in environment variables or provided")
         self.intent_detector = IntentDetector(api_key=api_key)
@@ -213,12 +213,7 @@ class ResponsePipeline:
             logger.info(f"Processing text (streaming): {text[:100]}...")
 
             # Step 1: Intent Detection (optional for streaming latency)
-            intent_detection_enabled = os.getenv("INTENT_DETECTION_ENABLED", "true").strip().lower() not in {
-                "0",
-                "false",
-                "no",
-                "off",
-            }
+            intent_detection_enabled = ConfigEnv.INTENT_DETECTION_ENABLED
             if intent_detection_enabled:
                 logger.info("Step 1: Intent Detection")
                 intent_result = await self.intent_detector.detect_intent(text)
