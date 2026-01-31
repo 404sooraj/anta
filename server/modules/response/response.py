@@ -4,8 +4,11 @@ import os
 import json
 import logging
 from typing import Dict, Any, Optional, AsyncGenerator
+import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 
+from db.connection import get_db
 from .intent_detector import IntentDetector
 from .llm_client import LLMClient
 from .tool_registry import get_registry
@@ -41,27 +44,35 @@ class ResponsePipeline:
         )
         self.tool_registry = get_registry()
     
-    async def process_text(self, text: str, conversation_history: list = None) -> Dict[str, Any]:
+    async def process_text(
+        self,
+        text: str,
+        conversation_history: list = None,
+        session_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """
         Process text through the complete pipeline.
-        
+
         Pipeline flow:
         1. Intent Detection
         2. LLM Processing (with tool definitions and conversation history)
         3. Tool Execution (if needed)
         4. LLM Response Generation
         5. Text Output
-        
+
         Args:
             text: Input text to process.
             conversation_history: Previous conversation for context.
-            
+            session_id: Optional; when set, conversation and intent_log are persisted.
+            user_id: Optional; used for conversation.user_id when persisting.
+
         Returns:
             Dictionary containing the final response and metadata.
         """
         try:
             logger.info(f"Processing text: {text[:100]}...")
-            
+
             # Build context from conversation history
             context_prompt = text
             if conversation_history:
@@ -71,11 +82,39 @@ class ResponsePipeline:
                 )
                 context_prompt = f"Previous conversation:\n{history_text}\n\nUSER: {text}"
                 logger.info(f"Added conversation context ({len(conversation_history)} turns)")
-            
+
             # Step 1: Intent Detection
             logger.info("Step 1: Intent Detection")
             intent_result = await self.intent_detector.detect_intent(text)
             logger.info(f"Detected intent: {intent_result.get('intent')}")
+
+            # Persist conversation and intent_log when session_id is provided
+            if session_id:
+                try:
+                    db = get_db()
+                    now = datetime.now(timezone.utc)
+                    await db.conversations.update_one(
+                        {"session_id": session_id},
+                        {
+                            "$setOnInsert": {
+                                "session_id": session_id,
+                                "user_id": user_id or "unknown",
+                                "language": "en",
+                                "start_time": now,
+                                "end_time": None,
+                                "outcome": None,
+                            }
+                        },
+                        upsert=True,
+                    )
+                    await db.intent_logs.insert_one({
+                        "intent_id": str(uuid.uuid4()),
+                        "session_id": session_id,
+                        "intent_name": intent_result.get("intent", "general"),
+                        "confidence": float(intent_result.get("confidence", 0)),
+                    })
+                except Exception as e:
+                    logger.warning(f"Failed to persist conversation/intent_log: {e}")
             
             # Step 2: LLM Processing with tool definitions
             logger.info("Step 2: LLM Processing with tools")

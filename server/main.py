@@ -9,10 +9,12 @@ from fastapi import FastAPI
 # Load environment variables first
 load_dotenv()
 
-# Import routers
+# Import routers and db
 from routers.stt import router as stt_router
 from routers.text import router as text_router
 from routers.tts import router as tts_router
+from db.connection import get_db, close_client
+from db.indexes import create_indexes
 
 # Configure logging
 logging.basicConfig(
@@ -46,12 +48,19 @@ async def lifespan(app: FastAPI):
         logger.info("TTS is disabled (CARTESIA_TTS_ENABLED=false)")
     elif not cartesia_key:
         logger.warning("CARTESIA_API_KEY not set - TTS features will not work")
-    
+
+    # MongoDB: connect and attach db to app state for routes/tools
+    db = get_db()
+    app.state.db = db
+    await create_indexes(db)
+    logger.info("✓ MongoDB connected")
+
     logger.info("✓ Startup complete")
-    
+
     yield  # Application runs here
-    
+
     logger.info("Shutting down BatterySmart API...")
+    close_client()
     logger.info("✓ Shutdown complete")
 
 

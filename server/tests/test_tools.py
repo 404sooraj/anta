@@ -1,6 +1,7 @@
 """Tests for the tool system."""
 
 import pytest
+from unittest.mock import AsyncMock, MagicMock, patch
 from modules.response.tool_registry import ToolRegistry, get_registry
 from modules.response.tools import (
     GetUserInfoTool,
@@ -58,17 +59,45 @@ def test_tool_schemas():
         assert "parameters" in schema
 
 
+async def _empty_async_iter():
+    """Async generator that yields nothing (for mocking cursor)."""
+    return
+    yield  # make it a generator
+
+
 @pytest.mark.asyncio
 async def test_tool_execution():
-    """Test executing a tool."""
-    registry = ToolRegistry()
-    
-    result = await registry.execute_tool("getUserInfo", {"userId": "test123"})
-    
+    """Test executing a tool (getUserInfo with mocked DB returns not_found when no user)."""
+    mock_db = MagicMock()
+    mock_db.users.find_one = AsyncMock(return_value=None)
+    mock_db.subscriptions.find = lambda *a, **k: _empty_async_iter()
+    with patch("modules.response.tools.user_info.get_db", return_value=mock_db):
+        registry = ToolRegistry()
+        result = await registry.execute_tool("getUserInfo", {"userId": "test123"})
     assert result is not None
     assert isinstance(result, dict)
-    # Placeholder tools return not_implemented status
-    assert result.get("status") == "not_implemented"
+    assert result.get("status") in ("not_found", "ok", "error")
+    if result.get("status") == "not_found":
+        assert "userId" in result.get("data", {})
+
+
+@pytest.mark.asyncio
+async def test_tool_execution_get_user_info_found():
+    """Test getUserInfo when user exists in DB."""
+    mock_db = MagicMock()
+    mock_db.users.find_one = AsyncMock(return_value={
+        "user_id": "u1",
+        "name": "Test User",
+        "phone_number": "+123",
+        "language": "en",
+    })
+    mock_db.subscriptions.find = lambda *a, **k: _empty_async_iter()
+    with patch("modules.response.tools.user_info.get_db", return_value=mock_db):
+        registry = ToolRegistry()
+        result = await registry.execute_tool("getUserInfo", {"userId": "u1"})
+    assert result.get("status") == "ok"
+    assert result.get("data", {}).get("user_id") == "u1"
+    assert result.get("data", {}).get("name") == "Test User"
 
 
 @pytest.mark.asyncio

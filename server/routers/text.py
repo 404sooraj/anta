@@ -5,7 +5,7 @@ Handles text processing through the response pipeline
 import logging
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from services.llm import LLMService
 
@@ -20,6 +20,8 @@ router = APIRouter(prefix="/api/text", tags=["text"])
 class TextRequest(BaseModel):
     """Request model for text processing endpoint."""
     text: str
+    session_id: Optional[str] = None  # when set, conversation and intent_log are persisted
+    user_id: Optional[str] = None  # optional; used for conversation.user_id when persisting
 
 
 class ProcessTextResponse(BaseModel):
@@ -53,8 +55,12 @@ async def process_text(request: TextRequest):
     try:
         logger.info(f"Processing text: {request.text[:100]}...")
         
-        # Process through LLM pipeline
-        result = await llm_service.process(request.text)
+        # Process through LLM pipeline (optional session_id/user_id for persistence)
+        result = await llm_service.process(
+            request.text,
+            session_id=request.session_id,
+            user_id=request.user_id,
+        )
         
         # Extract tool names (handle both string lists and dict lists)
         tool_calls_raw = result.get('tool_calls', [])

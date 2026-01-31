@@ -30,20 +30,28 @@ class LLMService:
         )
         logger.info("✓ LLM Service initialized with response pipeline")
     
-    async def process(self, transcript: str, conversation_history: list = None) -> dict:
+    async def process(
+        self,
+        transcript: str,
+        conversation_history: list = None,
+        session_id: str = None,
+        user_id: str = None,
+    ) -> dict:
         """
         Process transcript through the complete pipeline.
-        
+
         Pipeline flow:
         1. Intent Detection
         2. LLM Processing (with tool definitions and conversation context)
         3. Tool Execution (if needed)
         4. LLM Response Generation
-        
+
         Args:
             transcript: The transcribed text to process
             conversation_history: Previous conversation turns for context
-            
+            session_id: Optional; when set, conversation and intent_log are persisted
+            user_id: Optional; used for conversation.user_id when persisting
+
         Returns:
             Dictionary containing:
             - response: Final text response
@@ -52,9 +60,14 @@ class LLMService:
             - tool_results: Results from tool execution
         """
         logger.info(f"Processing transcript: {transcript[:100]}...")
-        
+
         try:
-            result = await self.pipeline.process_text(transcript, conversation_history)
+            result = await self.pipeline.process_text(
+                transcript,
+                conversation_history=conversation_history,
+                session_id=session_id,
+                user_id=user_id,
+            )
             
             logger.info(f"LLM processing complete. Response: {result.get('response', '')[:100]}...")
             
