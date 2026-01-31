@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { CallState, CallStatus } from '@/types/call';
+import { buildWsUrl } from '@/lib/api';
 
 interface UseVoiceBotReturn {
   callState: CallState;
@@ -16,7 +17,7 @@ interface UseVoiceBotReturn {
   conversationHistory: Array<{role: string, text: string}>;
 }
 
-const WS_URL = 'ws://localhost:8000/stt/ws/audio';
+const WS_PATH = '/stt/ws/audio';
 const INPUT_SAMPLE_RATE = 16000;
 const OUTPUT_SAMPLE_RATE = 44100;
 
@@ -235,7 +236,7 @@ export function useVoiceBot(): UseVoiceBotReturn {
       localStreamRef.current = stream;
 
       // Connect to WebSocket
-      const ws = new WebSocket(WS_URL);
+      const ws = new WebSocket(buildWsUrl(WS_PATH));
       wsRef.current = ws;
 
       ws.onopen = () => {

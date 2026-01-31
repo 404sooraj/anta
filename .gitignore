@@ -3,6 +3,9 @@ server/.env
 .env
 *.env
 !.env.example
+
+# Generated credentials (sensitive)
+*_generated_credentials.json
 *pycache*
 *__pycache__*
 *__pycache__*

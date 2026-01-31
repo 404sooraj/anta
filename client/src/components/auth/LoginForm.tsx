@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { buildApiUrl } from "@/lib/api";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,8 +24,9 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const resolvedEndpoint =
-    endpoint || process.env.NEXT_PUBLIC_AUTH_ENDPOINT || "/api/auth/login";
+  const resolvedEndpoint = buildApiUrl(
+    endpoint || process.env.NEXT_PUBLIC_AUTH_ENDPOINT || "/auth/login",
+  );
 
   const formErrors = useMemo(() => {
     const errors: string[] = [];
@@ -173,7 +175,6 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
       >
         {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
-
 
       <p className="text-xs text-zinc-500">
         Need an account?{" "}

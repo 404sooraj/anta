@@ -1,0 +1,35 @@
+[
+  {
+    "user_id": "user_001",
+    "name": "Ravi Sharma",
+    "phone_number": "+91-90000-00001",
+    "password": "Password@123",
+    "language": "en",
+    "location": {
+      "type": "Point",
+      "coordinates": [77.5946, 12.9716]
+    }
+  },
+  {
+    "user_id": "user_002",
+    "name": "Ananya Iyer",
+    "phone_number": "+91-90000-00002",
+    "password": "Password@456",
+    "language": "en",
+    "location": {
+      "type": "Point",
+      "coordinates": [72.8777, 19.076]
+    }
+  },
+  {
+    "user_id": "user_003",
+    "name": "Imran Khan",
+    "phone_number": "+91-90000-00003",
+    "password": "Password@789",
+    "language": "hi",
+    "location": {
+      "type": "Point",
+      "coordinates": [77.2167, 28.6667]
+    }
+  }
+]
