@@ -2,17 +2,25 @@
 
 from typing import Dict, Any
 
+from pydantic import BaseModel, Field
+
 from db.connection import get_db
 from .base import BaseTool
+
+
+class LocationInput(BaseModel):
+    """Input schema for getCurrentLocation tool."""
+    userId: str = Field(..., description="The unique identifier of the user")
 
 
 class GetCurrentLocationTool(BaseTool):
     """Get the current location of a user by user ID."""
 
     name: str = "getCurrentLocation"
-    description: str = "Retrieves the current geographical location (latitude, longitude, address) of a user based on their user ID."
+    description: str = "Retrieves the current geographical location (latitude, longitude, address) of a user based on their user ID. Use this when the user asks about their location or where they are."
+    args_schema = LocationInput
 
-    async def execute(self, userId: str) -> Dict[str, Any]:
+    async def execute(self, **kwargs) -> Dict[str, Any]:
         """
         Execute getCurrentLocation tool.
 
@@ -22,6 +30,12 @@ class GetCurrentLocationTool(BaseTool):
         Returns:
             Dictionary containing location information.
         """
+        userId = kwargs.get("userId")
+        if not userId:
+            return {
+                "status": "error",
+                "data": {"message": "userId is required"},
+            }
         try:
             db = get_db()
             user = await db.users.find_one(

@@ -2,6 +2,8 @@
 
 from typing import Dict, Any
 
+from pydantic import BaseModel, Field
+
 from db.connection import get_db
 from .base import BaseTool
 
@@ -23,7 +25,14 @@ class GetUserInfoTool(BaseTool):
     """Retrieve user information by user ID."""
 
     name: str = "getUserInfo"
-    description: str = "Retrieves user information including profile details, preferences, and account status for a given user ID."
+    description: str = "Retrieves user information including their name, phone number, profile details, preferences, and account status. Use this when the user asks about their name, account, profile, or personal information."
+    
+    class UserInfoInput(BaseModel):
+        """Input schema for getUserInfo tool."""
+
+        userId: str = Field(..., description="The unique identifier of the user")
+
+    args_schema = UserInfoInput
 
     async def execute(self, **kwargs) -> Dict[str, Any]:
         """

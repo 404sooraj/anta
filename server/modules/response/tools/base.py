@@ -1,7 +1,7 @@
 """Base tool interface for all tools in the system."""
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Type
 import inspect
 
 
@@ -10,6 +10,7 @@ class BaseTool(ABC):
     
     name: str = ""
     description: str = ""
+    args_schema: Optional[Type[Any]] = None
     
     @abstractmethod
     async def execute(self, **kwargs) -> Dict[str, Any]:
@@ -28,6 +29,15 @@ class BaseTool(ABC):
         Returns:
             Dictionary in Gemini function calling format.
         """
+        # Prefer explicit args_schema if provided (LangChain style)
+        if self.args_schema is not None and hasattr(self.args_schema, "model_json_schema"):
+            schema = self.args_schema.model_json_schema()
+            return {
+                "name": self.name,
+                "description": self.description,
+                "parameters": schema,
+            }
+
         # Get the execute method signature
         sig = inspect.signature(self.execute)
         parameters = {}

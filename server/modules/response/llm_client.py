@@ -58,7 +58,7 @@ class LLMClient:
         if conversation_history:
             for item in conversation_history:
                 role = item.get("role")
-                content = item.get("content", "")
+                content = item.get("content") or item.get("text", "")
                 if role == "system":
                     messages.append(SystemMessage(content=content))
                 elif role == "assistant":
@@ -104,10 +104,20 @@ class LLMClient:
         """
         try:
             tools = tool_schemas or []
+            logger.info(f"[LLMClient] Number of tools available: {len(tools)}")
+            for t in tools:
+                logger.info(f"[LLMClient] Tool: {t.name} - {t.description[:50]}...")
+            
             llm = self.model.bind_tools(tools) if tools else self.model
 
             messages = self._build_messages(prompt, conversation_history)
+            logger.info(f"[LLMClient] Messages to LLM: {[type(m).__name__ for m in messages]}")
+            for m in messages:
+                logger.info(f"[LLMClient] {type(m).__name__}: {str(m.content)[:100]}...")
+            
             response = await llm.ainvoke(messages)
+            logger.info(f"[LLMClient] Response tool_calls: {response.tool_calls}")
+            logger.info(f"[LLMClient] Response content: {str(response.content)[:200]}")
 
             tool_calls = []
             for tool_call in response.tool_calls or []:

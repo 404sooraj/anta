@@ -12,6 +12,7 @@ from modules.config import ConfigEnv
 from .intent_detector import IntentDetector
 from .llm_client import LLMClient
 from .tool_registry import get_registry
+from .prompts import build_system_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -116,13 +117,21 @@ class ResponsePipeline:
                 except Exception as e:
                     logger.warning(f"Failed to persist conversation/intent_log: {e}")
             
-            # Step 2: LLM Processing with tool definitions
+            # Step 2: LLM Processing with tool definitions (filtered by intent)
             logger.info("Step 2: LLM Processing with tools")
-            langchain_tools = self.tool_registry.get_langchain_tools()
+            detected_intent = intent_result.get("intent", "general")
+            langchain_tools = self.tool_registry.get_langchain_tools(intent=detected_intent)
+            logger.info(f"Loaded {len(langchain_tools)} tools for intent '{detected_intent}'")
+
+            # Build system prompt with user context and tool instructions
+            system_prompt = build_system_prompt(user_id=user_id, tools=langchain_tools)
+            tool_conversation = [{"role": "system", "content": system_prompt}]
+            tool_conversation.extend(conversation_history or [])
 
             llm_response = await self.llm_client.generate_with_tools(
                 prompt=text,
                 tool_schemas=langchain_tools,
+                conversation_history=tool_conversation,
             )
             
             # Step 3: Tool Execution (if LLM requested tools)
@@ -202,6 +211,7 @@ class ResponsePipeline:
         self,
         text: str,
         conversation_history: list = None,
+        user_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Process text and stream the final LLM response.
@@ -211,6 +221,7 @@ class ResponsePipeline:
         """
         try:
             logger.info(f"Processing text (streaming): {text[:100]}...")
+            logger.info(f"[Pipeline] user_id received: {user_id}")
 
             # Step 1: Intent Detection (optional for streaming latency)
             intent_detection_enabled = ConfigEnv.INTENT_DETECTION_ENABLED
@@ -222,14 +233,23 @@ class ResponsePipeline:
                 logger.info("Step 1: Intent Detection skipped (INTENT_DETECTION_ENABLED=false)")
                 intent_result = {"intent": "general", "confidence": 0.0, "reasoning": "disabled"}
 
-            # Step 2: LLM Processing with tool definitions
+            # Step 2: LLM Processing with tool definitions (filtered by intent)
             logger.info("Step 2: LLM Processing with tools")
-            langchain_tools = self.tool_registry.get_langchain_tools()
+            detected_intent = intent_result.get("intent", "general")
+            langchain_tools = self.tool_registry.get_langchain_tools(intent=detected_intent)
+            logger.info(f"Loaded {len(langchain_tools)} tools for intent '{detected_intent}'")
+
+            # Build system prompt with user context and tool instructions
+            logger.info(f"[Pipeline] Building system prompt with user_id={user_id}")
+            system_prompt = build_system_prompt(user_id=user_id, tools=langchain_tools)
+            logger.info(f"[Pipeline] System prompt (first 500 chars): {system_prompt[:500]}...")
+            tool_conversation = [{"role": "system", "content": system_prompt}]
+            tool_conversation.extend(conversation_history or [])
 
             llm_response = await self.llm_client.generate_with_tools(
                 prompt=text,
                 tool_schemas=langchain_tools,
-                conversation_history=conversation_history,
+                conversation_history=tool_conversation,
             )
 
             # Step 3: Tool Execution (if LLM requested tools)

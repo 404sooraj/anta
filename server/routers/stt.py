@@ -74,10 +74,13 @@ async def audio_websocket(ws: WebSocket):
     await ws.accept()
     print("✅ WebSocket connected")
 
+    user_id = None
+
     async def send_user_info():
         """Fetch basic user info via tool call when the call connects."""
+        nonlocal user_id
         token = ws.query_params.get("token")
-        user_id = ws.query_params.get("user_id")
+        user_id_param = ws.query_params.get("user_id")
 
         if token and ConfigEnv.AUTH_JWT_SECRET:
             try:
@@ -86,9 +89,16 @@ async def audio_websocket(ws: WebSocket):
                     ConfigEnv.AUTH_JWT_SECRET,
                     algorithms=["HS256"],
                 )
-                user_id = payload.get("sub") or user_id
+                decoded_user = payload.get("sub")
+                if decoded_user:
+                    user_id = decoded_user
+                    logger.info(f"[STT] user_id from JWT: {user_id}")
             except Exception as exc:
                 logger.warning("Failed to decode JWT token: %s", exc)
+
+        if user_id_param and not user_id:
+            user_id = user_id_param
+            logger.info(f"[STT] user_id from query param: {user_id}")
 
         if not user_id:
             await ws.send_json({
@@ -115,6 +125,7 @@ async def audio_websocket(ws: WebSocket):
             })
 
     await send_user_info()
+    print(f"🔑 After send_user_info: user_id = {user_id}")
 
     # State tracking
     speaking = False
@@ -195,13 +206,14 @@ async def audio_websocket(ws: WebSocket):
 
     async def process_and_respond():
         """Process transcript with LLM and stream TTS response"""
-        nonlocal processing_llm, tts_task
+        nonlocal processing_llm, tts_task, user_id
         
         if not transcript_buffer:
             print("⚠️  process_and_respond called but transcript_buffer is empty")
             return
         
         processing_llm = True
+        print(f"🔐 process_and_respond: user_id = {user_id}")
         
         try:
             # Combine all transcripts
@@ -218,7 +230,12 @@ async def audio_websocket(ws: WebSocket):
             
             # Process with LLM pipeline (streaming)
             print(f"🤖 Calling LLM service (streaming) with conversation context ({len(conversation_history)} turns)...")
-            llm_result = await llm_service.process_stream(full_transcript, conversation_history)
+            print(f"🔑 user_id being passed to LLM: {user_id}")
+            llm_result = await llm_service.process_stream(
+                full_transcript,
+                conversation_history,
+                user_id=user_id,
+            )
 
             stream = llm_result.get("stream")
             print(f"🎯 Intent: {llm_result.get('intent', {}).get('intent', 'unknown')}")
