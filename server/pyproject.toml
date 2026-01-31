@@ -31,4 +31,5 @@ dependencies = [
     "websockets>=15.0",
     "motor>=3.6.0",
     "openpyxl>=3.1.0",
+    "pinecone>=5.0.0",
 ]

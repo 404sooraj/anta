@@ -83,6 +83,7 @@ def build_system_prompt(
             "\n10. For reportBatteryIssue, pass the user's exact complaint as issueDescription."
             "\n11. If a tool returns an error or 'not found', inform the user politely."
             "\n12. For critical battery issues (overheating, swelling, leakage), emphasize safety and urgency in your response."
+            "\n13. When you need to know if a similar situation has happened before, what worked or failed, or what company policy says, use getCallInsights with a short situation_summary (and optionally issue_type like penalty_dispute or battery_swap). Use the returned similar scenarios, response patterns, and policy snippets to inform your response."
         )
         
         # Geocoding instructions for Twilio calls
@@ -127,6 +128,8 @@ def build_tool_result_prompt(tool_name: str, result: dict) -> str:
     status = result.get("status", "unknown")
     data = result.get("data", {})
     
+    if status == "success":
+        return f"Tool {tool_name} returned successfully with data: {data}"
     if status == "ok":
         return f"Tool {tool_name} returned successfully with data: {data}"
     elif status == "not_found":
