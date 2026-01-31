@@ -1,0 +1,48 @@
+{
+  "metadata": {
+    "date": "1/27/26 10:21 AM",
+    "name": "Jyoti Yadav",
+    "issueType": "Swap Information Shared",
+    "callingNumber": "7037561780",
+    "recordingLink": "https://drive.google.com/file/d/1IcbQzWBXVMSvZ5uf7HtB-vLApF1uZpGi/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:10:27.116Z",
+    "callDuration": 68
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "मेरा मीटर लगवा रहा है। मतलब मेरे सिस्टम पर जो लिखा हुआ आ रहा है, उसमें लगवाओ ना।",
+        "timestamp": 0.6,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "सर, बैटरी स्मार्ट में आपका स्वागत है। मैं ज्योति बात कर रही हूँ, बताइए मैं आपकी क्या सहायता कर सकती हूँ? मैडम, मेरी छुट्टी बताइए क्या होगी। छुट्टी। ड्राइवर आईडी कन्फर्म करा दीजिए। 21982। जी? हेलो, 21982। 21982। नाम कन्फर्म करा दीजिए। मिंटू पाल। जी? मिंटू पाल। मिंटू पाल। क्या सहायता कर सकती हूँ मैं आपकी? मैडम, मुझे छुट्टी की जानकारी लेनी है। छुट्टी की जानकारी लेनी है आपको? हाँ जी। लाइन पर बने रहिएगा। आपकी दो छुट्टी हो चुकी है, दो बाकी हैं। इसके अलावा मैं आपकी कोई और सहायता? सर, आपको जानकारी देना चाहेंगे कि कॉल को आईवीआर पर ट्रांसफर किया जा रहा है फीडबैक के लिए। जी जी। दी गई जानकारी से संतुष्ट हैं तो एक दबाइएगा। जी जी। असंतुष्ट हैं तो दो दबाइए। बैटरी स्मार्ट में समय देने के लिए धन्यवाद। अगर आप हम आपकी प्रतिक्रिया हमारे लिए बहुत मायने रखती है।",
+        "timestamp": 3.9,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: मेरा मीटर लगवा रहा है। मतलब मेरे सिस्टम पर जो लिखा हुआ आ रहा है, उसमें लगवाओ ना।\n\nPartner: सर, बैटरी स्मार्ट में आपका स्वागत है। मैं ज्योति बात कर रही हूँ, बताइए मैं आपकी क्या सहायता कर सकती हूँ? मैडम, मेरी छुट्टी बताइए क्या होगी। छुट्टी। ड्राइवर आईडी कन्फर्म करा दीजिए। 21982। जी? हेलो, 21982। 21982। नाम कन्फर्म करा दीजिए। मिंटू पाल। जी? मिंटू पाल। मिंटू पाल। क्या सहायता कर सकती हूँ मैं आपकी? मैडम, मुझे छुट्टी की जानकारी लेनी है। छुट्टी की जानकारी लेनी है आपको? हाँ जी। लाइन पर बने रहिएगा। आपकी दो छुट्टी हो चुकी है, दो बाकी हैं। इसके अलावा मैं आपकी कोई और सहायता? सर, आपको जानकारी देना चाहेंगे कि कॉल को आईवीआर पर ट्रांसफर किया जा रहा है फीडबैक के लिए। जी जी। दी गई जानकारी से संतुष्ट हैं तो एक दबाइएगा। जी जी। असंतुष्ट हैं तो दो दबाइए। बैटरी स्मार्ट में समय देने के लिए धन्यवाद। अगर आप हम आपकी प्रतिक्रिया हमारे लिए बहुत मायने रखती है।"
+  },
+  "analysis": {
+    "summary": "The customer appears to be inquiring about leave information from Battery Smart, with the agent Jyoti confirming the customer's driver ID (21982) and name (Mintu Pal). The agent informed the customer that they have already taken two leaves with two remaining, and then transferred the call to an IVR system for feedback. The call concluded with a standard customer service closure.",
+    "problemFaced": "The partner (customer) was seeking information about their leave status, specifically wanting to confirm how many leaves they have taken and how many are remaining.",
+    "solutionPresented": "Based on the transcript, it appears the agent informed the partner (Mintu Pal, driver ID 21982) that they have already taken two leaves and have two leaves remaining. The agent then prepared to transfer the call to an IVR system for feedback, asking the partner to press 1 if satisfied with the information or 2 if dissatisfied.",
+    "agentSentiment": {
+      "overall": "neutral",
+      "confidence": 0.7,
+      "details": "The agent appears to be making a straightforward request about meter installation in a matter-of-fact tone, without strong emotional coloration"
+    },
+    "partnerSentiment": {
+      "overall": "neutral",
+      "confidence": 0.85,
+      "details": "The partner (Jyoti) maintains a professional, service-oriented tone throughout the call. She speaks clearly, provides information about leave status, and follows standard customer service protocol without showing strong emotional variation. Her language is consistently polite and procedural."
+    },
+    "partnerSatisfactionScore": {
+      "score": 6,
+      "maxScore": 10,
+      "reasoning": "The conversation appears to be in Hindi and seems to be about leave/time-off information. The agent provided the customer with basic information about their remaining leave (two taken, two remaining). While the customer did not express strong frustration, the interaction seems somewhat transactional and perfunctory. The agent transferred the call to an IVR for feedback, suggesting a standard customer service process. The lack of clear emotional cues and the brief, functional nature of the exchange suggests a middling satisfaction level - not negative, but not particularly enthusiastic either."
+    }
+  }
+}

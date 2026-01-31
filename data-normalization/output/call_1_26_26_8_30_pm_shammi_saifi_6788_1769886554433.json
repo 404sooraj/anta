@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "date": "1/26/26 8:30 PM",
+    "name": "Shammi Saifi",
+    "issueType": "Penalty Information Shared",
+    "callingNumber": "9996616788",
+    "recordingLink": "https://drive.google.com/file/d/10Cw_uOrsa6DSkya4TBHqSfXhggevrMv7/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:09:14.432Z",
+    "callDuration": 109
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "नमस्कार, बैटरी स्मार्ट में आपका स्वागत है। मैं शमी, आपकी किस प्रकार सहायता कर सकता हूँ?",
+        "timestamp": 1.5,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी सर, आप मुझे ड्राइवर आईडी दोबारा से कन्फर्म कराएँ।",
+        "timestamp": 10.2,
+        "speaker": "agent"
+      },
+      {
+        "text": "15577।",
+        "timestamp": 15.72,
+        "speaker": "agent"
+      },
+      {
+        "text": "सर, नाम बताएँ, किस नाम से है आपका कनेक्शन?",
+        "timestamp": 18.6,
+        "speaker": "agent"
+      },
+      {
+        "text": "अमर सिंह। ओके सर, नाम कन्फर्म कराने के लिए धन्यवाद। जैसे कि मैं सुन पा रहा हूँ, आपका ड्राइवर आईडी 11177।",
+        "timestamp": 22.44,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी जी जी सर, बताइए हम आपकी क्या सहायता कर सकते हैं?",
+        "timestamp": 30.66,
+        "speaker": "agent"
+      },
+      {
+        "text": "लाइन पर बने रहें सर, आपकी छुट्टी चेक की जा रही है, समय दीजिएगा।",
+        "timestamp": 37.56,
+        "speaker": "agent"
+      },
+      {
+        "text": "बिल्कुल सर, मैं आपको बताना चाहूँगा, आपकी एक छुट्टी बची हुई है।",
+        "timestamp": 45.78,
+        "speaker": "agent"
+      },
+      {
+        "text": "नहीं, मैं आपको बताना चाहूँगा सर, छुट्टी नहीं है। अगर आप आज स्वैप नहीं लेंगे तो आपकी पेनल्टी भी लगेगी बस।",
+        "timestamp": 53.22,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी सर।",
+        "timestamp": 72.06,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी जी।",
+        "timestamp": 75.6,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी सर।",
+        "timestamp": 82.44,
+        "speaker": "agent"
+      },
+      {
+        "text": "और कोई सहायता बैटरी स्मार्ट से?",
+        "timestamp": 83.94,
+        "speaker": "agent"
+      },
+      {
+        "text": "मैं आपको बताना चाहूँगा सर, हम आपकी कॉल को आईवीआर पर ट्रांसफर कर रहे हैं फीडबैक के लिए। मेरे द्वारा दी गई सहायता से आप संतुष्ट हैं, तो एक दबाइएगा, अन्यथा दो दबाइएगा। बैटरी स्मार्ट में कॉल करने के लिए धन्यवाद। स्वस्थ रहें, सुरक्षित रहें।",
+        "timestamp": 88.56,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "सर, अमर सिंह, 15577।",
+        "timestamp": 6.54,
+        "speaker": "partner"
+      },
+      {
+        "text": "15577।",
+        "timestamp": 13.68,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ जी।",
+        "timestamp": 18.06,
+        "speaker": "partner"
+      },
+      {
+        "text": "अमर सिंह।",
+        "timestamp": 21.54,
+        "speaker": "partner"
+      },
+      {
+        "text": "15577।",
+        "timestamp": 29.22,
+        "speaker": "partner"
+      },
+      {
+        "text": "सर, मैं ये पूछना चाहता था, मेरी छुट्टी बची हुई है क्या?",
+        "timestamp": 33.78,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक है। आज की तो वैसे छुट्टी रजिस्टर देते हो आप लोग।",
+        "timestamp": 41.04,
+        "speaker": "partner"
+      },
+      {
+        "text": "अच्छा, आज की तो हमें मिलती है सरकारी आपकी तरफ से ना?",
+        "timestamp": 49.86,
+        "speaker": "partner"
+      },
+      {
+        "text": "अच्छा, जैसे फिर जैसे आज छुट्टी 26 जनवरी है, तो ये दिन के आज मैंने बैटरी नहीं ली, तो एक छुट्टी मेरी बचेगी ना अभी?",
+        "timestamp": 61.14,
+        "speaker": "partner"
+      },
+      {
+        "text": "अच्छा, एक छुट्टी मैं आगे ले सकता हूँ ना?",
+        "timestamp": 73.5,
+        "speaker": "partner"
+      },
+      {
+        "text": "चलिए, ठीक है सर। ठीक है, आज की यानी कि छुट्टी है हमारी वैसे, ना होगी।",
+        "timestamp": 77.1,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक है सर, थैंक यू सर।",
+        "timestamp": 82.5,
+        "speaker": "partner"
+      },
+      {
+        "text": "थैंक यू सर।",
+        "timestamp": 86.04,
+        "speaker": "partner"
+      },
+      {
+        "text": "अगर आप हमारे द्वारा दी गई सहायता से खुश हैं, तो एक दबाएँ। आपकी प्रतिक्रिया हमारे लिए बहुत मायने रखती है। बैटरी स्मार्ट।",
+        "timestamp": 100.8,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: नमस्कार, बैटरी स्मार्ट में आपका स्वागत है। मैं शमी, आपकी किस प्रकार सहायता कर सकता हूँ?\n\nPartner: सर, अमर सिंह, 15577।\n\nAgent: जी सर, आप मुझे ड्राइवर आईडी दोबारा से कन्फर्म कराएँ।\n\nPartner: 15577।\n\nAgent: 15577।\n\nPartner: हाँ जी।\n\nAgent: सर, नाम बताएँ, किस नाम से है आपका कनेक्शन?\n\nPartner: अमर सिंह।\n\nAgent: अमर सिंह। ओके सर, नाम कन्फर्म कराने के लिए धन्यवाद। जैसे कि मैं सुन पा रहा हूँ, आपका ड्राइवर आईडी 11177।\n\nPartner: 15577।\n\nAgent: जी जी जी सर, बताइए हम आपकी क्या सहायता कर सकते हैं?\n\nPartner: सर, मैं ये पूछना चाहता था, मेरी छुट्टी बची हुई है क्या?\n\nAgent: लाइन पर बने रहें सर, आपकी छुट्टी चेक की जा रही है, समय दीजिएगा।\n\nPartner: ठीक है। आज की तो वैसे छुट्टी रजिस्टर देते हो आप लोग।\n\nAgent: बिल्कुल सर, मैं आपको बताना चाहूँगा, आपकी एक छुट्टी बची हुई है।\n\nPartner: अच्छा, आज की तो हमें मिलती है सरकारी आपकी तरफ से ना?\n\nAgent: नहीं, मैं आपको बताना चाहूँगा सर, छुट्टी नहीं है। अगर आप आज स्वैप नहीं लेंगे तो आपकी पेनल्टी भी लगेगी बस।\n\nPartner: अच्छा, जैसे फिर जैसे आज छुट्टी 26 जनवरी है, तो ये दिन के आज मैंने बैटरी नहीं ली, तो एक छुट्टी मेरी बचेगी ना अभी?\n\nAgent: जी सर।\n\nPartner: अच्छा, एक छुट्टी मैं आगे ले सकता हूँ ना?\n\nAgent: जी जी।\n\nPartner: चलिए, ठीक है सर। ठीक है, आज की यानी कि छुट्टी है हमारी वैसे, ना होगी।\n\nAgent: जी सर।\n\nPartner: ठीक है सर, थैंक यू सर।\n\nAgent: और कोई सहायता बैटरी स्मार्ट से?\n\nPartner: थैंक यू सर।\n\nAgent: मैं आपको बताना चाहूँगा सर, हम आपकी कॉल को आईवीआर पर ट्रांसफर कर रहे हैं फीडबैक के लिए। मेरे द्वारा दी गई सहायता से आप संतुष्ट हैं, तो एक दबाइएगा, अन्यथा दो दबाइएगा। बैटरी स्मार्ट में कॉल करने के लिए धन्यवाद। स्वस्थ रहें, सुरक्षित रहें।\n\nPartner: अगर आप हमारे द्वारा दी गई सहायता से खुश हैं, तो एक दबाएँ। आपकी प्रतिक्रिया हमारे लिए बहुत मायने रखती है। बैटरी स्मार्ट।"
+  },
+  "analysis": {
+    "summary": "The customer, Amar Singh, called to inquire about his remaining leave day and whether he could take it. The agent clarified that he has no leave today and would incur a penalty if he does not swap the battery, but confirmed he can carry forward one leave day. The call ended with the customer understanding the situation and thanking the agent, followed by a standard feedback request.",
+    "problemFaced": "The customer wanted to confirm if he had any remaining leave/holiday for the day (26th January), specifically checking if he could carry forward one day's leave since he did not swap his battery today.",
+    "solutionPresented": "The agent clarified that the partner (driver) has no leave/holiday available for today (26 January), and if he does not swap the battery today, he will incur a penalty. The agent confirmed that the partner can use one leave/holiday in the future, but not for today. The solution was to inform the driver about his current leave status and potential penalty, while providing guidance about future leave usage.",
+    "agentSentiment": {
+      "overall": "neutral",
+      "confidence": 0.8,
+      "details": "Agent maintains a professional, even-toned demeanor throughout the call. Uses polite language, repeats confirmations, and follows standard customer service protocol without showing strong emotional variation. Speaks clearly and systematically while providing service information and guiding the customer through the process."
+    },
+    "partnerSentiment": {
+      "overall": "neutral",
+      "confidence": 0.8,
+      "details": "The speaker sounds calm and matter-of-fact while inquiring about leave/time off, using polite language and a steady tone. There are no strong emotional markers indicating frustration, anger, or excitement - just a straightforward professional communication about leave status."
+    },
+    "partnerSatisfactionScore": {
+      "score": 7,
+      "maxScore": 10,
+      "reasoning": "The customer's issue about leave/holiday was partially resolved. While there was some initial confusion about the leave status, the agent clearly explained that no leave was available and there would be a penalty if the battery was not swapped. The customer seemed to understand and accepted the explanation, ending the call with a polite 'Thank you'. The communication was professional, and the customer did not express significant frustration. The interaction was straightforward, with the agent providing clear information. The customer appeared satisfied enough to give a positive feedback response at the end of the call."
+    }
+  }
+}

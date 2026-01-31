@@ -11,11 +11,15 @@ import base64
 import audioop
 import logging
 import numpy as np
+import uuid
+from datetime import datetime
 
 from modules.config import ConfigEnv
 from services.stt import STTService, VADService
 from services.llm import LLMService
 from services.tts import TTSService
+from services.call_analytics import CallAnalyticsService
+from db.connection import get_db
 from services.user_lookup import lookup_user_by_phone, get_user_id_from_phone
 
 # =========================
@@ -111,6 +115,8 @@ async def media_stream(ws: WebSocket):
     # State tracking
     stream_sid = None
     call_sid = None
+    call_id = str(uuid.uuid4())  # Unique identifier for this call
+    call_start_time = datetime.utcnow()
     from_number = None  # Caller's phone number
     user_id = None  # Will be looked up from phone number
     is_twilio_call = True  # Flag to indicate this is a phone call (no GPS)
@@ -131,6 +137,60 @@ async def media_stream(ws: WebSocket):
     vad_service = VADService()
     llm_service = LLMService()
     tts_service = TTSService()
+    analytics_service = CallAnalyticsService()
+    
+    async def save_call_transcript():
+        """Save complete call transcript with AI-generated insights to database."""
+        nonlocal conversation_history, call_id, call_sid, call_start_time, detected_language
+        
+        try:
+            if not conversation_history:
+                logger.warning("⚠️  No conversation to save")
+                return
+            
+            call_end_time = datetime.utcnow()
+            duration_seconds = int((call_end_time - call_start_time).total_seconds())
+            
+            logger.info(f"📊 Analyzing call transcript ({len(conversation_history)} messages)...")
+            
+            # Generate AI insights
+            analysis = await analytics_service.analyze_call(conversation_history)
+            
+            logger.info(f"✅ Analysis complete:")
+            logger.info(f"   Summary: {analysis['summary'][:100]}...")
+            logger.info(f"   Satisfaction: {analysis['satisfaction_score']}/5 - {analysis['satisfaction_reasoning']}")
+            
+            # Prepare call transcript document
+            call_data = {
+                "call_id": call_id,
+                "user_id": None,  # Twilio calls don't have user_id by default
+                "start_time": call_start_time,
+                "end_time": call_end_time,
+                "duration_seconds": duration_seconds,
+                "messages": [
+                    {
+                        "role": msg["role"],
+                        "text": msg["text"],
+                        "timestamp": call_start_time  # Approximate timestamp
+                    }
+                    for msg in conversation_history
+                ],
+                "detected_language": detected_language,
+                "summary": analysis["summary"],
+                "satisfaction_score": analysis["satisfaction_score"],
+                "satisfaction_reasoning": analysis["satisfaction_reasoning"],
+                "call_source": "twilio",
+                "twilio_call_sid": call_sid
+            }
+            
+            # Save to database
+            db = get_db()
+            await db.call_transcripts.insert_one(call_data)
+            
+            logger.info(f"✅ Call transcript saved: {call_id} (Twilio SID: {call_sid})")
+        
+        except Exception as e:
+            logger.error(f"❌ Error saving call transcript: {e}", exc_info=True)
     
     async def finalize_utterance():
         """Finalize accumulated utterance and trigger LLM processing"""
@@ -442,8 +502,9 @@ async def media_stream(ws: WebSocket):
         logger.error(f"❌ WebSocket error: {e}", exc_info=True)
         if tts_task and not tts_task.done():
             tts_task.cancel()
-    finally:
-        # Cleanup
+    finally:        # Save call transcript with analytics
+        await save_call_transcript()
+                # Cleanup
         try:
             await asyncio.to_thread(stt_service.disconnect)
             logger.info("🔌 Disconnected from Soniox")

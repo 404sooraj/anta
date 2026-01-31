@@ -14,6 +14,7 @@ from routers.tts import router as tts_router
 from routers.twilio import router as twilio_router
 from routers.batteries import router as batteries_router
 from routers.auth import router as auth_router
+from routers.call_transcripts import router as call_transcripts_router
 from routers.location import router as location_router
 from routers.agent import router as agent_router
 from db.connection import get_db, close_client
@@ -85,6 +86,7 @@ app.include_router(tts_router)
 app.include_router(twilio_router)
 app.include_router(batteries_router)
 app.include_router(auth_router)
+app.include_router(call_transcripts_router)
 app.include_router(location_router)
 app.include_router(agent_router)
 
@@ -108,6 +110,9 @@ async def root():
             "twilio_media_stream": "ws://localhost:8000/twilio/media",
             "batteries_put": "PUT /api/batteries/{battery_id}",
             "batteries_get": "GET /api/batteries/{battery_id}",
+            "call_transcripts_list": "GET /api/calls/transcripts",
+            "call_transcript_get": "GET /api/calls/transcripts/{call_id}",
+            "call_analytics": "GET /api/calls/analytics/summary",
             "agent_websocket": "ws://localhost:8000/agent/ws/connect",
             "agent_queue_status": "/agent/queue/status",
             "agent_health": "/agent/health",

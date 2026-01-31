@@ -1,0 +1,188 @@
+{
+  "metadata": {
+    "date": "1/25/26 1:12 PM",
+    "name": "Jyoti",
+    "issueType": "Payment Confirmation",
+    "callingNumber": "9669029214",
+    "recordingLink": "https://drive.google.com/file/d/1oNjcdAgqI9qxFRTXbvKurjeebWebAc86/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:12:19.032Z",
+    "callDuration": 161
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "हैलो?",
+        "timestamp": 2.76,
+        "speaker": "agent"
+      },
+      {
+        "text": "नमस्कार मैम, मैं ओखला फेस-2 से बोल रहा हूँ, जेड ब्लॉक से, राजेश पटेल।",
+        "timestamp": 8.16,
+        "speaker": "agent"
+      },
+      {
+        "text": "ए-डी 16 एसई, ऐसे कुछ था।",
+        "timestamp": 16.5,
+        "speaker": "agent"
+      },
+      {
+        "text": "एक मिनट बता रहा हूँ, चाल देखिए। मैंने कल किस्त जमा किया, वो किस्त का कोई मैसेज नहीं आया। एक ड्राइवर आईडी लिखो।",
+        "timestamp": 22.86,
+        "speaker": "agent"
+      },
+      {
+        "text": "राजेश कुमार।",
+        "timestamp": 41.64,
+        "speaker": "agent"
+      },
+      {
+        "text": "कहना तो ये है कि कल हमने किस्त जमा किया, किस्त का कोई मैसेज नहीं आया। दूसरी बात, बैटरी का शिकायत किया था कि बैटरी में प्रॉब्लम आ रही है।",
+        "timestamp": 47.46,
+        "speaker": "agent"
+      },
+      {
+        "text": "हाँ जी।",
+        "timestamp": 60.12,
+        "speaker": "agent"
+      },
+      {
+        "text": "वो भैया लोग बैटरी लेके आए थे और 200 मीटर दूर बोल रहे हैं कि आओ तुम बैटरी सर पे लोड करो, अपने रिक्शा के पास ले चलो, फिर वो बैटरी लोड करके मेरे पास छोड़ो।",
+        "timestamp": 64.2,
+        "speaker": "agent"
+      },
+      {
+        "text": "हाँ जी।",
+        "timestamp": 81.54,
+        "speaker": "agent"
+      },
+      {
+        "text": "हाँ जी। कोई और सहायता तो कुछ नहीं आया।",
+        "timestamp": 87.06,
+        "speaker": "agent"
+      },
+      {
+        "text": "सहायता यही है कि बैटरी चेंज होनी चाहिए। चेंज हो या तो सही करवाया जाए।",
+        "timestamp": 94.62,
+        "speaker": "agent"
+      },
+      {
+        "text": "वो टीम से ही लोग आए थे और बोल रहे हैं कि वहाँ से तुम बैटरी खोल के और लाओ, तो यहाँ पे पहुँचाओ, फिर यहाँ से बैटरी गाड़ी से लेके जाओ, तो वहाँ से लो डालता हूँ।",
+        "timestamp": 114.66,
+        "speaker": "agent"
+      },
+      {
+        "text": "ठीक। ओके।",
+        "timestamp": 128.4,
+        "speaker": "agent"
+      },
+      {
+        "text": "बस मैम, इतनी सहायता चाहिए कि बैटरी चेंज हो जाए।",
+        "timestamp": 133.98,
+        "speaker": "agent"
+      },
+      {
+        "text": "नहीं नहीं मैम, और कोई दिक्कत नहीं है।",
+        "timestamp": 141,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "नमस्कार सर, मेरा प्लेटफॉर्म पर स्वागत है। मैं ज्योति, आपकी कैसे हेल्प कर सकती हूँ?",
+        "timestamp": 3.72,
+        "speaker": "partner"
+      },
+      {
+        "text": "जी, मुझे ड्राइवर आईडी बताइए सर अपने।",
+        "timestamp": 13.5,
+        "speaker": "partner"
+      },
+      {
+        "text": "डी 16?",
+        "timestamp": 20.76,
+        "speaker": "partner"
+      },
+      {
+        "text": "आपने किस्त जमा कर दी, मैंने—माफ़ कीजिए—1694 एसई, आपका ड्राइवर आईडी 169480। नाम बता दीजिए, किस नाम से आईडी है आपकी?",
+        "timestamp": 33.18,
+        "speaker": "partner"
+      },
+      {
+        "text": "राजेश कुमार जी के नाम से आईडी है आपकी। जी सर, बताइए, कैसे हेल्प कर सकती हूँ मैं आपकी?",
+        "timestamp": 42.96,
+        "speaker": "partner"
+      },
+      {
+        "text": "जी, आपने बैटरी की भी कंप्लेंट रेज़ की हुई है कि बैटरी आपकी लस रेंज दे रही है, बहुत कम चल रही है बैटरी आपकी।",
+        "timestamp": 54.72,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ जी, आपने—और फिर रुको।",
+        "timestamp": 61.32,
+        "speaker": "partner"
+      },
+      {
+        "text": "नहीं सर, ऐसा नहीं है। आप निश्चिंत रहिए। लिख दें। आपने 24 तारीख को कल पेमेंट की थी ना सर, आपने 10:40 पे रात को?",
+        "timestamp": 74.4,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ जी, भैया लोग से 85 रुपये की पेमेंट की थी आपने। पेमेंट हो गई है सर आपकी?",
+        "timestamp": 82.56,
+        "speaker": "partner"
+      },
+      {
+        "text": "उसके लिए मैं माफ़ी चाहूँगी, लेकिन पेमेंट आपकी हो चुकी है सर। कोई और सहायता आपकी सर?",
+        "timestamp": 89.82,
+        "speaker": "partner"
+      },
+      {
+        "text": "जी जी, मैं समझ पा रही हूँ। जो आपको परेशानी हो रही है, उसके लिए माफ़ी चाहूँगी। आपकी कंपनी ने ऐसे फॉरवर्ड कर दे रही है टीम को, टीम सहायता करेगी आपकी। कोई और सहायता आपकी सर, बैटरी स्मार्ट से संबंधित?",
+        "timestamp": 101.88,
+        "speaker": "partner"
+      },
+      {
+        "text": "नहीं सर, ऐसा नहीं है। टीम आ जाएगी आपके पास, आप निश्चिंत रहिएगा।",
+        "timestamp": 123.6,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ जी सर, लाइन पे बने। कोई और सहायता आपकी सर, बैटरी स्मार्ट से संबंधित?",
+        "timestamp": 129.72,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ जी, बैटरी बहुत कम चल रही है। और कोई दिक्कत तो नहीं आ रही ना सर बैटरी में आपको?",
+        "timestamp": 136.98,
+        "speaker": "partner"
+      },
+      {
+        "text": "जी सर, आप निश्चिंत रहिए। आपकी कॉल को मैं आईपीआर पर फीडबैक के लिए ट्रांसफर कर रही हूँ। अगर आप दी गई जानकारी से सहमत हैं तो 1 दबा दीजिए सर, और सहमत नहीं हैं तो 2 दबा दीजिए। बैटरी स्मार्ट पर कॉल करने के लिए धन्यवाद सर, स्वस्थ रहिए, सुरक्षित रहिए। अगर आप हमारे द्वारा। आपकी प्रतिक्रिया हमारे लिए बहुत मायने रखती है। बैटरी स्मार्ट चुनने के लिए धन्यवाद।",
+        "timestamp": 142.8,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: हैलो?\n\nPartner: नमस्कार सर, मेरा प्लेटफॉर्म पर स्वागत है। मैं ज्योति, आपकी कैसे हेल्प कर सकती हूँ?\n\nAgent: नमस्कार मैम, मैं ओखला फेस-2 से बोल रहा हूँ, जेड ब्लॉक से, राजेश पटेल।\n\nPartner: जी, मुझे ड्राइवर आईडी बताइए सर अपने।\n\nAgent: ए-डी 16 एसई, ऐसे कुछ था।\n\nPartner: डी 16?\n\nAgent: एक मिनट बता रहा हूँ, चाल देखिए। मैंने कल किस्त जमा किया, वो किस्त का कोई मैसेज नहीं आया। एक ड्राइवर आईडी लिखो।\n\nPartner: आपने किस्त जमा कर दी, मैंने—माफ़ कीजिए—1694 एसई, आपका ड्राइवर आईडी 169480। नाम बता दीजिए, किस नाम से आईडी है आपकी?\n\nAgent: राजेश कुमार।\n\nPartner: राजेश कुमार जी के नाम से आईडी है आपकी। जी सर, बताइए, कैसे हेल्प कर सकती हूँ मैं आपकी?\n\nAgent: कहना तो ये है कि कल हमने किस्त जमा किया, किस्त का कोई मैसेज नहीं आया। दूसरी बात, बैटरी का शिकायत किया था कि बैटरी में प्रॉब्लम आ रही है।\n\nPartner: जी, आपने बैटरी की भी कंप्लेंट रेज़ की हुई है कि बैटरी आपकी लस रेंज दे रही है, बहुत कम चल रही है बैटरी आपकी।\n\nAgent: हाँ जी।\n\nPartner: हाँ जी, आपने—और फिर रुको।\n\nAgent: वो भैया लोग बैटरी लेके आए थे और 200 मीटर दूर बोल रहे हैं कि आओ तुम बैटरी सर पे लोड करो, अपने रिक्शा के पास ले चलो, फिर वो बैटरी लोड करके मेरे पास छोड़ो।\n\nPartner: नहीं सर, ऐसा नहीं है। आप निश्चिंत रहिए। लिख दें। आपने 24 तारीख को कल पेमेंट की थी ना सर, आपने 10:40 पे रात को?\n\nAgent: हाँ जी।\n\nPartner: हाँ जी, भैया लोग से 85 रुपये की पेमेंट की थी आपने। पेमेंट हो गई है सर आपकी?\n\nAgent: हाँ जी। कोई और सहायता तो कुछ नहीं आया।\n\nPartner: उसके लिए मैं माफ़ी चाहूँगी, लेकिन पेमेंट आपकी हो चुकी है सर। कोई और सहायता आपकी सर?\n\nAgent: सहायता यही है कि बैटरी चेंज होनी चाहिए। चेंज हो या तो सही करवाया जाए।\n\nPartner: जी जी, मैं समझ पा रही हूँ। जो आपको परेशानी हो रही है, उसके लिए माफ़ी चाहूँगी। आपकी कंपनी ने ऐसे फॉरवर्ड कर दे रही है टीम को, टीम सहायता करेगी आपकी। कोई और सहायता आपकी सर, बैटरी स्मार्ट से संबंधित?\n\nAgent: वो टीम से ही लोग आए थे और बोल रहे हैं कि वहाँ से तुम बैटरी खोल के और लाओ, तो यहाँ पे पहुँचाओ, फिर यहाँ से बैटरी गाड़ी से लेके जाओ, तो वहाँ से लो डालता हूँ।\n\nPartner: नहीं सर, ऐसा नहीं है। टीम आ जाएगी आपके पास, आप निश्चिंत रहिएगा।\n\nAgent: ठीक। ओके।\n\nPartner: हाँ जी सर, लाइन पे बने। कोई और सहायता आपकी सर, बैटरी स्मार्ट से संबंधित?\n\nAgent: बस मैम, इतनी सहायता चाहिए कि बैटरी चेंज हो जाए।\n\nPartner: हाँ जी, बैटरी बहुत कम चल रही है। और कोई दिक्कत तो नहीं आ रही ना सर बैटरी में आपको?\n\nAgent: नहीं नहीं मैम, और कोई दिक्कत नहीं है।\n\nPartner: जी सर, आप निश्चिंत रहिए। आपकी कॉल को मैं आईपीआर पर फीडबैक के लिए ट्रांसफर कर रही हूँ। अगर आप दी गई जानकारी से सहमत हैं तो 1 दबा दीजिए सर, और सहमत नहीं हैं तो 2 दबा दीजिए। बैटरी स्मार्ट पर कॉल करने के लिए धन्यवाद सर, स्वस्थ रहिए, सुरक्षित रहिए। अगर आप हमारे द्वारा। आपकी प्रतिक्रिया हमारे लिए बहुत मायने रखती है। बैटरी स्मार्ट चुनने के लिए धन्यवाद।"
+  },
+  "analysis": {
+    "summary": "The customer, Rajesh Kumar, called about two issues: not receiving a payment confirmation message after making an installment payment and experiencing battery performance problems with his vehicle. The customer service representative acknowledged the payment and assured the customer that a team would be sent to address the battery issue. The call ended with the representative transferring the call to IPR for feedback and the customer seemingly satisfied that his battery concern would be resolved.",
+    "problemFaced": "The customer is experiencing issues with his battery's performance, reporting that it has a very low range and is not functioning properly. Additionally, he mentioned not receiving a payment confirmation message after making a payment, and there seems to be confusion about how the battery replacement or service should be handled, with conflicting instructions from the service team about battery exchange and loading.",
+    "solutionPresented": "The customer service agent addressed the partner's battery issue by assuring him that the team will come to his location to help with the battery problem. Specifically, the agent confirmed that the payment was processed correctly and promised that the support team will assist with changing or fixing the battery. The agent emphasized that the team will come to the partner's location and help resolve the battery performance issue, asking the partner to remain calm and assured that support is on the way.",
+    "agentSentiment": {
+      "overall": "concerned",
+      "confidence": 0.85,
+      "details": "The agent sounds concerned and slightly frustrated while explaining technical issues with a battery and payment confirmation. His tone is polite but persistent in seeking resolution, using a mix of professional language and genuine problem-solving intent."
+    },
+    "partnerSentiment": {
+      "overall": "concerned",
+      "confidence": 0.85,
+      "details": "The partner sounds professionally concerned about the customer's battery issue, repeatedly reassuring the customer while acknowledging their problem. The tone suggests attentiveness and a desire to resolve the customer's complaint, with multiple attempts to provide support and comfort."
+    },
+    "partnerSatisfactionScore": {
+      "score": 6,
+      "maxScore": 10,
+      "reasoning": "The customer's issue with battery performance was acknowledged, and the support agent promised to forward the complaint to the team for resolution. While the agent was polite and tried to address the customer's concerns, the customer seemed somewhat frustrated with the battery issue and the unclear resolution process. The payment was confirmed, but the battery problem remains unresolved at the end of the call. The customer did not express strong dissatisfaction, but also did not seem completely satisfied with the outcome."
+    }
+  }
+}

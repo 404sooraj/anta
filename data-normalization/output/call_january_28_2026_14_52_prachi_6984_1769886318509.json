@@ -1,0 +1,133 @@
+{
+  "metadata": {
+    "date": "January 28, 2026, 14:52",
+    "name": "Prachi",
+    "issueType": "Penalty Information Shared",
+    "callingNumber": "8317736984",
+    "recordingLink": "https://drive.google.com/file/d/12_oT56S-P47HIhGWmF4b4iWp2r_eLVwA/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:05:18.508Z",
+    "callDuration": 78
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "नमस्कार सर, बैटरी स्मार्ट में आपका स्वागत है। मैं प्राची, आपकी किस प्रकार सहायता कर सकती हूँ?",
+        "timestamp": 5.58,
+        "speaker": "agent"
+      },
+      {
+        "text": "ड्राइवर आईडी बताइएगा।",
+        "timestamp": 14.46,
+        "speaker": "agent"
+      },
+      {
+        "text": "178507?",
+        "timestamp": 19.14,
+        "speaker": "agent"
+      },
+      {
+        "text": "178507 ना?",
+        "timestamp": 23.46,
+        "speaker": "agent"
+      },
+      {
+        "text": "आईडी गलत बता रहे हैं, 178507 से तो है ही नहीं, 179507। 85।",
+        "timestamp": 28.08,
+        "speaker": "agent"
+      },
+      {
+        "text": "178507। 178507 नाम?",
+        "timestamp": 37.2,
+        "speaker": "agent"
+      },
+      {
+        "text": "धन्यवाद सर। आईडी और नाम कन्फर्म कराने के लिए बताइए, किस प्रकार सहायता कर सकती हूँ मैं आपकी?",
+        "timestamp": 43.92,
+        "speaker": "agent"
+      },
+      {
+        "text": "पैलेंटी? लाइन पे रहिएगा। सर, इस आईडी पे पैलेंटी नहीं है।",
+        "timestamp": 52.44,
+        "speaker": "agent"
+      },
+      {
+        "text": "हर महीने चार छुट्टी मिलती है। अगर चार छुट्टी से अधिक छुट्टी चाहिए आपको, तो बैटरी को डीएसके पे सबमिट कराइएगा। ओके सर?",
+        "timestamp": 65.64,
+        "speaker": "agent"
+      },
+      {
+        "text": "और किसी प्रकार की सहायता?",
+        "timestamp": 73.98,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "मेरा पैनल इनकी देखिए तो गिरा हुआ है।",
+        "timestamp": 11.82,
+        "speaker": "partner"
+      },
+      {
+        "text": "178507।",
+        "timestamp": 17.52,
+        "speaker": "partner"
+      },
+      {
+        "text": "हम्म।",
+        "timestamp": 22.5,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ, रंजीत कुमार।",
+        "timestamp": 26.64,
+        "speaker": "partner"
+      },
+      {
+        "text": "178507।",
+        "timestamp": 36.96,
+        "speaker": "partner"
+      },
+      {
+        "text": "रंजीत कुमार।",
+        "timestamp": 43.02,
+        "speaker": "partner"
+      },
+      {
+        "text": "देखिए ना, पैलेंटी गिरा हुआ है, अच्छा।",
+        "timestamp": 50.04,
+        "speaker": "partner"
+      },
+      {
+        "text": "मैम, ये बताइए तो हर महीना चार छुट्टी मिलती है।",
+        "timestamp": 62.1,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ।",
+        "timestamp": 73.38,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: नमस्कार सर, बैटरी स्मार्ट में आपका स्वागत है। मैं प्राची, आपकी किस प्रकार सहायता कर सकती हूँ?\n\nPartner: मेरा पैनल इनकी देखिए तो गिरा हुआ है।\n\nAgent: ड्राइवर आईडी बताइएगा।\n\nPartner: 178507।\n\nAgent: 178507?\n\nPartner: हम्म।\n\nAgent: 178507 ना?\n\nPartner: हाँ, रंजीत कुमार।\n\nAgent: आईडी गलत बता रहे हैं, 178507 से तो है ही नहीं, 179507। 85।\n\nPartner: 178507।\n\nAgent: 178507। 178507 नाम?\n\nPartner: रंजीत कुमार।\n\nAgent: धन्यवाद सर। आईडी और नाम कन्फर्म कराने के लिए बताइए, किस प्रकार सहायता कर सकती हूँ मैं आपकी?\n\nPartner: देखिए ना, पैलेंटी गिरा हुआ है, अच्छा।\n\nAgent: पैलेंटी? लाइन पे रहिएगा। सर, इस आईडी पे पैलेंटी नहीं है।\n\nPartner: मैम, ये बताइए तो हर महीना चार छुट्टी मिलती है।\n\nAgent: हर महीने चार छुट्टी मिलती है। अगर चार छुट्टी से अधिक छुट्टी चाहिए आपको, तो बैटरी को डीएसके पे सबमिट कराइएगा। ओके सर?\n\nPartner: हाँ।\n\nAgent: और किसी प्रकार की सहायता?"
+  },
+  "analysis": {
+    "summary": "The customer, Ranjeet Kumar, called about a fallen panel and inquired about monthly leave allowances. The agent clarified that the specific panel was not associated with the given ID and advised submitting additional leave requests through DSK. The call ended with the customer acknowledging the agent's guidance.",
+    "problemFaced": "The customer is reporting an issue with a panel (possibly solar panel) that has fallen or is not in the proper position, and he is also inquiring about the number of leave days he is entitled to each month.",
+    "solutionPresented": "The agent provided guidance that if the partner wants more than the standard four days off per month, they should submit their request to DSK (likely a department or manager). The agent confirmed the partner receives four days of leave monthly and directed them to follow the formal process for additional leave requests.",
+    "agentSentiment": {
+      "overall": "neutral",
+      "confidence": 0.8,
+      "details": "The agent speaks in a professional, matter-of-fact tone, providing information and guidance with a consistent and even-tempered approach. While there are some moments of clarification around the driver ID, the agent remains composed and focused on assisting the customer effectively."
+    },
+    "partnerSentiment": {
+      "overall": "concerned",
+      "confidence": 0.75,
+      "details": "The speaker sounds slightly anxious or worried while discussing some numerical details (panel, ID number) and asking about monthly leave, with a tone that suggests some underlying concern or mild stress about the information being discussed"
+    },
+    "partnerSatisfactionScore": {
+      "score": 4,
+      "maxScore": 10,
+      "reasoning": "The customer seems frustrated throughout the call, with communication challenges and unresolved issues. The agent appears somewhat confused about the customer's ID and doesn't fully address the initial complaint about a fallen panel. While the agent provides some guidance about leave policy, the customer doesn't seem fully satisfied. The interaction feels disjointed, with the agent repeatedly confirming details and not directly resolving the customer's primary concern. The short, abrupt responses from both parties suggest a low-quality customer service experience."
+    }
+  }
+}
