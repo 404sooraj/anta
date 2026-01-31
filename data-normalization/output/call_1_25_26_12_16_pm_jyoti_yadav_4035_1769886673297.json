@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "date": "1/25/26 12:16 PM",
+    "name": "Jyoti Yadav",
+    "issueType": "Meter: No Reading (No Light)",
+    "callingNumber": "9335144035",
+    "recordingLink": "https://drive.google.com/file/d/1hXAutH44BFuVYgkZcJS34pjQBSogzZCj/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:11:13.297Z",
+    "callDuration": 123
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "नमस्कार, बैटरी स्मार्ट का आपका स्वागत है। मैं ज्योति बात कर रही हूँ, बताइए मैं आपकी क्या सहायता कर सकती हूँ?",
+        "timestamp": 2.28,
+        "speaker": "agent"
+      },
+      {
+        "text": "ड्राइवर आईडी बता दीजिए।",
+        "timestamp": 17.4,
+        "speaker": "agent"
+      },
+      {
+        "text": "98873, माफ़ी चाहूँगी, आपके साथ परेशानी आ रही है। जैसे कि मैं समझ पा रही हूँ, आपके मीटर में लाइट और रीडिंग कुछ भी नहीं आ रहा है?",
+        "timestamp": 22.68,
+        "speaker": "agent"
+      },
+      {
+        "text": "ठीक है, इसके लिए आप नज़दीकी डीएसपी पे जाके भी अपना मीटर ठीक करा सकते हैं। आपकी लोकेशन में सर्विस अवेलेबल है। स्टेशन आईडी है आपका मुट्ठीगंज में 1694। ये स्टेशन आपके पास में है, 1694?",
+        "timestamp": 32.94,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, आप।",
+        "timestamp": 51.84,
+        "speaker": "agent"
+      },
+      {
+        "text": "सर, मैं भी पार्टनर स्टेशन की ही बात कर रही हूँ। पार्टनर स्टेशन पे सर्विस अवेलेबल है, वहाँ जाके आप मीटर ठीक करा सकते हैं। पहला जो स्टेशन है वो आपका मुट्ठीगंज में है, स्टेशन आईडी है 1694। यहाँ पे आप 10 से 1 बजे के बीच में जब जाएंगे तो आपको सर्विस मिल जाएगी, 10 से 1। ठीक है?",
+        "timestamp": 59.76,
+        "speaker": "agent"
+      },
+      {
+        "text": "लाइन पे रहिए, दूसरा स्टेशन भी मैं आपको गाइड कर देती हूँ। आपका दूसरा स्टेशन है लाल कॉलोनी में, ये 12 से 2 बजे तक खुला रहता है। यहाँ पे आपको मीटर, जो भी आपकी प्रॉब्लम है, सॉल्व हो जाएगी। ये स्टेशन आईडी है 3389। ठीक है? इन दोनों स्टेशन में से आप किसी भी स्टेशन पे जा सकते हैं, बैटरी, अपना मीटर आप ठीक करा लीजिए। ठीक है?",
+        "timestamp": 79.2,
+        "speaker": "agent"
+      },
+      {
+        "text": "हाँ, चले जाइए। आपका, आपको मतलब तुरंत सर्विस मिल जाएगी। ठीक है?",
+        "timestamp": 101.04,
+        "speaker": "agent"
+      },
+      {
+        "text": "ठीक है सर, बताना चाहूँगी, कॉल को मैं आईवीआर पे ट्रांसफर कर रही हूँ फीडबैक के लिए। दी गई जानकारी से संतुष्ट हैं तो 1 दबाइए, असंतुष्ट हैं तो 2 दबाइएगा। बैटरी स्मार्ट में समय देने के लिए धन्यवाद।",
+        "timestamp": 107.76,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "देखिए मैम, कल रात में जो है, रैंडमली हमारा मीटर ब्लैंड हो गया।",
+        "timestamp": 10.98,
+        "speaker": "partner"
+      },
+      {
+        "text": "98873।",
+        "timestamp": 20.94,
+        "speaker": "partner"
+      },
+      {
+        "text": "जी नहीं, कुछ नहीं आ रहा।",
+        "timestamp": 30.78,
+        "speaker": "partner"
+      },
+      {
+        "text": "नहीं, यहाँ आसपास नहीं है, हमारा इतना बहुत दूर है यहाँ से। ठीक है?",
+        "timestamp": 46.8,
+        "speaker": "partner"
+      },
+      {
+        "text": "आप ऐसा करिए, हमारे पास स्टेशन पे मीटर भिजवा दीजिए और वहीं, वहीं लग जाएगा और फिर कंप्लेन।",
+        "timestamp": 52.86,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक है।",
+        "timestamp": 78,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक है, मतलब जाना पड़ेगा वहाँ?",
+        "timestamp": 99.18,
+        "speaker": "partner"
+      },
+      {
+        "text": "ओके, ठीक है।",
+        "timestamp": 106.86,
+        "speaker": "partner"
+      },
+      {
+        "text": "अगर आप हमारे द्वारा दी गई सहायता आपकी प्रतिक्रिया हमारे।",
+        "timestamp": 120.6,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: नमस्कार, बैटरी स्मार्ट का आपका स्वागत है। मैं ज्योति बात कर रही हूँ, बताइए मैं आपकी क्या सहायता कर सकती हूँ?\n\nPartner: देखिए मैम, कल रात में जो है, रैंडमली हमारा मीटर ब्लैंड हो गया।\n\nAgent: ड्राइवर आईडी बता दीजिए।\n\nPartner: 98873।\n\nAgent: 98873, माफ़ी चाहूँगी, आपके साथ परेशानी आ रही है। जैसे कि मैं समझ पा रही हूँ, आपके मीटर में लाइट और रीडिंग कुछ भी नहीं आ रहा है?\n\nPartner: जी नहीं, कुछ नहीं आ रहा।\n\nAgent: ठीक है, इसके लिए आप नज़दीकी डीएसपी पे जाके भी अपना मीटर ठीक करा सकते हैं। आपकी लोकेशन में सर्विस अवेलेबल है। स्टेशन आईडी है आपका मुट्ठीगंज में 1694। ये स्टेशन आपके पास में है, 1694?\n\nPartner: नहीं, यहाँ आसपास नहीं है, हमारा इतना बहुत दूर है यहाँ से। ठीक है?\n\nAgent: जी, आप।\n\nPartner: आप ऐसा करिए, हमारे पास स्टेशन पे मीटर भिजवा दीजिए और वहीं, वहीं लग जाएगा और फिर कंप्लेन।\n\nAgent: सर, मैं भी पार्टनर स्टेशन की ही बात कर रही हूँ। पार्टनर स्टेशन पे सर्विस अवेलेबल है, वहाँ जाके आप मीटर ठीक करा सकते हैं। पहला जो स्टेशन है वो आपका मुट्ठीगंज में है, स्टेशन आईडी है 1694। यहाँ पे आप 10 से 1 बजे के बीच में जब जाएंगे तो आपको सर्विस मिल जाएगी, 10 से 1। ठीक है?\n\nPartner: ठीक है।\n\nAgent: लाइन पे रहिए, दूसरा स्टेशन भी मैं आपको गाइड कर देती हूँ। आपका दूसरा स्टेशन है लाल कॉलोनी में, ये 12 से 2 बजे तक खुला रहता है। यहाँ पे आपको मीटर, जो भी आपकी प्रॉब्लम है, सॉल्व हो जाएगी। ये स्टेशन आईडी है 3389। ठीक है? इन दोनों स्टेशन में से आप किसी भी स्टेशन पे जा सकते हैं, बैटरी, अपना मीटर आप ठीक करा लीजिए। ठीक है?\n\nPartner: ठीक है, मतलब जाना पड़ेगा वहाँ?\n\nAgent: हाँ, चले जाइए। आपका, आपको मतलब तुरंत सर्विस मिल जाएगी। ठीक है?\n\nPartner: ओके, ठीक है।\n\nAgent: ठीक है सर, बताना चाहूँगी, कॉल को मैं आईवीआर पे ट्रांसफर कर रही हूँ फीडबैक के लिए। दी गई जानकारी से संतुष्ट हैं तो 1 दबाइए, असंतुष्ट हैं तो 2 दबाइएगा। बैटरी स्मार्ट में समय देने के लिए धन्यवाद।\n\nPartner: अगर आप हमारे द्वारा दी गई सहायता आपकी प्रतिक्रिया हमारे।"
+  },
+  "analysis": {
+    "summary": "The customer reported that their battery meter randomly went blank and was not displaying any readings. The agent provided detailed guidance on two nearby service stations where the customer could get their meter fixed, including specific station IDs, locations, and operating hours. The call ended with the customer understanding they need to visit one of the recommended stations to resolve their meter issue.",
+    "problemFaced": "The partner's electric meter randomly went blank/blank screen overnight, with no light or reading showing on the meter, preventing him from using or reading the meter properly.",
+    "solutionPresented": "The agent provided the partner with two nearby service station locations where they can get their meter repaired: Muttigung station (ID 1694), open from 10 AM to 1 PM, and Lal Colony station (ID 3389), open from 12 PM to 2 PM. The agent advised the partner to visit either of these stations to have their meter fixed and resolve the issue of the meter being blank and not showing any readings.",
+    "agentSentiment": {
+      "overall": "calm/composed",
+      "confidence": 0.9,
+      "details": "The agent speaks in a professional, helpful, and patient manner, systematically providing detailed service information about two repair stations. Her tone is steady and supportive, explaining options clearly without showing frustration or emotional volatility."
+    },
+    "partnerSentiment": {
+      "overall": "concerned",
+      "confidence": 0.85,
+      "details": "The speaker sounds worried and slightly frustrated about a meter issue, using a tone that suggests technical difficulty and seeking a resolution. The repeated 'theek hai' (okay) and questioning indicate underlying concern about the problem."
+    },
+    "partnerSatisfactionScore": {
+      "score": 7,
+      "maxScore": 10,
+      "reasoning": "The customer's issue with a malfunctioning meter was addressed with specific guidance on two service stations where they can get their meter fixed. The agent was patient, provided clear instructions with station locations and timings, and seemed genuinely helpful. The customer initially seemed frustrated but became more cooperative as the agent explained the solution. While the customer will need to take additional steps (visiting a service station), they appeared satisfied with the information provided. The slight deduction in score is due to the inconvenience of having to physically go to a service station to resolve the issue."
+    }
+  }
+}

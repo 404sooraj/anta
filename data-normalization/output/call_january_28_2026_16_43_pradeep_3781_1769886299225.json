@@ -1,0 +1,203 @@
+{
+  "metadata": {
+    "date": "January 28, 2026, 16:43",
+    "name": "Pradeep",
+    "issueType": "Vehicle Impounded / Vehicle Seized with Battery",
+    "callingNumber": "7295953781",
+    "recordingLink": "https://drive.google.com/file/d/1bf0fsjvDw7POpFFITp-m8NC3i3AalxVf/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:04:59.225Z",
+    "callDuration": 130
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "जी नमस्ते सर, मैं बैटरी स्मार्ट से पर बात कर रहा हूँ। क्या मेरी बात दौलत परवेन जी से हो रही है?",
+        "timestamp": 2.7,
+        "speaker": "agent"
+      },
+      {
+        "text": "क्या मैं आपका ड्राइवर आईडी जान सकता हूँ?",
+        "timestamp": 9.3,
+        "speaker": "agent"
+      },
+      {
+        "text": "13168। 131668। आपकी आईडी पर सर एक कंप्लेंट था कि आपकी जो गाड़ी है, पुलिस ने पकड़ लिया तो आपको पेनल्टी हटवाना है। तो आपके जो 24 साल की जो—जी, तो आपके जो 24 साल की पेनल्टी लगी थी ₹80 का, वो मैंने हटा दी हूँ। अब आपकी आईडी पर कोई भी पेनल्टी नहीं है, ठीक है सर?",
+        "timestamp": 13.8,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, इसके अलावा मैं आपका कोई और भी सहायता कर सकता हूँ?",
+        "timestamp": 33.9,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी?",
+        "timestamp": 41.7,
+        "speaker": "agent"
+      },
+      {
+        "text": "23 तारीख का आपका जो आपने जो पेनल्टी जमा किया था, वो 23 तारीख के रुपए का जमा किया था। 24 का जो पेनल्टी था ₹80 का, वो मैंने हटा दिया हूँ। ठीक है सर, अब आपकी आईडी पर कोई पेनल्टी नहीं है अब।",
+        "timestamp": 52.2,
+        "speaker": "agent"
+      },
+      {
+        "text": "ठीक है, इसके अलावा मैं आपको कोई और भी सहायता कर सकता हूँ?",
+        "timestamp": 64.2,
+        "speaker": "agent"
+      },
+      {
+        "text": "नहीं, नहीं, नहीं, वो तो आपने स्टेप ले लिया था ना। 26 को कोई पेनल्टी नहीं लगा था और 26 को आपकी छुट्टी था टीम की तरफ से।",
+        "timestamp": 72,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी।",
+        "timestamp": 79.92,
+        "speaker": "agent"
+      },
+      {
+        "text": "नहीं लगेगा। जो भी पेनल्टी था आपका, मैंने हटा दिया हूँ। अब कोई पेनल्टी नहीं है।",
+        "timestamp": 85.62,
+        "speaker": "agent"
+      },
+      {
+        "text": "ठीक है। इसके अलावा मैं आपको कोई और भी सहायता कर सकता हूँ?",
+        "timestamp": 90.78,
+        "speaker": "agent"
+      },
+      {
+        "text": "बताइए।",
+        "timestamp": 95.46,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी।",
+        "timestamp": 99.06,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी।",
+        "timestamp": 102.54,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, उसके लिए सर आप हमारे हेल्पलाइन नंबर पर कॉल कर लीजिए। उनसे आपको जानकारी मिल जाएगा। सर, अगर आपको कोई पेनल्टी के रिगार्डिंग अगर आपको कुछ बताना है तो आप मुझे बता सकते हैं।",
+        "timestamp": 110.34,
+        "speaker": "agent"
+      },
+      {
+        "text": "ठीक है, आप हेल्पलाइन नंबर पर कॉल कर लीजिएगा। वहाँ से आपको सहायता मिल जाएगा सर।",
+        "timestamp": 121.26,
+        "speaker": "agent"
+      },
+      {
+        "text": "ठीक है सर, बैटरी स्मार्ट के लिए धन्यवाद। आपका दिन शुभ हो सर।",
+        "timestamp": 125.64,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "हाँ, बोलिए।",
+        "timestamp": 7.92,
+        "speaker": "partner"
+      },
+      {
+        "text": "13168।",
+        "timestamp": 11.88,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक है, ठीक।",
+        "timestamp": 32.7,
+        "speaker": "partner"
+      },
+      {
+        "text": "जब चेक किए तो कल वाला, कल वाला डेट में मेरा पेनल्टी लगा हुआ है।",
+        "timestamp": 37.26,
+        "speaker": "partner"
+      },
+      {
+        "text": "कल का जो पिछले वाला डेट है, आज 28 है ना, देखिए तो उसमें 26 तारीख वाला हम देखें तो पेनल्टी है।",
+        "timestamp": 43.26,
+        "speaker": "partner"
+      },
+      {
+        "text": "हम।",
+        "timestamp": 63.42,
+        "speaker": "partner"
+      },
+      {
+        "text": "जैसे कि हम, हम बोल रहे हैं कि 26 तारीख वाला डेट में देखिए ना, पेनल्टी लगा हुआ है 26 तारीख को।",
+        "timestamp": 66.6,
+        "speaker": "partner"
+      },
+      {
+        "text": "हम।",
+        "timestamp": 78.72,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक है, हट गया तो कोई बात नहीं। आज, आज बाइक ही लेंगे तो पेनल्टी नहीं देना पड़ेगा?",
+        "timestamp": 81.18,
+        "speaker": "partner"
+      },
+      {
+        "text": "हम। ठीक है।",
+        "timestamp": 89.58,
+        "speaker": "partner"
+      },
+      {
+        "text": "जरा सा एक बात कहना था हमको।",
+        "timestamp": 93.72,
+        "speaker": "partner"
+      },
+      {
+        "text": "मेरा एक आईडी है।",
+        "timestamp": 97.26,
+        "speaker": "partner"
+      },
+      {
+        "text": "107751।",
+        "timestamp": 100.62,
+        "speaker": "partner"
+      },
+      {
+        "text": "उसमें मेरा पांच आठ महीना हो जाएगा बाइक चोरी हुआ हुआ। अभी तक मेरा बाइक का कोई कंप्लेंट नहीं है।",
+        "timestamp": 104.1,
+        "speaker": "partner"
+      },
+      {
+        "text": "नहीं, बस वही पूछना था मेरे बाइक का।",
+        "timestamp": 118.98,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक है, ठीक।",
+        "timestamp": 124.56,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: जी नमस्ते सर, मैं बैटरी स्मार्ट से पर बात कर रहा हूँ। क्या मेरी बात दौलत परवेन जी से हो रही है?\n\nPartner: हाँ, बोलिए।\n\nAgent: क्या मैं आपका ड्राइवर आईडी जान सकता हूँ?\n\nPartner: 13168।\n\nAgent: 13168। 131668। आपकी आईडी पर सर एक कंप्लेंट था कि आपकी जो गाड़ी है, पुलिस ने पकड़ लिया तो आपको पेनल्टी हटवाना है। तो आपके जो 24 साल की जो—जी, तो आपके जो 24 साल की पेनल्टी लगी थी ₹80 का, वो मैंने हटा दी हूँ। अब आपकी आईडी पर कोई भी पेनल्टी नहीं है, ठीक है सर?\n\nPartner: ठीक है, ठीक।\n\nAgent: जी, इसके अलावा मैं आपका कोई और भी सहायता कर सकता हूँ?\n\nPartner: जब चेक किए तो कल वाला, कल वाला डेट में मेरा पेनल्टी लगा हुआ है।\n\nAgent: जी?\n\nPartner: कल का जो पिछले वाला डेट है, आज 28 है ना, देखिए तो उसमें 26 तारीख वाला हम देखें तो पेनल्टी है।\n\nAgent: 23 तारीख का आपका जो आपने जो पेनल्टी जमा किया था, वो 23 तारीख के रुपए का जमा किया था। 24 का जो पेनल्टी था ₹80 का, वो मैंने हटा दिया हूँ। ठीक है सर, अब आपकी आईडी पर कोई पेनल्टी नहीं है अब।\n\nPartner: हम।\n\nAgent: ठीक है, इसके अलावा मैं आपको कोई और भी सहायता कर सकता हूँ?\n\nPartner: जैसे कि हम, हम बोल रहे हैं कि 26 तारीख वाला डेट में देखिए ना, पेनल्टी लगा हुआ है 26 तारीख को।\n\nAgent: नहीं, नहीं, नहीं, वो तो आपने स्टेप ले लिया था ना। 26 को कोई पेनल्टी नहीं लगा था और 26 को आपकी छुट्टी था टीम की तरफ से।\n\nPartner: हम।\n\nAgent: जी।\n\nPartner: ठीक है, हट गया तो कोई बात नहीं। आज, आज बाइक ही लेंगे तो पेनल्टी नहीं देना पड़ेगा?\n\nAgent: नहीं लगेगा। जो भी पेनल्टी था आपका, मैंने हटा दिया हूँ। अब कोई पेनल्टी नहीं है।\n\nPartner: हम। ठीक है।\n\nAgent: ठीक है। इसके अलावा मैं आपको कोई और भी सहायता कर सकता हूँ?\n\nPartner: जरा सा एक बात कहना था हमको।\n\nAgent: बताइए।\n\nPartner: मेरा एक आईडी है।\n\nAgent: जी।\n\nPartner: 107751।\n\nAgent: जी।\n\nPartner: उसमें मेरा पांच आठ महीना हो जाएगा बाइक चोरी हुआ हुआ। अभी तक मेरा बाइक का कोई कंप्लेंट नहीं है।\n\nAgent: जी, उसके लिए सर आप हमारे हेल्पलाइन नंबर पर कॉल कर लीजिए। उनसे आपको जानकारी मिल जाएगा। सर, अगर आपको कोई पेनल्टी के रिगार्डिंग अगर आपको कुछ बताना है तो आप मुझे बता सकते हैं।\n\nPartner: नहीं, बस वही पूछना था मेरे बाइक का।\n\nAgent: ठीक है, आप हेल्पलाइन नंबर पर कॉल कर लीजिएगा। वहाँ से आपको सहायता मिल जाएगा सर।\n\nPartner: ठीक है, ठीक।\n\nAgent: ठीक है सर, बैटरी स्मार्ट के लिए धन्यवाद। आपका दिन शुभ हो सर।"
+  },
+  "analysis": {
+    "summary": "The customer called about a penalty on his driver ID and sought clarification about its status. The agent informed the customer that he had removed the ₹80 penalty from the 24th and assured him that no further penalties exist on his account. The call concluded with the customer also inquiring about a previously stolen bike, which the agent directed him to contact the helpline for further assistance.",
+    "problemFaced": "The customer was experiencing multiple issues: first, a penalty from the police for their vehicle that was later resolved by the agent, and second, an unresolved complaint about a bike theft that occurred 5-8 months ago for which no action had been taken.",
+    "solutionPresented": "The agent resolved the partner's penalty issue by removing the ₹80 penalty that was previously on the driver's account. The agent confirmed that there are no more penalties on the partner's ID. When the partner inquired about a bike theft from 5-8 months ago with no complaint filed, the agent directed him to call the helpline number to get more information about the incident.",
+    "agentSentiment": {
+      "overall": "calm/composed",
+      "confidence": 0.9,
+      "details": "The agent maintains a consistently polite, professional, and helpful tone throughout the conversation. They speak in a measured, reassuring manner, repeatedly offering assistance and explaining the penalty resolution calmly. The language is respectful, using 'सर' (sir) frequently and ending with a pleasant farewell."
+    },
+    "partnerSentiment": {
+      "overall": "concerned",
+      "confidence": 0.85,
+      "details": "The speaker sounds concerned about a penalty charge and a past bike theft, speaking in a serious but not overly emotional tone. They are seeking clarification about their bike and penalty status, with a mix of mild frustration and a desire to resolve the issue."
+    },
+    "partnerSatisfactionScore": {
+      "score": 7,
+      "maxScore": 10,
+      "reasoning": "The customer's issue with the penalty was partially resolved. The agent removed the ₹80 penalty for the 24th and clarified there are no outstanding penalties. The customer seemed mostly satisfied, responding with 'ठीक है' (okay) multiple times. However, his secondary concern about a bike theft from 5-8 months ago was not addressed, and the agent simply redirected him to a helpline. While the primary penalty issue was resolved, the unresolved bike theft complaint prevents a higher satisfaction rating."
+    }
+  }
+}

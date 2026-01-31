@@ -1,0 +1,188 @@
+{
+  "metadata": {
+    "date": "January 28, 2026, 15:02",
+    "name": "Prateeksha",
+    "issueType": "Swap Information Shared",
+    "callingNumber": "9123273350",
+    "recordingLink": "https://drive.google.com/file/d/1FT2bCMfwo1cDXS2clwmKnc2QxFDKwF0O/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:05:22.755Z",
+    "callDuration": 200
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "नमस्कार, भट्टी स्मार्ट में आपका स्वागत है। मैं प्रतीक्षा, आपकी क्या सहायता कर सकती हूँ?",
+        "timestamp": 3.42,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, ड्राइवर आईडी आपने क्या बताई है?",
+        "timestamp": 14.1,
+        "speaker": "agent"
+      },
+      {
+        "text": "166025। आईडी पर नाम बता दीजिए।",
+        "timestamp": 19.02,
+        "speaker": "agent"
+      },
+      {
+        "text": "चंद्रदीप कुमार जी के नाम की आईडी है आपकी 166025। आईडी और नाम कन्फर्म कराने के लिए धन्यवाद। क्या सहायता कर सकते हैं आपकी बैटरी स्मार्ट से?",
+        "timestamp": 24.48,
+        "speaker": "agent"
+      },
+      {
+        "text": "माफ़ी चाहते हैं, 25 जनवरी की तो आपकी ऐसी कोई कंप्लेंट नहीं है। आपको डीएसके पर गाइड किया गया था।",
+        "timestamp": 43.14,
+        "speaker": "agent"
+      },
+      {
+        "text": "यहाँ पर आप कह रहे हैं कि आपने 25 तारीख को इन्फॉर्म किया है कि आपकी बैटरी लिए जाएँ?",
+        "timestamp": 51.48,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, पर यहाँ पर तो ऐसी कोई जानकारी शो नहीं हो रही। यहाँ पर शो हो रहा है कि आपको नज़दीकी स्टेशन बताया गया था बैटरी जमा करवाने के लिए।",
+        "timestamp": 59.22,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, आप हमें बता दीजिए कहाँ से बैटरी लाना है।",
+        "timestamp": 78.48,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी सर, वही हम कह रहे हैं कि आपकी तबीयत खराब है ना, तो आप लोकेशन बता दीजिए, बैटरी कहाँ पर है कि हमारी टीम जाकर लाए।",
+        "timestamp": 87.54,
+        "speaker": "agent"
+      },
+      {
+        "text": "स्टेशन आईडी? वहाँ जमा करवा रहे हैं आप?",
+        "timestamp": 106.02,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, पेनल्टी है आपकी। पेनल्टी आपकी 360 रुपये है। ये आपकी 24, 25 और 27 तारीख की पेनल्टी है।",
+        "timestamp": 114.66,
+        "speaker": "agent"
+      },
+      {
+        "text": "आप कहाँ पर बैटरी जमा कर रहे हैं? स्टेशन की आईडी बता दीजिए।",
+        "timestamp": 127.92,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, आप आईडी बता दीजिए, कहाँ पर है आप?",
+        "timestamp": 158.64,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी? माफ़ी चाहते हैं, इनकी आईडी पर ऐसी कोई कंप्लेंट नहीं है कि इनको बैटरी पिक करवानी थी?",
+        "timestamp": 170.94,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, समझ पा रहे हैं आपकी बात को। यहाँ पर कंप्लेंट है कि आपको नियर बाय डीएसके पर भेजा गया था, पर ये कंप्लेंट नहीं है कि आपने बोला गया होगा कि आपके घर से बैटरी लानी है। ऐसी कोई कंप्लेंट नहीं है। आपको 25 तारीख को आपका नियर बाय स्टेशन बताया गया था।",
+        "timestamp": 185.64,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "ड्राइवर आईडी दीजिए, मैं कंपनी में किया था। पहले ड्राइवर आईडी आप दीजिए।",
+        "timestamp": 9.54,
+        "speaker": "partner"
+      },
+      {
+        "text": "166025।",
+        "timestamp": 17.04,
+        "speaker": "partner"
+      },
+      {
+        "text": "चंद्रदीप कुमार।",
+        "timestamp": 23.04,
+        "speaker": "partner"
+      },
+      {
+        "text": "अभी हम 25 तारीख को कंप्लेंट किए थे कि मेरा तबीयत खराब है, और अभी तक वो बैटरी वाले नहीं कोई आए हैं।",
+        "timestamp": 34.74,
+        "speaker": "partner"
+      },
+      {
+        "text": "क्या डीएसके?",
+        "timestamp": 49.68,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ, हाँ, ले जाएँ।",
+        "timestamp": 57.6,
+        "speaker": "partner"
+      },
+      {
+        "text": "बैटरी जमा का तो तबीयत खराब हो गया था, हम फोन किए थे तो अभी तक वो बोले कि हाँ सर चला जाएगा। आप ये बोल रहे हैं कि दूसरा कंपनी थी, आप बोल रहे हैं।",
+        "timestamp": 68.76,
+        "speaker": "partner"
+      },
+      {
+        "text": "लाना नहीं है, मुझे जमा करना है। मेरा तबीयत डाउन है अभी।",
+        "timestamp": 82.86,
+        "speaker": "partner"
+      },
+      {
+        "text": "मैं अभी खुजाई मिली पे पास हूँ, ठीक है। मैं अभी आईएफसी गोडाउन के पास आ गया हूँ, उनका अनिल कुमार के नाम से जिनका आईडी है।",
+        "timestamp": 97.32,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ, हाँ। तो मैं यहाँ ये बोल रहे हैं कि नहीं, यहाँ कोर्ट पे पेनल्टी लगा हुआ है।",
+        "timestamp": 109.38,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ।",
+        "timestamp": 127.38,
+        "speaker": "partner"
+      },
+      {
+        "text": "स्टेशन आईडी? हाँ सर, हाँ वही तो बोल रहे हैं कि कंप्लेंट की वजह से तो पेनल्टी कैसा लग गया? इसी कारण अब बात फॉर सर्चिंग हो रहा है कि हम गाड़ी जब चलाए नहीं हैं, जब फोन नंबर भी कर दिए हैं, फोन भी कर दिए थे, तो जमा कैसे कर देगा आदमी?",
+        "timestamp": 132.66,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ मैम, हम कंप्लेंट किए थे 26 तारीख को या 25 तारीख को।",
+        "timestamp": 168.06,
+        "speaker": "partner"
+      },
+      {
+        "text": "वैसे भी तो वो कंप्लेंट ही नहीं है। अगर आपने बोली थी इसलिए कोई बात नहीं है, हाँ, हाँ। आप जब ठीक होगे तब जाकर जमा कर दीजिए ऐसा बोल रहे हैं।",
+        "timestamp": 177.84,
+        "speaker": "partner"
+      },
+      {
+        "text": "आज।",
+        "timestamp": 199.86,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: नमस्कार, भट्टी स्मार्ट में आपका स्वागत है। मैं प्रतीक्षा, आपकी क्या सहायता कर सकती हूँ?\n\nPartner: ड्राइवर आईडी दीजिए, मैं कंपनी में किया था। पहले ड्राइवर आईडी आप दीजिए।\n\nAgent: जी, ड्राइवर आईडी आपने क्या बताई है?\n\nPartner: 166025।\n\nAgent: 166025। आईडी पर नाम बता दीजिए।\n\nPartner: चंद्रदीप कुमार।\n\nAgent: चंद्रदीप कुमार जी के नाम की आईडी है आपकी 166025। आईडी और नाम कन्फर्म कराने के लिए धन्यवाद। क्या सहायता कर सकते हैं आपकी बैटरी स्मार्ट से?\n\nPartner: अभी हम 25 तारीख को कंप्लेंट किए थे कि मेरा तबीयत खराब है, और अभी तक वो बैटरी वाले नहीं कोई आए हैं।\n\nAgent: माफ़ी चाहते हैं, 25 जनवरी की तो आपकी ऐसी कोई कंप्लेंट नहीं है। आपको डीएसके पर गाइड किया गया था।\n\nPartner: क्या डीएसके?\n\nAgent: यहाँ पर आप कह रहे हैं कि आपने 25 तारीख को इन्फॉर्म किया है कि आपकी बैटरी लिए जाएँ?\n\nPartner: हाँ, हाँ, ले जाएँ।\n\nAgent: जी, पर यहाँ पर तो ऐसी कोई जानकारी शो नहीं हो रही। यहाँ पर शो हो रहा है कि आपको नज़दीकी स्टेशन बताया गया था बैटरी जमा करवाने के लिए।\n\nPartner: बैटरी जमा का तो तबीयत खराब हो गया था, हम फोन किए थे तो अभी तक वो बोले कि हाँ सर चला जाएगा। आप ये बोल रहे हैं कि दूसरा कंपनी थी, आप बोल रहे हैं।\n\nAgent: जी, आप हमें बता दीजिए कहाँ से बैटरी लाना है।\n\nPartner: लाना नहीं है, मुझे जमा करना है। मेरा तबीयत डाउन है अभी।\n\nAgent: जी सर, वही हम कह रहे हैं कि आपकी तबीयत खराब है ना, तो आप लोकेशन बता दीजिए, बैटरी कहाँ पर है कि हमारी टीम जाकर लाए।\n\nPartner: मैं अभी खुजाई मिली पे पास हूँ, ठीक है। मैं अभी आईएफसी गोडाउन के पास आ गया हूँ, उनका अनिल कुमार के नाम से जिनका आईडी है।\n\nAgent: स्टेशन आईडी? वहाँ जमा करवा रहे हैं आप?\n\nPartner: हाँ, हाँ। तो मैं यहाँ ये बोल रहे हैं कि नहीं, यहाँ कोर्ट पे पेनल्टी लगा हुआ है।\n\nAgent: जी, पेनल्टी है आपकी। पेनल्टी आपकी 360 रुपये है। ये आपकी 24, 25 और 27 तारीख की पेनल्टी है।\n\nPartner: हाँ।\n\nAgent: आप कहाँ पर बैटरी जमा कर रहे हैं? स्टेशन की आईडी बता दीजिए।\n\nPartner: स्टेशन आईडी? हाँ सर, हाँ वही तो बोल रहे हैं कि कंप्लेंट की वजह से तो पेनल्टी कैसा लग गया? इसी कारण अब बात फॉर सर्चिंग हो रहा है कि हम गाड़ी जब चलाए नहीं हैं, जब फोन नंबर भी कर दिए हैं, फोन भी कर दिए थे, तो जमा कैसे कर देगा आदमी?\n\nAgent: जी, आप आईडी बता दीजिए, कहाँ पर है आप?\n\nPartner: हाँ मैम, हम कंप्लेंट किए थे 26 तारीख को या 25 तारीख को।\n\nAgent: जी? माफ़ी चाहते हैं, इनकी आईडी पर ऐसी कोई कंप्लेंट नहीं है कि इनको बैटरी पिक करवानी थी?\n\nPartner: वैसे भी तो वो कंप्लेंट ही नहीं है। अगर आपने बोली थी इसलिए कोई बात नहीं है, हाँ, हाँ। आप जब ठीक होगे तब जाकर जमा कर दीजिए ऐसा बोल रहे हैं।\n\nAgent: जी, समझ पा रहे हैं आपकी बात को। यहाँ पर कंप्लेंट है कि आपको नियर बाय डीएसके पर भेजा गया था, पर ये कंप्लेंट नहीं है कि आपने बोला गया होगा कि आपके घर से बैटरी लानी है। ऐसी कोई कंप्लेंट नहीं है। आपको 25 तारीख को आपका नियर बाय स्टेशन बताया गया था।\n\nPartner: आज।"
+  },
+  "analysis": {
+    "summary": "The customer called about a battery pickup complaint from January 25th, claiming no one had come to collect his battery despite his health issues. The agent could not find a record of the specific complaint and suggested the customer had been previously directed to a nearby station to submit the battery. The conversation ended without a clear resolution, with ongoing confusion about the status of the battery pickup and an existing penalty of 360 rupees.",
+    "problemFaced": "The partner is trying to get a battery picked up or dropped off at a station due to feeling unwell, but the customer service agent is unable to find a record of the original complaint. The partner claims they made a complaint on January 25th about needing to submit a battery, but the agent cannot locate this complaint in their system. There is also a mention of a penalty of 360 rupees for the partner, which seems to be related to not using their vehicle or resolving the battery issue.",
+    "solutionPresented": "Based on the transcript, the agent did not provide a clear solution to the partner's complaint. The agent repeatedly stated that there was no record of the partner's complaint about battery pickup, and suggested the partner was previously directed to a nearby station to deposit the battery. The agent asked for the station ID and location multiple times but did not resolve the partner's issue of battery pickup or address the accumulated penalty of 360 rupees. The conversation appears to be unresolved, with the agent and partner talking past each other without reaching a concrete solution.",
+    "agentSentiment": {
+      "overall": "neutral",
+      "confidence": 0.8,
+      "details": "The agent maintains a professional, matter-of-fact tone throughout the conversation. They are systematically addressing the customer's query about battery pickup, verifying details, and explaining the situation without showing strong emotional fluctuations. The language is calm and procedural, focusing on gathering information and clarifying the service process."
+    },
+    "partnerSentiment": {
+      "overall": "frustrated",
+      "confidence": 0.9,
+      "details": "The speaker sounds increasingly agitated about an unresolved complaint, repeatedly emphasizing his poor health condition and the lack of response from the company regarding a battery issue. The tone suggests mounting frustration with bureaucratic delays and unaddressed concerns."
+    },
+    "partnerSatisfactionScore": {
+      "score": 3,
+      "maxScore": 10,
+      "reasoning": "The customer appears frustrated and unsatisfied throughout the call. There are multiple communication gaps and misunderstandings about his battery complaint. The agent seems unable to fully resolve his issue, repeatedly stating there's no record of his original complaint. The customer sounds increasingly agitated as the conversation progresses, with no clear resolution reached. The back-and-forth suggests poor customer service, lack of clear information, and unresolved concerns about a battery pickup and associated penalties."
+    }
+  }
+}
