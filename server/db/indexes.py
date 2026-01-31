@@ -174,4 +174,21 @@ async def create_indexes(db: AsyncIOMotorDatabase) -> None:
     if c:
         logger.info("Indexes batteries.* created")
 
+    # call_transcripts: call_id unique, user_id for user query, start_time for chronological queries
+    c = 0
+    if await _ensure_index(db.call_transcripts, [("call_id", 1)], unique=True, name="call_id_unique"):
+        c += 1
+        total_created += 1
+    if await _ensure_index(db.call_transcripts, [("user_id", 1)], name="user_id_1"):
+        c += 1
+        total_created += 1
+    if await _ensure_index(db.call_transcripts, [("start_time", -1)], name="start_time_-1"):
+        c += 1
+        total_created += 1
+    if await _ensure_index(db.call_transcripts, [("twilio_call_sid", 1)], name="twilio_call_sid_1"):
+        c += 1
+        total_created += 1
+    if c:
+        logger.info("Indexes call_transcripts.* created")
+
     logger.info("Indexes ensured for all collections (%s created this run)", total_created)

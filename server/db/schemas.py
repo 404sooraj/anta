@@ -122,3 +122,34 @@ class Battery(BaseModel):
     battery_id: str
     station_id: Optional[str] = None
     issues: List[BatteryIssue] = Field(default_factory=list)
+
+
+class ConversationMessage(BaseModel):
+    """Individual message in a call transcript."""
+    
+    role: Literal["user", "assistant"]
+    text: str
+    timestamp: Optional[datetime] = None
+
+
+class CallTranscript(BaseModel):
+    """Complete call transcript with AI-generated summary and satisfaction score."""
+    
+    call_id: str  # Unique identifier for this call
+    user_id: Optional[str] = None  # User who made the call (if authenticated)
+    start_time: datetime
+    end_time: datetime
+    duration_seconds: int
+    
+    # Conversation data
+    messages: List[ConversationMessage] = Field(default_factory=list)
+    detected_language: str = "en"
+    
+    # AI-generated insights
+    summary: Optional[str] = None  # AI-generated summary of the conversation
+    satisfaction_score: Optional[int] = Field(None, ge=1, le=5)  # 1-5 rating
+    satisfaction_reasoning: Optional[str] = None  # Why this score was given
+    
+    # Call metadata
+    call_source: Literal["web", "twilio"] = "web"  # Where the call came from
+    twilio_call_sid: Optional[str] = None  # Twilio-specific identifier
