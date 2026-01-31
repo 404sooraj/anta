@@ -6,6 +6,7 @@ then streams TTS response back to client
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import asyncio
 import json
+import uuid
 
 from services.stt import STTService, VADService
 from services.llm import LLMService
@@ -147,20 +148,13 @@ async def audio_websocket(ws: WebSocket):
                 "text": full_transcript
             })
             
-            # Process with LLM pipeline (with conversation history)
-            print(f"🤖 Calling LLM service with conversation context ({len(conversation_history)} turns)...")
-            llm_result = await llm_service.process(full_transcript, conversation_history)
-            
-            response_text = llm_result.get('response', '')
-            print(f"💬 LLM Response: {response_text}")
+            # Process with LLM pipeline (streaming)
+            print(f"🤖 Calling LLM service (streaming) with conversation context ({len(conversation_history)} turns)...")
+            llm_result = await llm_service.process_stream(full_transcript, conversation_history)
+
+            stream = llm_result.get("stream")
             print(f"🎯 Intent: {llm_result.get('intent', {}).get('intent', 'unknown')}")
-            
-            # Add assistant response to conversation history
-            conversation_history.append({
-                "role": "assistant",
-                "text": response_text
-            })
-            
+
             # Extract tool names
             tool_calls_raw = llm_result.get('tool_calls', [])
             tool_names = []
@@ -169,11 +163,92 @@ async def audio_websocket(ws: WebSocket):
                     tool_names.append(tc.get('name', tc.get('tool_name', 'unknown')))
                 elif isinstance(tc, str):
                     tool_names.append(tc)
-            
+
             if tool_names:
                 print(f"🔧 Tools used: {tool_names}")
-            
-            # Send LLM metadata to client
+
+            # Notify client that LLM streaming is starting
+            await ws.send_json({
+                "type": "llm_start",
+                "transcript": full_transcript,
+                "intent": llm_result.get("intent", {}),
+                "tool_calls": tool_names,
+                "tool_results": llm_result.get("tool_results", []),
+                "conversation_history": conversation_history[-10:],
+            })
+
+            async def stream_with_last(async_iter):
+                it = async_iter.__aiter__()
+                try:
+                    prev = await it.__anext__()
+                except StopAsyncIteration:
+                    return
+                while True:
+                    try:
+                        curr = await it.__anext__()
+                        yield prev, False
+                        prev = curr
+                    except StopAsyncIteration:
+                        yield prev, True
+                        return
+
+            response_text = ""
+            tts_context_id = f"tts-{uuid.uuid4()}"
+            tts_started = False
+            audio_chunk_count = 0
+
+            if stream:
+                async for text_chunk, is_last in stream_with_last(stream):
+                    # Check for interruption
+                    current_task = asyncio.current_task()
+                    if current_task and current_task.cancelled():
+                        print("⚠️  LLM streaming interrupted")
+                        await ws.send_json({"type": "interrupted"})
+                        return
+
+                    response_text += text_chunk
+                    await ws.send_json({
+                        "type": "response_stream",
+                        "text": response_text.strip()
+                    })
+
+                    if tts_service.enabled and text_chunk.strip():
+                        if not tts_started:
+                            await ws.send_json({"type": "audio_start"})
+                            tts_started = True
+
+                        try:
+                            async for audio_chunk in tts_service.stream_tts_chunk(
+                                transcript=text_chunk,
+                                context_id=tts_context_id,
+                                continue_flag=not is_last,
+                                language="auto",
+                            ):
+                                current_task = asyncio.current_task()
+                                if current_task and current_task.cancelled():
+                                    print("⚠️  TTS streaming interrupted")
+                                    await ws.send_json({"type": "interrupted"})
+                                    return
+
+                                await ws.send_bytes(audio_chunk)
+                                audio_chunk_count += 1
+                        except asyncio.CancelledError:
+                            print("⚠️  TTS streaming cancelled by interruption")
+                            await ws.send_json({"type": "interrupted"})
+                            raise
+
+                if tts_started:
+                    await ws.send_json({"type": "audio_end"})
+                    print(f"✅ TTS streaming complete ({audio_chunk_count} chunks)\n")
+
+            # Add assistant response to conversation history
+            if response_text.strip():
+                conversation_history.append({
+                    "role": "assistant",
+                    "text": response_text
+                })
+
+            # Send final LLM metadata to client
             await ws.send_json({
                 "type": "llm_response",
                 "transcript": full_transcript,
@@ -181,54 +256,10 @@ async def audio_websocket(ws: WebSocket):
                 "intent": llm_result.get("intent", {}),
                 "tool_calls": tool_names,
                 "tool_results": llm_result.get("tool_results", []),
-                "conversation_history": conversation_history[-10:]  # Send last 10 messages
+                "conversation_history": conversation_history[-10:]
             })
-            
-            print(f"✅ Sent LLM response metadata to client")
-            
-            # Stream response text word-by-word for live display
-            if response_text and response_text.strip():
-                words = response_text.split()
-                streamed_text = ""
-                for word in words:
-                    streamed_text += word + " "
-                    await ws.send_json({
-                        "type": "response_stream",
-                        "text": streamed_text.strip()
-                    })
-                    await asyncio.sleep(0.05)  # Small delay for word-by-word effect
-            
-            # Stream TTS Response
-            if response_text and response_text.strip():
-                print(f"🔊 Starting TTS streaming...")
-                
-                # Signal audio start
-                await ws.send_json({"type": "audio_start"})
-                
-                # Stream TTS audio chunks
-                audio_chunk_count = 0
-                try:
-                    async for audio_chunk in tts_service.stream_tts(
-                        text=response_text,
-                        language="auto"
-                    ):
-                        # Check if task was cancelled (interrupted)
-                        if asyncio.current_task().cancelled():
-                            print("⚠️  TTS streaming interrupted")
-                            await ws.send_json({"type": "interrupted"})
-                            return
-                        
-                        await ws.send_bytes(audio_chunk)
-                        audio_chunk_count += 1
-                    
-                    # Signal audio end
-                    await ws.send_json({"type": "audio_end"})
-                    print(f"✅ TTS streaming complete ({audio_chunk_count} chunks)\n")
-                
-                except asyncio.CancelledError:
-                    print("⚠️  TTS streaming cancelled by interruption")
-                    await ws.send_json({"type": "interrupted"})
-                    raise
+
+            print("✅ Sent final LLM response metadata to client")
             
         finally:
             processing_llm = False
@@ -267,9 +298,7 @@ async def audio_websocket(ws: WebSocket):
 
                     # If this is the START of new speech (wasn't speaking before)
                     if not speaking:
-                        print("🎤 New speech started - Clearing old transcript buffer")
-                        transcript_buffer.clear()
-                        waiting_for_transcript = False
+                        print("🎤 New speech started")
 
                     speaking = True
                     silence_chunks = 0

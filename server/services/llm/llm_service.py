@@ -69,3 +69,26 @@ class LLMService:
                 "tool_results": [],
                 "error": str(e)
             }
+
+    async def process_stream(self, transcript: str, conversation_history: list = None) -> dict:
+        """
+        Process transcript and stream the LLM response.
+
+        Returns:
+            Dictionary containing metadata and an async generator under "stream".
+        """
+        logger.info(f"Processing transcript (streaming): {transcript[:100]}...")
+
+        try:
+            result = await self.pipeline.process_text_streaming(transcript, conversation_history)
+            return result
+        except Exception as e:
+            logger.error(f"Error in LLM streaming: {e}")
+            return {
+                "stream": None,
+                "response": f"I encountered an error processing your request: {str(e)}",
+                "intent": {},
+                "tool_calls": [],
+                "tool_results": [],
+                "error": str(e)
+            }

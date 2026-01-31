@@ -32,13 +32,14 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up BatterySmart API...")
     
     # Verify API keys
-    gemini_key = os.getenv("GEMINI_API_KEY")
+    bedrock_model_id = os.getenv("BEDROCK_MODEL_ID")
+    bedrock_region = os.getenv("BEDROCK_REGION") or os.getenv("AWS_REGION")
     assemblyai_key = os.getenv("ASSEMBLYAI_API_KEY")
     cartesia_key = os.getenv("CARTESIA_API_KEY") or os.getenv("CARTESIAN_PRODUCT_API_KEY")
     tts_enabled = os.getenv("CARTESIA_TTS_ENABLED", "true").strip().lower() not in {"0", "false", "no", "off"}
     
-    if not gemini_key:
-        logger.warning("GEMINI_API_KEY not set - LLM features will not work")
+    if not bedrock_model_id or not bedrock_region:
+        logger.warning("BEDROCK_MODEL_ID or BEDROCK_REGION/AWS_REGION not set - LLM features may not work")
     if not assemblyai_key:
         logger.warning("ASSEMBLYAI_API_KEY not set - STT features will not work")
     if not tts_enabled:

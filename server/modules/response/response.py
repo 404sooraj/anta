@@ -3,7 +3,7 @@
 import os
 import json
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, AsyncGenerator
 from pathlib import Path
 
 from .intent_detector import IntentDetector
@@ -152,6 +152,117 @@ class ResponsePipeline:
         except Exception as e:
             logger.error(f"Error in response pipeline: {e}")
             return {
+                "response": f"I encountered an error processing your request: {str(e)}",
+                "error": str(e),
+                "intent": {"intent": "general", "confidence": 0.0},
+                "tool_calls": [],
+                "tool_results": [],
+            }
+
+    async def process_text_streaming(
+        self,
+        text: str,
+        conversation_history: list = None,
+    ) -> Dict[str, Any]:
+        """
+        Process text and stream the final LLM response.
+
+        Returns:
+            Dictionary containing metadata and an async generator under "stream".
+        """
+        try:
+            logger.info(f"Processing text (streaming): {text[:100]}...")
+
+            # Step 1: Intent Detection (optional for streaming latency)
+            intent_detection_enabled = os.getenv("INTENT_DETECTION_ENABLED", "true").strip().lower() not in {
+                "0",
+                "false",
+                "no",
+                "off",
+            }
+            if intent_detection_enabled:
+                logger.info("Step 1: Intent Detection")
+                intent_result = await self.intent_detector.detect_intent(text)
+                logger.info(f"Detected intent: {intent_result.get('intent')}")
+            else:
+                logger.info("Step 1: Intent Detection skipped (INTENT_DETECTION_ENABLED=false)")
+                intent_result = {"intent": "general", "confidence": 0.0, "reasoning": "disabled"}
+
+            # Step 2: LLM Processing with tool definitions
+            logger.info("Step 2: LLM Processing with tools")
+            langchain_tools = self.tool_registry.get_langchain_tools()
+
+            llm_response = await self.llm_client.generate_with_tools(
+                prompt=text,
+                tool_schemas=langchain_tools,
+                conversation_history=conversation_history,
+            )
+
+            # Step 3: Tool Execution (if LLM requested tools)
+            tool_results = []
+            if llm_response.get("tool_calls"):
+                logger.info(f"Step 3: Executing {len(llm_response['tool_calls'])} tool(s)")
+
+                for tool_call in llm_response["tool_calls"]:
+                    tool_name = tool_call.get("name")
+                    tool_args = tool_call.get("arguments", {})
+                    call_id = tool_call.get("call_id")
+
+                    try:
+                        result = await self.tool_registry.execute_tool(
+                            name=tool_name,
+                            arguments=tool_args,
+                        )
+                        tool_results.append({
+                            "tool_name": tool_name,
+                            "arguments": tool_args,
+                            "call_id": call_id,
+                            "result": result,
+                        })
+                        logger.info(f"Tool {tool_name} executed successfully")
+                    except Exception as e:
+                        logger.error(f"Error executing tool {tool_name}: {e}")
+                        tool_results.append({
+                            "tool_name": tool_name,
+                            "arguments": tool_args,
+                            "call_id": call_id,
+                            "result": {
+                                "status": "error",
+                                "error": str(e),
+                            },
+                        })
+
+            # Step 4: Stream final LLM response
+            logger.info("Step 4: Streaming final response")
+            if tool_results:
+                stream = self.llm_client.stream_response(
+                    prompt=text,
+                    tool_results=tool_results,
+                    messages=llm_response.get("messages"),
+                    tools=langchain_tools,
+                )
+            else:
+                stream = self.llm_client.stream_response(
+                    prompt=text,
+                    conversation_history=conversation_history,
+                    tools=None,
+                )
+
+            return {
+                "stream": stream,
+                "intent": intent_result,
+                "tool_calls": [tc.get("name") for tc in llm_response.get("tool_calls", [])],
+                "tool_results": tool_results,
+                "metadata": {
+                    "model": self.llm_client.model_name,
+                    "temperature": self.llm_client.temperature,
+                },
+            }
+
+        except Exception as e:
+            logger.error(f"Error in streaming response pipeline: {e}")
+            return {
+                "stream": None,
                 "response": f"I encountered an error processing your request: {str(e)}",
                 "error": str(e),
                 "intent": {"intent": "general", "confidence": 0.0},

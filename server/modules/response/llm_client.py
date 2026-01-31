@@ -3,7 +3,7 @@
 import json
 import os
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, AsyncGenerator
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_aws import ChatBedrockConverse
@@ -67,6 +67,22 @@ class LLMClient:
 
         messages.append(HumanMessage(content=prompt))
         return messages
+
+    @staticmethod
+    def _normalize_content(content: Any) -> str:
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            parts = []
+            for item in content:
+                if isinstance(item, str):
+                    parts.append(item)
+                elif isinstance(item, dict):
+                    text = item.get("text") or item.get("content")
+                    if text:
+                        parts.append(str(text))
+            return "".join(parts)
+        return ""
     
     async def generate_with_tools(
         self,
@@ -147,8 +163,54 @@ class LLMClient:
 
             llm = self.model.bind_tools(tools) if tools else self.model
             response = await llm.ainvoke([*base_messages, *tool_messages])
-            return response.content or ""
+            return self._normalize_content(response.content)
 
         except Exception as e:
             logger.error(f"Error generating final response: {e}")
+            raise
+
+    async def stream_response(
+        self,
+        prompt: str,
+        conversation_history: Optional[List[Dict[str, str]]] = None,
+        messages: Optional[List[BaseMessage]] = None,
+        tools: Optional[List[Any]] = None,
+        tool_results: Optional[List[Dict[str, Any]]] = None,
+    ) -> AsyncGenerator[str, None]:
+        """
+        Stream LLM response text.
+
+        Args:
+            prompt: The user prompt.
+            conversation_history: Optional conversation history.
+            messages: Optional pre-built messages.
+            tools: Optional tools to bind for model context.
+            tool_results: Optional tool results to include as ToolMessages.
+
+        Yields:
+            Text chunks as they are generated.
+        """
+        try:
+            base_messages = messages or self._build_messages(prompt, conversation_history)
+            tool_messages: List[ToolMessage] = []
+
+            if tool_results:
+                for tool_result in tool_results:
+                    tool_messages.append(
+                        ToolMessage(
+                            name=tool_result.get("tool_name", ""),
+                            content=json.dumps(tool_result.get("result", {})),
+                            tool_call_id=tool_result.get("call_id") or "",
+                        )
+                    )
+
+            llm = self.model.bind_tools(tools) if tools else self.model
+
+            async for chunk in llm.astream([*base_messages, *tool_messages]):
+                normalized = self._normalize_content(chunk.content)
+                if normalized:
+                    yield normalized
+
+        except Exception as e:
+            logger.error(f"Error streaming LLM response: {e}")
             raise
