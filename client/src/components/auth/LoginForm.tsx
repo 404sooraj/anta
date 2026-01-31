@@ -2,10 +2,8 @@
 
 import { useMemo, useState } from "react";
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 export type LoginFormPayload = {
-  email: string;
+  identifier: string;
   password: string;
   remember: boolean;
 };
@@ -16,7 +14,7 @@ type LoginFormProps = {
 };
 
 export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
@@ -24,15 +22,15 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const resolvedEndpoint =
-    endpoint || process.env.NEXT_PUBLIC_AUTH_ENDPOINT || "/api/auth/login";
+    endpoint ||
+    process.env.NEXT_PUBLIC_AUTH_ENDPOINT ||
+    "http://localhost:8000/api/auth/login";
 
   const formErrors = useMemo(() => {
     const errors: string[] = [];
 
-    if (!email.trim()) {
-      errors.push("Email is required.");
-    } else if (!EMAIL_REGEX.test(email)) {
-      errors.push("Enter a valid email address.");
+    if (!identifier.trim()) {
+      errors.push("User ID or Phone Number is required.");
     }
 
     if (!password) {
@@ -42,7 +40,7 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
     }
 
     return errors;
-  }, [email, password]);
+  }, [identifier, password]);
 
   const canSubmit = formErrors.length === 0 && !isSubmitting;
 
@@ -54,7 +52,8 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
       return;
     }
 
-    const payload = { email: email.trim(), password, remember };
+    // Backend expects 'identifier' not 'email'
+    const payload = { identifier: identifier.trim(), password };
 
     try {
       setIsSubmitting(true);
@@ -67,11 +66,32 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
       });
 
       if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || "Login failed. Try again.");
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.detail || "Login failed. Try again.");
       }
 
-      onSuccess?.(payload);
+      const data = await response.json();
+
+      // Store auth token and user info in localStorage
+      if (data.token) {
+        localStorage.setItem("auth_token", data.token);
+      }
+      if (data.user?.user_id) {
+        localStorage.setItem("user_id", data.user.user_id);
+      }
+      if (data.user?.name) {
+        localStorage.setItem("user_name", data.user.name);
+      }
+
+      console.log(
+        "✅ Login successful, stored auth token and user_id:",
+        data.user?.user_id,
+      );
+
+      // Redirect to home page
+      window.location.href = "/";
+
+      onSuccess?.({ identifier: identifier.trim(), password, remember });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed.");
     } finally {
@@ -84,21 +104,21 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
       <div className="space-y-4">
         <div className="space-y-2">
           <label
-            htmlFor="email"
+            htmlFor="identifier"
             className="text-sm font-medium text-zinc-700 dark:text-zinc-200"
           >
-            Work email
+            User ID or Phone Number
           </label>
           <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
+            id="identifier"
+            name="identifier"
+            type="text"
+            autoComplete="username"
             required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            value={identifier}
+            onChange={(event) => setIdentifier(event.target.value)}
             className="w-full rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-3 text-sm text-zinc-900 dark:text-zinc-100 shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:focus:ring-emerald-500/30"
-            placeholder="you@company.com"
+            placeholder="user_001 or +91-90000-00001"
           />
         </div>
 
@@ -141,12 +161,6 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
             />
             Remember me
           </label>
-          <a
-            href="/forgot-password"
-            className="text-xs font-medium text-emerald-600 hover:text-emerald-700 dark:text-emerald-400"
-          >
-            Forgot password?
-          </a>
         </div>
       </div>
 
@@ -169,26 +183,27 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
       <button
         type="submit"
         disabled={!canSubmit}
-        className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-zinc-300"
+        className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-zinc-300 dark:disabled:bg-zinc-700"
       >
         {isSubmitting ? "Signing in..." : "Sign in"}
       </button>
 
-
-      <p className="text-xs text-zinc-500">
-        Need an account?{" "}
-        <a
-          href="/signup"
-          className="font-medium text-emerald-600 hover:text-emerald-700"
-        >
-          Create one
-        </a>
-      </p>
-
-      <p className="text-[11px] text-zinc-400">
-        This login form is ready for backend integration at{" "}
-        <span className="font-mono text-emerald-600">{resolvedEndpoint}</span>.
-      </p>
+      {/* Test credentials hint */}
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 px-4 py-3 text-xs text-zinc-600 dark:text-zinc-400">
+        <p className="font-medium mb-1">Test Credentials:</p>
+        <p>
+          User ID:{" "}
+          <code className="bg-zinc-200 dark:bg-zinc-700 px-1 rounded">
+            user_001
+          </code>
+        </p>
+        <p>
+          Password:{" "}
+          <code className="bg-zinc-200 dark:bg-zinc-700 px-1 rounded">
+            Password@123
+          </code>
+        </p>
+      </div>
     </form>
   );
 }
