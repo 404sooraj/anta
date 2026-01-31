@@ -2,7 +2,7 @@ import axios from "axios";
 import { API_CONFIG } from "./config";
 
 const api = axios.create({
-  baseURL: API_CONFIG.API_ENDPOINT,
+  baseURL: API_CONFIG.API_BASE,
 });
 
 // Attach auth token from localStorage on every request (client-side only)
