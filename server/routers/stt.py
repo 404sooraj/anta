@@ -8,7 +8,8 @@ import asyncio
 import json
 import uuid
 import logging
-from typing import Literal, cast
+from typing import Literal, cast, Any, Dict, List
+from datetime import datetime
 
 import jwt
 
@@ -26,6 +27,18 @@ def normalize_tts_language(lang: str) -> TTSLanguage:
     if lang in ("hi", "en"):
         return cast(TTSLanguage, lang)
     return "auto"
+
+def serialize_for_json(obj: Any) -> Any:
+    """Recursively serialize datetime objects and other non-JSON types."""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    elif isinstance(obj, dict):
+        return {key: serialize_for_json(val) for key, val in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [serialize_for_json(item) for item in obj]
+    elif hasattr(obj, "isoformat"):  # Handle other date/time types
+        return obj.isoformat()
+    return obj
 
 
 # =========================
@@ -128,15 +141,15 @@ async def audio_websocket(ws: WebSocket):
     print(f"🔑 After send_user_info: user_id = {user_id}")
 
     # State tracking
-    speaking = False
-    silence_chunks = 0
-    transcript_buffer = []
     conversation_history = []  # Store conversation: [{"role": "user", "text": "..."}, {"role": "assistant", "text": "..."}]
     tts_task = None  # Track active TTS streaming task
-    processing_llm = False  # Track if LLM is currently processing
-    waiting_for_transcript = False  # Flag to indicate we're waiting for final transcript
-    vad_buffer = b""  # Buffer for VAD (needs at least VAD_MIN_BYTES per call)
     detected_language = "en"  # Track detected language from STT
+    processing_lock = asyncio.Lock()  # Prevent concurrent LLM calls
+    
+    # Utterance accumulation state
+    current_utterance_parts = []  # Accumulate transcripts from same utterance
+    utterance_timer_task = None  # Timer to finalize utterance after pause
+    UTTERANCE_TIMEOUT = 1.0  # Seconds to wait before finalizing utterance
     
     # Get event loop for scheduling tasks from callback thread
     loop = asyncio.get_event_loop()
@@ -146,49 +159,97 @@ async def audio_websocket(ws: WebSocket):
     llm_service = LLMService()
     tts_service = TTSService()
     
+    async def finalize_utterance():
+        """Finalize accumulated utterance and trigger LLM processing"""
+        nonlocal current_utterance_parts, tts_task
+        
+        if not current_utterance_parts:
+            return
+        
+        # Combine all parts into one user message
+        full_text = " ".join(current_utterance_parts).strip()
+        current_utterance_parts.clear()
+        
+        if not full_text:
+            return
+        
+        print(f"✅ Utterance finalized: {full_text}")
+        
+        # Cancel any ongoing TTS if user spoke
+        if tts_task and not tts_task.done():
+            print("🛑 Interrupting previous response - New user utterance")
+            tts_task.cancel()
+            try:
+                await tts_task
+            except asyncio.CancelledError:
+                pass
+        
+        # Add to conversation history as user message
+        conversation_history.append({
+            "role": "user",
+            "text": full_text
+        })
+        
+        # Trigger LLM processing
+        tts_task = asyncio.create_task(process_and_respond())
+    
     # STT service with callbacks
     def on_partial_transcript(text: str, language: str):
         """Handle streaming partial transcripts for real-time feedback"""
-        nonlocal detected_language
+        nonlocal detected_language, current_utterance_parts
+        
+        # Log language changes
+        if detected_language != language:
+            print(f"🌐 Language changed: {detected_language} → {language}")
+        
         # Store detected language
         detected_language = language
         
         # Send partial transcripts to client for real-time display
+        # Include accumulated text so far
+        accumulated = " ".join(current_utterance_parts)
+        full_partial = (accumulated + " " + text).strip() if accumulated else text
+        
         # Use call_soon_threadsafe since this callback runs in Soniox's thread
         async def send_partial():
             await ws.send_json({
                 "type": "partial_transcript",
-                "text": text,
+                "text": full_partial,
                 "language": language
             })
         
         loop.call_soon_threadsafe(lambda: asyncio.create_task(send_partial()))
     
     def on_transcript(text: str, language: str):
-        nonlocal waiting_for_transcript, tts_task, detected_language
+        nonlocal detected_language, current_utterance_parts, utterance_timer_task
+        
+        # Log language changes
+        if detected_language != language:
+            print(f"🌐 Language changed: {detected_language} → {language}")
         
         # Store detected language
         detected_language = language
         
-        # Deduplicate - only add if not already the last item
-        if not transcript_buffer or transcript_buffer[-1] != text:
-            print(f"📝 Final Transcript ({language}): {text}")
-            transcript_buffer.append(text)
+        # Accumulate transcript part
+        print(f"📝 Final Transcript ({language}): {text}")
+        current_utterance_parts.append(text)
+        
+        # Cancel existing timer if any
+        if utterance_timer_task and not utterance_timer_task.done():
+            utterance_timer_task.cancel()
+        
+        # Start new timer to finalize utterance after pause
+        # Use call_soon_threadsafe since this callback runs in Soniox's thread
+        def schedule_timer():
+            nonlocal utterance_timer_task
             
-            # If we're waiting for transcript after silence, process now
-            # Use call_soon_threadsafe since this callback runs in Soniox's thread
-            if waiting_for_transcript and not processing_llm:
-                print(f"✅ Transcript received after silence - Processing now!")
-                waiting_for_transcript = False
-                
-                # Schedule task creation on the event loop
-                def create_task():
-                    nonlocal tts_task
-                    tts_task = asyncio.create_task(process_and_respond())
-                
-                loop.call_soon_threadsafe(create_task)
-        else:
-            print(f"⏭️  Skipping duplicate transcript: {text}")
+            async def timer():
+                await asyncio.sleep(UTTERANCE_TIMEOUT)
+                await finalize_utterance()
+            
+            utterance_timer_task = asyncio.create_task(timer())
+        
+        loop.call_soon_threadsafe(schedule_timer)
     
 
     def on_error(error: str):
@@ -206,21 +267,18 @@ async def audio_websocket(ws: WebSocket):
 
     async def process_and_respond():
         """Process transcript with LLM and stream TTS response"""
-        nonlocal processing_llm, tts_task, user_id
+        nonlocal tts_task, user_id, conversation_history
         
-        if not transcript_buffer:
-            print("⚠️  process_and_respond called but transcript_buffer is empty")
-            return
-        
-        processing_llm = True
-        print(f"🔐 process_and_respond: user_id = {user_id}")
-        
-        try:
-            # Combine all transcripts
-            full_transcript = " ".join(transcript_buffer)
-            transcript_buffer.clear()
+        # Use lock to prevent concurrent processing
+        async with processing_lock:
+            # Get the last user message from history
+            if not conversation_history or conversation_history[-1]["role"] != "user":
+                print("⚠️  No user message to process")
+                return
             
-            print(f"📄 Full transcript: {full_transcript}")
+            full_transcript = conversation_history[-1]["text"]
+            print(f"🔐 process_and_respond: user_id = {user_id}")
+            print(f"📄 Processing transcript: {full_transcript}")
             
             # Add user message to conversation history
             conversation_history.append({
@@ -253,14 +311,14 @@ async def audio_websocket(ws: WebSocket):
                 print(f"🔧 Tools used: {tool_names}")
 
             # Notify client that LLM streaming is starting
-            await ws.send_json({
+            await ws.send_json(serialize_for_json({
                 "type": "llm_start",
                 "transcript": full_transcript,
                 "intent": llm_result.get("intent", {}),
                 "tool_calls": tool_names,
                 "tool_results": llm_result.get("tool_results", []),
                 "conversation_history": conversation_history[-10:],
-            })
+            }))
 
             async def stream_with_last(async_iter):
                 it = async_iter.__aiter__()
@@ -304,6 +362,7 @@ async def audio_websocket(ws: WebSocket):
 
                         try:
                             tts_language = normalize_tts_language(detected_language)
+                            print(f"🔊 TTS using language: {tts_language} (detected: {detected_language})")
                             async for audio_chunk in tts_service.stream_tts_chunk(
                                 transcript=text_chunk,
                                 context_id=tts_context_id,
@@ -328,14 +387,13 @@ async def audio_websocket(ws: WebSocket):
                     print(f"✅ TTS streaming complete ({audio_chunk_count} chunks)\n")
 
             # Add assistant response to conversation history
-            if response_text.strip():
-                conversation_history.append({
-                    "role": "assistant",
-                    "text": response_text
-                })
+            conversation_history.append({
+                "role": "assistant",
+                "text": response_text
+            })
 
             # Send final LLM metadata to client
-            await ws.send_json({
+            await ws.send_json(serialize_for_json({
                 "type": "llm_response",
                 "transcript": full_transcript,
                 "response": response_text,
@@ -343,73 +401,21 @@ async def audio_websocket(ws: WebSocket):
                 "tool_calls": tool_names,
                 "tool_results": llm_result.get("tool_results", []),
                 "conversation_history": conversation_history[-10:]
-            })
+            }))
 
             print("✅ Sent final LLM response metadata to client")
-            
-        finally:
-            processing_llm = False
-            tts_task = None
 
     try:
         while True:
             # Receive audio chunk
             audio_bytes = await ws.receive_bytes()
 
-            # Stream to AssemblyAI immediately (no buffering)
+            # Stream to Soniox immediately
             try:
                 await asyncio.to_thread(stt_service.stream, audio_bytes)
             except Exception as e:
                 print(f"⚠️  STT streaming error: {e}")
                 # Continue processing, don't crash on STT errors
-
-            # Buffer for VAD; Silero requires at least 512 samples (1024 bytes) per chunk
-            vad_buffer += audio_bytes
-            while len(vad_buffer) >= VAD_MIN_BYTES:
-                chunk = vad_buffer[:VAD_MIN_BYTES]
-                vad_buffer = vad_buffer[VAD_MIN_BYTES:]
-                confidence = vad_service.get_confidence(chunk)
-
-                # Check if new speech detected during TTS playback
-                if confidence > vad_service.speech_threshold:
-                    # If TTS is currently playing, interrupt it
-                    if tts_task and not tts_task.done():
-                        print("🛑 Interrupting TTS - New speech detected")
-                        tts_task.cancel()
-                        try:
-                            await tts_task
-                        except asyncio.CancelledError:
-                            pass
-                        tts_task = None
-
-                    # If this is the START of new speech (wasn't speaking before)
-                    if not speaking:
-                        print("🎤 New speech started")
-
-                    speaking = True
-                    silence_chunks = 0
-                    print(f"🎤 VAD: {confidence:.3f} [SPEECH] | Buffer: {len(transcript_buffer)} transcripts")
-                else:
-                    # Silence detected
-                    if speaking:
-                        silence_chunks += 1
-                        print(f"🔇 VAD: {confidence:.3f} [silence {silence_chunks}/{SILENCE_LIMIT_CHUNKS}]")
-
-                # Process immediately after silence threshold (only if not already processing)
-                if speaking and silence_chunks >= SILENCE_LIMIT_CHUNKS and not processing_llm:
-                    print(f"\n🔕 Silence threshold reached - Waiting for transcript...")
-
-                    speaking = False
-                    waiting_for_transcript = True
-
-                    # If transcript already in buffer, process immediately
-                    if transcript_buffer:
-                        print(f"📋 Transcript already available - Processing now!")
-                        waiting_for_transcript = False
-                        tts_task = asyncio.create_task(process_and_respond())
-                    
-                    # Reset silence_chunks to prevent infinite counting
-                    silence_chunks = 0
 
     except WebSocketDisconnect:
         print("✋ Client disconnected")

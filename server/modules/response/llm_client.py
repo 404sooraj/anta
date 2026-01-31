@@ -3,6 +3,7 @@
 import json
 import logging
 from typing import Dict, Any, List, Optional, AsyncGenerator
+from datetime import datetime
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_aws import ChatBedrockConverse
@@ -10,6 +11,19 @@ from langchain_aws import ChatBedrockConverse
 from modules.config import ConfigEnv
 
 logger = logging.getLogger(__name__)
+
+
+def serialize_for_json(obj: Any) -> Any:
+    """Recursively serialize datetime objects and other non-JSON types."""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    elif isinstance(obj, dict):
+        return {key: serialize_for_json(val) for key, val in obj.items()}
+    elif isinstance(obj, (list, tuple)):
+        return [serialize_for_json(item) for item in obj]
+    elif hasattr(obj, "isoformat"):  # Handle other date/time types
+        return obj.isoformat()
+    return obj
 
 
 class LLMClient:
@@ -167,7 +181,7 @@ class LLMClient:
                 tool_messages.append(
                     ToolMessage(
                         name=tool_result.get("tool_name", ""),
-                        content=json.dumps(tool_result.get("result", {})),
+                        content=json.dumps(serialize_for_json(tool_result.get("result", {}))),
                         tool_call_id=tool_result.get("call_id") or "",
                     )
                 )
@@ -210,7 +224,7 @@ class LLMClient:
                     tool_messages.append(
                         ToolMessage(
                             name=tool_result.get("tool_name", ""),
-                            content=json.dumps(tool_result.get("result", {})),
+                            content=json.dumps(serialize_for_json(tool_result.get("result", {}))),
                             tool_call_id=tool_result.get("call_id") or "",
                         )
                     )
