@@ -2,14 +2,45 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from site import USER_BASE
-from typing import Literal
+from typing import Literal, Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
+
+class PyObjectId(ObjectId):
+    """Custom type for handling MongoDB ObjectId in Pydantic models."""
+    
+    @classmethod
+    def __get_pydantic_core_schema__(cls, _source_type, _handler):
+        from pydantic_core import core_schema
+        return core_schema.union_schema([
+            core_schema.is_instance_schema(ObjectId),
+            core_schema.chain_schema([
+                core_schema.str_schema(),
+                core_schema.no_info_plain_validator_function(cls.validate),
+            ])
+        ], serialization=core_schema.plain_serializer_function_ser_schema(str))
+    
+    @classmethod
+    def validate(cls, v):
+        if isinstance(v, ObjectId):
+            return v
+        if isinstance(v, str):
+            return ObjectId(v)
+        raise ValueError("Invalid ObjectId")
 
 
 class MongoModel(BaseModel):
-    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
+    """Base model for MongoDB documents with ObjectId support."""
+    
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+    
+    id: Optional[PyObjectId] = Field(default=None, alias="_id")
 
 
 # GeoJSON Point for station location (2dsphere index)
