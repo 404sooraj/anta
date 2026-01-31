@@ -31,6 +31,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getLastServiceCenterVisit",
         "getNearestStation",
         "getBatteryInfo",
+        "getCallInsights",  # Similar past scenarios and policy
         "getSubscriptionInfo",  # May need subscription info for service
         "geocodeAddress",  # For Twilio calls - convert spoken location
     ],
@@ -43,6 +44,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getLastServiceCenterVisit",
         "getBatteryInfo",  # Battery issues are common problems
         "reportBatteryIssue",  # Allow reporting battery issues
+        "getCallInsights",  # Similar past scenarios and policy
     ],
     
     # User asking about their location
@@ -94,6 +96,7 @@ INTENT_TOOL_MAPPING: Dict[str, List[str]] = {
         "getCurrentLocation",
         "getNearestStation",  # Station queries are common
         "getBatteryInfo",
+        "getCallInsights",  # Similar past situations / policy
         "geocodeAddress",  # For Twilio calls - convert spoken location
     ],
     
