@@ -1,0 +1,158 @@
+{
+  "metadata": {
+    "date": "1/26/26 7:30 PM",
+    "name": "Varsha Swain",
+    "issueType": "SMS Not Received: Calling Number Same As Registered Number",
+    "callingNumber": "7505212719",
+    "recordingLink": "https://drive.google.com/file/d/1D69yv-3MDvEsyjwFMEOmR1yP-AJ8UZR9/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:07:59.971Z",
+    "callDuration": 84
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "नमस्कार, बैटरी स्मार्ट में आपका स्वागत है। मैं वर्षा, आपकी किस प्रकार की सहायता कर सकती हूँ?",
+        "timestamp": 1.44,
+        "speaker": "agent"
+      },
+      {
+        "text": "ड्राइवर आईडी बता दीजिए, मैं चेक कर लेती हूँ।",
+        "timestamp": 9.42,
+        "speaker": "agent"
+      },
+      {
+        "text": "फिर?",
+        "timestamp": 13.32,
+        "speaker": "agent"
+      },
+      {
+        "text": "95088। नाम बताएँ।",
+        "timestamp": 17.64,
+        "speaker": "agent"
+      },
+      {
+        "text": "कंचन लता जी। नाम और आईडी कन्फर्म करने के लिए सर, धन्यवाद। जैसे कि मैं समझ पा रही हूँ, आप बताना चाहते हैं अभी आप स्वैप लिए, बट आपको एसएमएस नहीं आया, राइट सर?",
+        "timestamp": 21.72,
+        "speaker": "agent"
+      },
+      {
+        "text": "माफ़ी चाहेंगे, आपको जो।",
+        "timestamp": 29.16,
+        "speaker": "agent"
+      },
+      {
+        "text": "नो नो सर, माफ़ी चाहेंगे, आपको जो परेशानी आ रही है, जैसे कि मैं चेक कर पा रही हूँ, आज के डेट पर आपका स्वैप हो चुका है, 7:17 पर, वो कभी-कभार से नेटवर्क इश्यू के कारण या फिर आपका इनबॉक्स फुल होने के कारण एसएमएस नहीं आता है, ओके सर?",
+        "timestamp": 34.44,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, आप निश्चिंत रहें, जब भी ऐसा इश्यू होता है, तब आप हमें कॉल करके कन्फर्म कर सकते हैं, आपका स्वैप हुआ है या नहीं, ओके सर?",
+        "timestamp": 47.7,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी मैम।",
+        "timestamp": 54.78,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, आप कन्फर्म कर लीजिएगा, अगर आपको एसएमएस नहीं आता है ना, आप कन्फर्म कर लीजिएगा, ओके सर?",
+        "timestamp": 59.22,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, मैं आपकी और किसी प्रकार की सहायता कर सकती हूँ?",
+        "timestamp": 64.26,
+        "speaker": "agent"
+      },
+      {
+        "text": "ओके सर, फिर कॉल को आईवीआर पर ट्रांसफर की जा रही है। दी गई जानकारी से अगर आप संतुष्ट हैं, एक दबाएँ, अगर आप संतुष्ट हैं, दो दबाएँ। बैटरी स्मार्ट में कॉल करने के लिए धन्यवाद, आशा करती हूँ स्वस्थ रहें, सुरक्षित रहें।",
+        "timestamp": 68.94,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "मैडम, अभी हमने रिचार्ज कराया, मैसेज नहीं आया।",
+        "timestamp": 6.42,
+        "speaker": "partner"
+      },
+      {
+        "text": "95088।",
+        "timestamp": 11.7,
+        "speaker": "partner"
+      },
+      {
+        "text": "95088।",
+        "timestamp": 15.42,
+        "speaker": "partner"
+      },
+      {
+        "text": "कंचन लता।",
+        "timestamp": 20.46,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ, वही।",
+        "timestamp": 28.8,
+        "speaker": "partner"
+      },
+      {
+        "text": "रिचार्ज करवा लेते हैं, उसके बाद पेनल्टी लग जाती है।",
+        "timestamp": 31.26,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक मैडम।",
+        "timestamp": 46.86,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक मैडम।",
+        "timestamp": 53.7,
+        "speaker": "partner"
+      },
+      {
+        "text": "पेनल्टी लगा देते हैं ना आप लोग, सबसे बड़ी बात है पेनल्टी लगा देते हैं, तुरंत लगा देते हैं।",
+        "timestamp": 55.14,
+        "speaker": "partner"
+      },
+      {
+        "text": "ठीक।",
+        "timestamp": 63.42,
+        "speaker": "partner"
+      },
+      {
+        "text": "बहुत-बहुत धन्यवाद।",
+        "timestamp": 67.68,
+        "speaker": "partner"
+      },
+      {
+        "text": "अगर आप हमारे द्वारा दी गई सहायता से खुश हैं, तो एक दबाएँ। अगर नहीं, आपकी प्रतिक्रिया हमारे लिए बहुत।",
+        "timestamp": 77.88,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: नमस्कार, बैटरी स्मार्ट में आपका स्वागत है। मैं वर्षा, आपकी किस प्रकार की सहायता कर सकती हूँ?\n\nPartner: मैडम, अभी हमने रिचार्ज कराया, मैसेज नहीं आया।\n\nAgent: ड्राइवर आईडी बता दीजिए, मैं चेक कर लेती हूँ।\n\nPartner: 95088।\n\nAgent: फिर?\n\nPartner: 95088।\n\nAgent: 95088। नाम बताएँ।\n\nPartner: कंचन लता।\n\nAgent: कंचन लता जी। नाम और आईडी कन्फर्म करने के लिए सर, धन्यवाद। जैसे कि मैं समझ पा रही हूँ, आप बताना चाहते हैं अभी आप स्वैप लिए, बट आपको एसएमएस नहीं आया, राइट सर?\n\nPartner: हाँ, वही।\n\nAgent: माफ़ी चाहेंगे, आपको जो।\n\nPartner: रिचार्ज करवा लेते हैं, उसके बाद पेनल्टी लग जाती है।\n\nAgent: नो नो सर, माफ़ी चाहेंगे, आपको जो परेशानी आ रही है, जैसे कि मैं चेक कर पा रही हूँ, आज के डेट पर आपका स्वैप हो चुका है, 7:17 पर, वो कभी-कभार से नेटवर्क इश्यू के कारण या फिर आपका इनबॉक्स फुल होने के कारण एसएमएस नहीं आता है, ओके सर?\n\nPartner: ठीक मैडम।\n\nAgent: जी, आप निश्चिंत रहें, जब भी ऐसा इश्यू होता है, तब आप हमें कॉल करके कन्फर्म कर सकते हैं, आपका स्वैप हुआ है या नहीं, ओके सर?\n\nPartner: ठीक मैडम।\n\nAgent: जी मैम।\n\nPartner: पेनल्टी लगा देते हैं ना आप लोग, सबसे बड़ी बात है पेनल्टी लगा देते हैं, तुरंत लगा देते हैं।\n\nAgent: जी, आप कन्फर्म कर लीजिएगा, अगर आपको एसएमएस नहीं आता है ना, आप कन्फर्म कर लीजिएगा, ओके सर?\n\nPartner: ठीक।\n\nAgent: जी, मैं आपकी और किसी प्रकार की सहायता कर सकती हूँ?\n\nPartner: बहुत-बहुत धन्यवाद।\n\nAgent: ओके सर, फिर कॉल को आईवीआर पर ट्रांसफर की जा रही है। दी गई जानकारी से अगर आप संतुष्ट हैं, एक दबाएँ, अगर आप संतुष्ट हैं, दो दबाएँ। बैटरी स्मार्ट में कॉल करने के लिए धन्यवाद, आशा करती हूँ स्वस्थ रहें, सुरक्षित रहें।\n\nPartner: अगर आप हमारे द्वारा दी गई सहायता से खुश हैं, तो एक दबाएँ। अगर नहीं, आपकी प्रतिक्रिया हमारे लिए बहुत।"
+  },
+  "analysis": {
+    "summary": "The customer was concerned about not receiving an SMS confirmation after a battery swap. The agent explained that occasional network issues or a full inbox can prevent SMS delivery, and assured the customer that their swap was completed successfully. The call ended with the customer thanking the agent and seemingly satisfied with the explanation.",
+    "problemFaced": "The customer reported not receiving an SMS message after completing a battery swap, despite the swap being successfully done at 7:17. He was concerned about potential penalties being imposed and wanted confirmation of his swap transaction.",
+    "solutionPresented": "The agent confirmed that the partner's battery swap was completed at 7:17, and explained that the missing SMS could be due to network issues or a full inbox. She reassured the partner that if they do not receive an SMS, they can always call and confirm their swap status. The agent did not apply any penalty and simply provided guidance on how to verify the swap transaction in case of communication problems.",
+    "agentSentiment": {
+      "overall": "calm/composed",
+      "confidence": 0.9,
+      "details": "The agent (Varsha) maintains a professional, patient, and helpful tone throughout the conversation. She systematically addresses the customer's concern about a missed SMS, explains the possible reasons calmly, offers reassurance, and provides clear guidance with a polite and composed demeanor."
+    },
+    "partnerSentiment": {
+      "overall": "concerned",
+      "confidence": 0.85,
+      "details": "The speaker sounds worried about a recharge issue, repeatedly mentioning potential penalties and seeking immediate assistance. The tone suggests anxiety about resolving the problem quickly, with a mix of politeness and underlying concern about potential additional charges."
+    },
+    "partnerSatisfactionScore": {
+      "score": 7,
+      "maxScore": 10,
+      "reasoning": "The customer's issue was largely resolved as the agent explained that the swap was completed successfully and the SMS delay was due to network issues or a full inbox. The agent was patient and explained the situation clearly. The customer initially seemed frustrated about potential penalties but became more calm towards the end. The customer expressed gratitude with 'बहुत-बहुत धन्यवाद' (Thank you very much), indicating a relatively positive resolution. While not a perfect 10, the interaction ended on a cooperative note with the customer seemingly satisfied with the explanation."
+    }
+  }
+}
