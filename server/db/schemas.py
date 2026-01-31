@@ -90,15 +90,15 @@ class Subscription(BaseModel):
     deleted_at: datetime | None = None  # soft delete
 
 
-
-
 class Swap(BaseModel):
     swap_id: str
     user_id: str
     station_id: str
     date: datetime
     amount: int = 1
-    battery_available_count:int #available count of batteries at the station during the swap
+    battery_available_count: (
+        int  # available count of batteries at the station during the swap
+    )
     battery_id_taken: str | None = None
     battery_id_returned: str | None = None
     status: Literal["pending", "completed", "cancelled"] = "pending"
@@ -122,3 +122,24 @@ class Battery(BaseModel):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime | None = None
     deleted_at: datetime | None = None  # soft delete
+
+
+# from datetime import datetime, timezone
+
+# from pydantic import BaseModel, Field
+
+
+class GlobalPricing(BaseModel):
+    pricing_id: str = "GLOBAL_V1"
+
+    base_swap_price: int = 170
+    secondary_swap_price: int = 70
+
+    service_charge_per_swap: int = 40
+
+    free_leave_days_per_month: int = 4
+    leave_penalty_amount: int = 120
+    penalty_recovery_per_swap: int = 60
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime | None = None

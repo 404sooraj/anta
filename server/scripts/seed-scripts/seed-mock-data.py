@@ -45,6 +45,7 @@ COLLECTIONS = [
     "swaps",
     "conversations",
     "agents",
+    "global_pricing",
 ]
 
 
@@ -254,9 +255,10 @@ async def main() -> None:
     raw_subscriptions = _load_json("subscriptions.json")
     raw_swaps = _load_json("swaps.json")
     raw_agents = _load_json("agents.json")
+    raw_global_pricing = _load_json("global_pricing.json")
 
     logger.info(
-        f"   Loaded {len(raw_users)} users, {len(raw_stations)} stations, {len(raw_batteries)} batteries, {len(raw_subscriptions)} subscriptions, {len(raw_swaps)} swaps, {len(raw_agents)} agents"
+        f"   Loaded {len(raw_users)} users, {len(raw_stations)} stations, {len(raw_batteries)} batteries, {len(raw_subscriptions)} subscriptions, {len(raw_swaps)} swaps, {len(raw_agents)} agents, {len(raw_global_pricing)} global_pricing"
     )
 
     # Normalize subscriptions first (needed for user active_plan)
@@ -279,6 +281,10 @@ async def main() -> None:
     # Agents don't have timestamps in schema, use as-is
     logger.info("   Loading agents...")
     agents = raw_agents
+
+    # Normalize global_pricing (add timestamps)
+    logger.info("   Normalizing global_pricing...")
+    global_pricing = [_add_timestamps(p) for p in raw_global_pricing]
 
     # Normalize users (includes password hashing and active_plan)
     logger.info("🔐 Hashing passwords and normalizing users...")
@@ -334,6 +340,10 @@ async def main() -> None:
     created_agents = await _insert_many(db.agents, agents)
     logger.info(f"   ✅ Agents: {created_agents} inserted")
 
+    logger.info("   Inserting global_pricing...")
+    created_global_pricing = await _insert_many(db.global_pricing, global_pricing)
+    logger.info(f"   ✅ Global Pricing: {created_global_pricing} inserted")
+
     # Step 4: Save credentials
     logger.info("")
     logger.info(f"💾 Saving credentials to {CREDENTIALS_FILE}...")
@@ -358,6 +368,7 @@ async def main() -> None:
     print(f"      - Subscriptions: {created_subscriptions}")
     print(f"      - Swaps: {created_swaps}")
     print(f"      - Agents: {created_agents}")
+    print(f"      - Global Pricing: {created_global_pricing}")
     print(f"\n🔐 Generated credentials saved to: {CREDENTIALS_FILE}")
     print("⚠️  Keep this file secure and do not commit to version control!")
     print()
