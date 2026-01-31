@@ -95,13 +95,16 @@ class GetNearestStationTool(BaseTool):
     """Find the nearest battery swap station to the user's current location."""
     
     name: str = "getNearestStation"
-    description: str = """Finds the nearest battery swap station to the user's current location. 
-Can optionally filter to only show stations with available batteries.
-Use this when the user asks about:
-- Nearest/closest swap station
-- Where to swap battery
+    description: str = """Finds the nearest battery swap station. This tool automatically fetches the user's stored location - you do NOT need to call getCurrentLocation first.
+
+Use this tool DIRECTLY when user asks about:
+- Nearest/closest swap station ("Nearest station kahan hai?")
+- Where to swap battery ("Battery kahan swap karun?")
 - Finding a station nearby
-- Stations with available batteries"""
+- Stations with available batteries
+
+For web/app users: Just pass userId - location is fetched automatically.
+For phone callers (Twilio): Pass latitude and longitude explicitly after using geocodeAddress."""
     args_schema = NearestStationInput
     
     async def execute(self, **kwargs) -> Dict[str, Any]:

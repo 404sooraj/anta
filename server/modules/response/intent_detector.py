@@ -70,8 +70,16 @@ Category definitions:
   * "Scooter slow chal raha hai" (scooter running slow) = problem_report
   * "Kuch problem hai" (there's some problem) = problem_report
   * Any statement describing something IS wrong/broken/not working = problem_report
-- location_query: User asking specifically about their own current location
-- station_query: User asking about nearest station, where to swap battery, finding a swap station
+- location_query: User asking specifically about their own current location (e.g., "Meri location kya hai?", "Where am I?")
+- station_query: User asking about nearest station, where to swap battery, finding a swap station. Examples:
+  * "Nearest station kahan hai?" (where is nearest station?) = station_query
+  * "Sabse paas wala swap station batao" (tell me the closest swap station) = station_query
+  * "Battery kahan swap karun?" (where should I swap battery?) = station_query
+  * "Swap station dhundh do" (find me a swap station) = station_query
+  * "Koi station nearby hai?" (is there any station nearby?) = station_query
+  * "Where can I swap my battery?" = station_query
+  * "Find nearest swap station" = station_query
+  * "Station with available batteries?" = station_query
 - battery_query: User ASKING about their battery (query/question), NOT complaining. Examples:
   * "Meri battery ki health kya hai?" (what is my battery health?) = battery_query
   * "Battery status batao" (tell me battery status) = battery_query
@@ -98,6 +106,7 @@ CRITICAL RULES:
 2. If user ASKS a question about battery status → battery_query
 3. "Battery garam hoti hai" (battery gets hot) = problem_report, NOT battery_query
 4. "Battery ki health kya hai?" (what is battery health) = battery_query, NOT problem_report
+5. If user asks about nearest/closest station or where to swap → station_query (NOT general or location_query)
 5. When in doubt between problem_report and general, prefer problem_report if user mentions any issue
 6. If user explicitly asks for human/agent/customer care/real person → human_handoff
 
