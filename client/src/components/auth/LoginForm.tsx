@@ -1,5 +1,6 @@
 "use client";
 
+import { API_CONFIG } from "@/utils/config";
 import { useMemo, useState } from "react";
 
 export type LoginFormPayload = {
@@ -9,11 +10,10 @@ export type LoginFormPayload = {
 };
 
 type LoginFormProps = {
-  endpoint?: string;
   onSuccess?: (payload: LoginFormPayload) => void;
 };
 
-export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
+export function LoginForm({ onSuccess }: LoginFormProps) {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -21,10 +21,7 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const resolvedEndpoint =
-    endpoint ||
-    process.env.NEXT_PUBLIC_AUTH_ENDPOINT ||
-    "http://localhost:8000/api/auth/login";
+  const baseOrEndpoint = API_CONFIG.API_ENDPOINT + "/auth/login";
 
   const formErrors = useMemo(() => {
     const errors: string[] = [];
@@ -57,7 +54,7 @@ export function LoginForm({ endpoint, onSuccess }: LoginFormProps) {
 
     try {
       setIsSubmitting(true);
-      const response = await fetch(resolvedEndpoint, {
+      const response = await fetch(baseOrEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

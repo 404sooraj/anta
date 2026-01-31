@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { RequireAuth } from "@/components/auth/RequireAuth";
 
 // Types
 interface PendingCall {
@@ -520,9 +521,10 @@ export default function AgentPage() {
   }, [disconnect]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
+    <RequireAuth>
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl font-bold text-gray-800 mb-6">
           📞 Call Center Agent Dashboard
         </h1>
 
@@ -764,5 +766,6 @@ export default function AgentPage() {
         </div>
       </div>
     </div>
+    </RequireAuth>
   );
 }

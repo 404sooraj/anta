@@ -1,8 +1,10 @@
+import { RequireAuth } from "@/components/auth/RequireAuth";
 import { VoiceBotInterface } from "@/components/voicebot";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
+    <RequireAuth>
+      <div className="min-h-screen flex flex-col bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
       {/* Header */}
       <header className="w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -81,5 +83,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </RequireAuth>
   );
 }
