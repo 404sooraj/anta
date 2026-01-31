@@ -3,21 +3,35 @@
     "subscription_id": "sub_001",
     "user_id": "user_001",
     "plan": "standard",
-    "status": "active",
+    "price": 999.0,
     "valid_till_days": 90
   },
   {
     "subscription_id": "sub_002",
     "user_id": "user_002",
     "plan": "premium",
-    "status": "active",
+    "price": 1999.0,
     "valid_till_days": 90
   },
   {
     "subscription_id": "sub_003",
     "user_id": "user_003",
     "plan": "standard",
-    "status": "active",
+    "price": 999.0,
     "valid_till_days": 90
+  },
+  {
+    "subscription_id": "sub_004",
+    "user_id": "user_004",
+    "plan": "premium",
+    "price": 1999.0,
+    "valid_till_days": 180
+  },
+  {
+    "subscription_id": "sub_005",
+    "user_id": "user_005",
+    "plan": "basic",
+    "price": 499.0,
+    "valid_till_days": 30
   }
 ]

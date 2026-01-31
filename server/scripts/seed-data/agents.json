@@ -1,0 +1,14 @@
+[
+  {
+    "agent_id": "agent_001",
+    "name": "Support Agent - Priya"
+  },
+  {
+    "agent_id": "agent_002",
+    "name": "Support Agent - Rahul"
+  },
+  {
+    "agent_id": "agent_003",
+    "name": "AI Assistant - Antaryami"
+  }
+]
