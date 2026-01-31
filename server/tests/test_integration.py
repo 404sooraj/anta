@@ -1,6 +1,6 @@
 """Integration tests for end-to-end pipeline functionality.
 
-Note: These tests require a valid GEMINI_API_KEY to run actual API calls.
+Note: These tests require valid AWS credentials to run actual Bedrock API calls.
 """
 
 import os
@@ -15,30 +15,28 @@ if env_path.exists():
 
 # Skip integration tests if no real API key is available
 # Check if API key exists and is not the test key
-_api_key = os.getenv("GEMINI_API_KEY", "")
-_has_real_api_key = (
-    _api_key 
-    and _api_key != "test_api_key_12345"
-    and len(_api_key) > 20  # Real API keys are longer
+_has_real_api_key = bool(
+    os.getenv("AWS_ACCESS_KEY_ID")
+    and os.getenv("AWS_SECRET_ACCESS_KEY")
+    and (os.getenv("BEDROCK_REGION") or os.getenv("AWS_REGION"))
 )
 
 pytestmark = pytest.mark.skipif(
     not _has_real_api_key,
-    reason="Integration tests skipped. Set a real GEMINI_API_KEY in .env file to run."
-)
+    reason="Integration tests skipped. Set AWS credentials and BEDROCK_REGION/AWS_REGION in .env file to run."
+    not _has_aws_credentials,
 
 
 @pytest.mark.integration
 @pytest.mark.asyncio
 async def test_full_pipeline_with_real_api():
-    """Test full pipeline with real Gemini API (requires API key)."""
+    """Test full pipeline with real Bedrock API (requires AWS credentials)."""
     from modules.response.response import ResponsePipeline
     
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key or api_key == "test_api_key_12345":
-        pytest.skip("Real GEMINI_API_KEY not set for integration test")
+    if not _has_real_api_key:
+    if not _has_aws_credentials:
     
-    pipeline = ResponsePipeline(api_key=api_key)
+    pipeline = ResponsePipeline()
     
     # Test with a simple prompt
     result = await pipeline.process_text("Hello, how are you?")
@@ -55,11 +53,10 @@ async def test_pipeline_with_tool_calling():
     """Test pipeline with a prompt that should trigger tool calling."""
     from modules.response.response import ResponsePipeline
     
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key or api_key == "test_api_key_12345":
-        pytest.skip("Real GEMINI_API_KEY not set for integration test")
+    if not _has_aws_credentials:
+        pytest.skip("AWS credentials or region not set for integration test")
     
-    pipeline = ResponsePipeline(api_key=api_key)
+    pipeline = ResponsePipeline()
     
     # Prompt that might trigger tool use
     result = await pipeline.process_text("What is the user information for user ID 12345?")
@@ -92,11 +89,10 @@ async def test_all_test_prompts_one_by_one():
     """
     import json
     from pathlib import Path
-    from modules.response.response import ResponsePipeline
+    if not _has_aws_credentials:
     
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key or api_key == "test_api_key_12345":
-        pytest.skip("Real GEMINI_API_KEY not set for integration test")
+    if not _has_real_api_key:
+        pytest.skip("AWS credentials or region not set for integration test")
     
     # Load test prompts
     prompts_file = Path(__file__).parent.parent / "modules" / "response" / "data" / "test-prompts.json"
@@ -110,7 +106,7 @@ async def test_all_test_prompts_one_by_one():
         pytest.skip("No prompts found in test-prompts.json")
     
     # Initialize pipeline
-    pipeline = ResponsePipeline(api_key=api_key)
+    pipeline = ResponsePipeline()
     
     # Show available tools
     available_tools = pipeline.tool_registry.get_tool_schemas()

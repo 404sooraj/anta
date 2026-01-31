@@ -3,6 +3,8 @@
 from typing import Dict, Any, List, Optional
 import logging
 
+from langchain_core.tools import StructuredTool
+
 from .tools import (
     GetUserInfoTool,
     GetCurrentLocationTool,
@@ -81,6 +83,26 @@ class ToolRegistry:
             List of tool schemas in Gemini function calling format.
         """
         return [tool.get_schema() for tool in self._tools.values()]
+
+    def get_langchain_tools(self) -> List[StructuredTool]:
+        """
+        Get LangChain tool objects for all registered tools.
+
+        Returns:
+            List of LangChain StructuredTool instances.
+        """
+        return [self._to_langchain_tool(tool) for tool in self._tools.values()]
+
+    @staticmethod
+    def _to_langchain_tool(tool: BaseTool) -> StructuredTool:
+        """Convert a BaseTool to a LangChain StructuredTool."""
+        return StructuredTool.from_function(
+            func=None,
+            coroutine=tool.execute,
+            name=tool.name,
+            description=tool.description,
+            infer_schema=True,
+        )
     
     async def execute_tool(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """

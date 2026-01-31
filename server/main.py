@@ -35,12 +35,15 @@ async def lifespan(app: FastAPI):
     gemini_key = os.getenv("GEMINI_API_KEY")
     assemblyai_key = os.getenv("ASSEMBLYAI_API_KEY")
     cartesia_key = os.getenv("CARTESIA_API_KEY") or os.getenv("CARTESIAN_PRODUCT_API_KEY")
+    tts_enabled = os.getenv("CARTESIA_TTS_ENABLED", "true").strip().lower() not in {"0", "false", "no", "off"}
     
     if not gemini_key:
         logger.warning("GEMINI_API_KEY not set - LLM features will not work")
     if not assemblyai_key:
         logger.warning("ASSEMBLYAI_API_KEY not set - STT features will not work")
-    if not cartesia_key:
+    if not tts_enabled:
+        logger.info("TTS is disabled (CARTESIA_TTS_ENABLED=false)")
+    elif not cartesia_key:
         logger.warning("CARTESIA_API_KEY not set - TTS features will not work")
     
     logger.info("✓ Startup complete")

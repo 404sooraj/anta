@@ -7,6 +7,8 @@ from unittest.mock import Mock, AsyncMock
 from fastapi.testclient import TestClient
 from dotenv import load_dotenv
 
+from langchain_core.messages import AIMessage
+
 # Load .env file first to get real API key if it exists
 env_path = Path(__file__).parent.parent / ".env"
 if env_path.exists():
@@ -15,25 +17,27 @@ if env_path.exists():
 # Set test environment variables (only if not already set from .env)
 if not os.getenv("GEMINI_API_KEY"):
     os.environ["GEMINI_API_KEY"] = "test_api_key_12345"
+if not os.getenv("GOOGLE_API_KEY"):
+    os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY", "test_api_key_12345")
+
+if not os.getenv("BEDROCK_MODEL_ID"):
+    os.environ["BEDROCK_MODEL_ID"] = "anthropic.claude-3-haiku-20240307-v1:0"
 
 
 @pytest.fixture
-def mock_genai_client():
-    """Mock google genai client for testing."""
-    mock = Mock()
-    
-    # Mock interaction response
-    mock_output = Mock()
-    mock_output.type = "text"
-    mock_output.text = "This is a test response from the LLM."
-    
-    mock_interaction = Mock()
-    mock_interaction.outputs = [mock_output]
-    mock_interaction.id = "test_interaction_id_123"
-    
-    mock.interactions.create.return_value = mock_interaction
-    
-    return mock
+def mock_langchain_chat_model():
+    """Mock LangChain chat model for testing."""
+
+    class FakeChatModel:
+        def bind_tools(self, tools):
+            return self
+
+        async def ainvoke(self, prompt):
+            if isinstance(prompt, str) and "Intent categories" in prompt:
+                return AIMessage(content='{"intent":"general","confidence":0.9,"reasoning":"Test"}', tool_calls=[])
+            return AIMessage(content="This is a test response from the LLM.", tool_calls=[])
+
+    return FakeChatModel()
 
 
 @pytest.fixture

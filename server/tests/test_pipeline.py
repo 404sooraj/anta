@@ -1,5 +1,6 @@
 """Tests for the response pipeline."""
 
+import os
 import pytest
 from modules.response.response import ResponsePipeline
 from modules.response.llm_client import LLMClient
@@ -24,9 +25,9 @@ async def test_llm_client_initialization():
     
     assert client is not None
     assert client.api_key == "test_api_key"
-    assert client.model_name == "gemini-2.5-flash-lite"
+    assert client.model_name == os.getenv("BEDROCK_MODEL_ID")
     assert client.temperature == 0.7
-    assert client.client is not None
+    assert client.model is not None
 
 
 @pytest.mark.asyncio
@@ -36,7 +37,7 @@ async def test_intent_detector_initialization():
     
     assert detector is not None
     assert detector.api_key == "test_api_key"
-    assert detector.client is not None
+    assert detector.model is not None
     assert len(detector.INTENT_CATEGORIES) > 0
 
 
@@ -51,11 +52,11 @@ def test_pipeline_load_test_prompts():
 
 
 @pytest.mark.asyncio
-async def test_pipeline_process_text_structure(mock_genai_client, monkeypatch):
+async def test_pipeline_process_text_structure(mock_langchain_chat_model, monkeypatch):
     """Test that process_text returns correct structure."""
-    # Mock the genai.Client to avoid actual API calls
-    monkeypatch.setattr("modules.response.llm_client.genai.Client", lambda **kwargs: mock_genai_client)
-    monkeypatch.setattr("modules.response.intent_detector.genai.Client", lambda **kwargs: mock_genai_client)
+    # Mock the ChatGoogleGenerativeAI to avoid actual API calls
+    monkeypatch.setattr("modules.response.llm_client.ChatBedrockConverse", lambda **kwargs: mock_langchain_chat_model)
+    monkeypatch.setattr("modules.response.intent_detector.ChatBedrockConverse", lambda **kwargs: mock_langchain_chat_model)
     
     pipeline = ResponsePipeline(api_key="test_api_key")
     result = await pipeline.process_text("Test prompt")
