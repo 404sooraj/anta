@@ -361,13 +361,16 @@ export function useVoiceBot(options: UseVoiceBotOptions = {}): UseVoiceBotReturn
                 setIsNewSpeech(false);
               }
               setPartialTranscript(data.text || '');
+              // Also update transcript so it persists after partial ends
+              setTranscript(data.text || '');
             } else if (data.type === 'response_stream') {
               // Streaming response text word-by-word
               setStreamingResponse(data.text || '');
             } else if (data.type === 'llm_response') {
               console.log('📄 Transcript:', data.transcript);
               console.log('🤖 Response:', data.response);
-              setTranscript(data.transcript || '');
+              // DON'T update transcript - keep what user saw while speaking
+              // setTranscript(data.transcript || '');
               // Clear partial after a brief delay to show the final transcript first
               setTimeout(() => setPartialTranscript(''), 100);
               setResponse(data.response || '');

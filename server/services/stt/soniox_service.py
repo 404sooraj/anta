@@ -39,6 +39,8 @@ class STTService:
         self.on_error_callback = on_error
         self.receive_thread: Optional[threading.Thread] = None
         self.running = False
+        self.current_language = "en"  # Track current stable language
+        self.language_token_count = {"en": 0, "hi": 0}  # Count tokens per language
         
     def connect(self):
         """Connect to Soniox WebSocket API"""
@@ -98,24 +100,54 @@ class STTService:
                         # Separate final and non-final tokens
                         final_text = ""
                         partial_text = ""
-                        detected_language = "en"  # Default to English
+                        
+                        # Count language occurrences in this batch
+                        batch_languages = {"en": 0, "hi": 0}
                         
                         for token in tokens:
                             text = token.get("text", "")
-                            # Get language from first token with language info
-                            if token.get("language") and detected_language == "en":
-                                detected_language = token.get("language")
+                            token_lang = token.get("language", self.current_language)
+                            
+                            # Count this token's language
+                            if token_lang in batch_languages:
+                                batch_languages[token_lang] += 1
                             
                             if token.get("is_final"):
                                 final_text += text
                             else:
                                 partial_text += text
                         
-                        # Send partial transcripts (non-final tokens) with language
+                        # Determine dominant language in this batch
+                        if batch_languages["en"] > 0 or batch_languages["hi"] > 0:
+                            # Update language token counts
+                            self.language_token_count["en"] += batch_languages["en"]
+                            self.language_token_count["hi"] += batch_languages["hi"]
+                            
+                            # Only switch language if we have significant evidence
+                            # Require at least 3 tokens in the new language
+                            total_tokens = self.language_token_count["en"] + self.language_token_count["hi"]
+                            if total_tokens >= 3:
+                                # Switch if the new language has >60% of recent tokens
+                                if self.language_token_count["hi"] > self.language_token_count["en"] * 1.5:
+                                    if self.current_language != "hi":
+                                        logger.info(f"Language switched: {self.current_language} → hi (tokens: en={self.language_token_count['en']}, hi={self.language_token_count['hi']})")
+                                        self.current_language = "hi"
+                                        # Reset counters after switch
+                                        self.language_token_count = {"en": 0, "hi": 0}
+                                elif self.language_token_count["en"] > self.language_token_count["hi"] * 1.5:
+                                    if self.current_language != "en":
+                                        logger.info(f"Language switched: {self.current_language} → en (tokens: en={self.language_token_count['en']}, hi={self.language_token_count['hi']})")
+                                        self.current_language = "en"
+                                        # Reset counters after switch
+                                        self.language_token_count = {"en": 0, "hi": 0}
+                        
+                        detected_language = self.current_language
+                        
+                        # Send partial transcripts (non-final tokens) with stable language
                         if partial_text and self.on_partial_transcript_callback:
                             self.on_partial_transcript_callback(partial_text.strip(), detected_language)
                         
-                        # Send final transcripts with language
+                        # Send final transcripts with stable language
                         if final_text and self.on_transcript_callback:
                             self.on_transcript_callback(final_text.strip(), detected_language)
                     

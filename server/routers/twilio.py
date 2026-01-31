@@ -110,15 +110,15 @@ async def media_stream(ws: WebSocket):
     # State tracking
     stream_sid = None
     call_sid = None
-    speaking = False
-    silence_chunks = 0
-    transcript_buffer = []
-    conversation_history = []
+    conversation_history = []  # Store conversation: [{"role": "user", "text": "..."}, {"role": "assistant", "text": "..."}]
     tts_task = None
-    processing_llm = False
-    waiting_for_transcript = False
-    vad_buffer = b""
     detected_language = "en"  # Track detected language from STT
+    processing_lock = asyncio.Lock()  # Prevent concurrent LLM calls
+    
+    # Utterance accumulation state
+    current_utterance_parts = []  # Accumulate transcripts from same utterance
+    utterance_timer_task = None  # Timer to finalize utterance after pause
+    UTTERANCE_TIMEOUT = 1.0  # Seconds to wait before finalizing utterance
     
     # Get event loop for thread-safe task creation
     loop = asyncio.get_event_loop()
@@ -128,37 +128,82 @@ async def media_stream(ws: WebSocket):
     llm_service = LLMService()
     tts_service = TTSService()
     
+    async def finalize_utterance():
+        """Finalize accumulated utterance and trigger LLM processing"""
+        nonlocal current_utterance_parts, tts_task
+        
+        if not current_utterance_parts:
+            return
+        
+        # Combine all parts into one user message
+        full_text = " ".join(current_utterance_parts).strip()
+        current_utterance_parts.clear()
+        
+        if not full_text:
+            return
+        
+        logger.info(f"✅ Utterance finalized: {full_text}")
+        
+        # Cancel any ongoing TTS if user spoke
+        if tts_task and not tts_task.done():
+            logger.info("🛑 Interrupting previous response - New user utterance")
+            tts_task.cancel()
+            try:
+                await tts_task
+            except asyncio.CancelledError:
+                pass
+        
+        # Add to conversation history as user message
+        conversation_history.append({
+            "role": "user",
+            "text": full_text
+        })
+        
+        # Trigger LLM processing
+        tts_task = asyncio.create_task(process_and_respond())
+    
     # STT service with callbacks
     def on_partial_transcript(text: str, language: str):
         """Handle streaming partial transcripts"""
-        nonlocal detected_language
+        nonlocal detected_language, current_utterance_parts
+        
+        # Log language changes
+        if detected_language != language:
+            logger.info(f"🌐 Language changed: {detected_language} → {language}")
+        
         # Store detected language
         detected_language = language
-        
-        async def send_partial():
-            logger.info(f"📝 Partial ({language}): {text}")
-        
-        loop.call_soon_threadsafe(lambda: asyncio.create_task(send_partial()))
+        logger.info(f"📝 Partial ({language}): {text}")
     
     def on_transcript(text: str, language: str):
-        nonlocal waiting_for_transcript, tts_task, detected_language
+        nonlocal detected_language, current_utterance_parts, utterance_timer_task
+        
+        # Log language changes
+        if detected_language != language:
+            logger.info(f"🌐 Language changed: {detected_language} → {language}")
         
         # Store detected language
         detected_language = language
         
-        if not transcript_buffer or transcript_buffer[-1] != text:
-            logger.info(f"📝 Final Transcript ({language}): {text}")
-            transcript_buffer.append(text)
+        # Accumulate transcript part
+        logger.info(f"📝 Final Transcript ({language}): {text}")
+        current_utterance_parts.append(text)
+        
+        # Cancel existing timer if any
+        if utterance_timer_task and not utterance_timer_task.done():
+            utterance_timer_task.cancel()
+        
+        # Start new timer to finalize utterance after pause
+        def schedule_timer():
+            nonlocal utterance_timer_task
             
-            if waiting_for_transcript and not processing_llm:
-                logger.info(f"✅ Transcript received - Processing now!")
-                waiting_for_transcript = False
-                
-                def create_task():
-                    nonlocal tts_task
-                    tts_task = asyncio.create_task(process_and_respond())
-                
-                loop.call_soon_threadsafe(create_task)
+            async def timer():
+                await asyncio.sleep(UTTERANCE_TIMEOUT)
+                await finalize_utterance()
+            
+            utterance_timer_task = asyncio.create_task(timer())
+        
+        loop.call_soon_threadsafe(schedule_timer)
     
     def on_error(error: str):
         logger.error(f"❌ STT Error: {error}")
@@ -175,21 +220,17 @@ async def media_stream(ws: WebSocket):
 
     async def process_and_respond():
         """Process transcript with LLM and stream TTS response to Twilio"""
-        nonlocal processing_llm, tts_task, stream_sid
+        nonlocal tts_task, stream_sid, conversation_history
         
-        if not transcript_buffer:
-            return
-        
-        processing_llm = True
-        
-        try:
-            full_transcript = " ".join(transcript_buffer)
-            transcript_buffer.clear()
+        # Use lock to prevent concurrent processing
+        async with processing_lock:
+            # Get the last user message from history
+            if not conversation_history or conversation_history[-1]["role"] != "user":
+                logger.warning("⚠️  No user message to process")
+                return
             
+            full_transcript = conversation_history[-1]["text"]
             logger.info(f"📄 Processing: {full_transcript}")
-            
-            # Add to conversation history
-            conversation_history.append({"role": "user", "text": full_transcript})
             
             # Process with LLM
             llm_result = await llm_service.process(full_transcript, conversation_history)
@@ -266,10 +307,7 @@ async def media_stream(ws: WebSocket):
                 except asyncio.CancelledError:
                     logger.warning("⚠️ TTS cancelled")
                     raise
-        
-        finally:
-            processing_llm = False
-            tts_task = None
+
 
     try:
         while True:

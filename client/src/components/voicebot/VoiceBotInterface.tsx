@@ -152,7 +152,24 @@ export function VoiceBotInterface() {
                 You said:
               </p>
               <p className="text-base text-zinc-900 dark:text-zinc-100">
-                {transcript || partialTranscript}
+                {(() => {
+                  // Concatenate all consecutive user messages from the end of conversation history
+                  // that haven't been responded to yet
+                  const userMessages: string[] = [];
+                  for (let i = conversationHistory.length - 1; i >= 0; i--) {
+                    if (conversationHistory[i].role === 'user') {
+                      userMessages.unshift(conversationHistory[i].text);
+                    } else {
+                      break; // Stop at the last agent message
+                    }
+                  }
+                  
+                  // If we have user messages from history, concatenate them
+                  // Otherwise show current transcript or partial
+                  return userMessages.length > 0 
+                    ? userMessages.join(' ')
+                    : (transcript || partialTranscript);
+                })()}
                 {partialTranscript && !transcript && (
                   <span className="inline-block ml-1 w-1 h-4 bg-zinc-400 animate-pulse" />
                 )}
