@@ -41,25 +41,36 @@ class ResponsePipeline:
         )
         self.tool_registry = get_registry()
     
-    async def process_text(self, text: str) -> Dict[str, Any]:
+    async def process_text(self, text: str, conversation_history: list = None) -> Dict[str, Any]:
         """
         Process text through the complete pipeline.
         
         Pipeline flow:
         1. Intent Detection
-        2. LLM Processing (with tool definitions)
+        2. LLM Processing (with tool definitions and conversation history)
         3. Tool Execution (if needed)
         4. LLM Response Generation
         5. Text Output
         
         Args:
             text: Input text to process.
+            conversation_history: Previous conversation for context.
             
         Returns:
             Dictionary containing the final response and metadata.
         """
         try:
             logger.info(f"Processing text: {text[:100]}...")
+            
+            # Build context from conversation history
+            context_prompt = text
+            if conversation_history:
+                # Format: USER: hi\nAGENT: Hello! How may I help you?\nUSER: new message
+                history_text = "\n".join(
+                    [f"{msg['role'].upper()}: {msg['text']}" for msg in conversation_history]
+                )
+                context_prompt = f"Previous conversation:\n{history_text}\n\nUSER: {text}"
+                logger.info(f"Added conversation context ({len(conversation_history)} turns)")
             
             # Step 1: Intent Detection
             logger.info("Step 1: Intent Detection")
