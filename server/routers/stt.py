@@ -20,6 +20,9 @@ router = APIRouter(prefix="/stt", tags=["stt"])
 # Constants
 # =========================
 SILENCE_LIMIT_CHUNKS = 15  # ~0.5s of silence to trigger LLM
+# Silero VAD requires at least 512 samples (32ms at 16kHz) per chunk
+VAD_MIN_SAMPLES = 512
+VAD_MIN_BYTES = VAD_MIN_SAMPLES * 2  # PCM16
 
 
 # =========================
@@ -61,6 +64,7 @@ async def audio_websocket(ws: WebSocket):
     tts_task = None  # Track active TTS streaming task
     processing_llm = False  # Track if LLM is currently processing
     waiting_for_transcript = False  # Flag to indicate we're waiting for final transcript
+    vad_buffer = b""  # Buffer for VAD (needs at least VAD_MIN_BYTES per call)
     
     # Get event loop for scheduling tasks from callback thread
     loop = asyncio.get_event_loop()
@@ -196,46 +200,50 @@ async def audio_websocket(ws: WebSocket):
             # Receive audio chunk
             audio_bytes = await ws.receive_bytes()
 
-            # Get VAD confidence
-            confidence = vad_service.get_confidence(audio_bytes)
-            
-            # Stream to AssemblyAI continuously
+            # Stream to AssemblyAI immediately (no buffering)
             await asyncio.to_thread(stt_service.stream, audio_bytes)
 
-            # Check if new speech detected during TTS playback
-            if confidence > vad_service.speech_threshold:
-                # If TTS is currently playing, interrupt it
-                if tts_task and not tts_task.done():
-                    print("🛑 Interrupting TTS - New speech detected")
-                    tts_task.cancel()
-                    try:
-                        await tts_task
-                    except asyncio.CancelledError:
-                        pass
-                    tts_task = None
-                
-                speaking = True
-                silence_chunks = 0
-                print(f"🎤 VAD: {confidence:.3f} [SPEECH] | Buffer: {len(transcript_buffer)} transcripts")
-            else:
-                # Silence detected
-                if speaking:
-                    silence_chunks += 1
-                    print(f"🔇 VAD: {confidence:.3f} [silence {silence_chunks}/{SILENCE_LIMIT_CHUNKS}]")
+            # Buffer for VAD; Silero requires at least 512 samples (1024 bytes) per chunk
+            vad_buffer += audio_bytes
+            while len(vad_buffer) >= VAD_MIN_BYTES:
+                chunk = vad_buffer[:VAD_MIN_BYTES]
+                vad_buffer = vad_buffer[VAD_MIN_BYTES:]
+                confidence = vad_service.get_confidence(chunk)
 
-            # Process immediately after silence threshold (only if not already processing)
-            if speaking and silence_chunks >= SILENCE_LIMIT_CHUNKS and not processing_llm:
-                print(f"\n🔕 Silence threshold reached - Waiting for transcript...")
-                
-                speaking = False
-                silence_chunks = 0
-                waiting_for_transcript = True
-                
-                # If transcript already in buffer, process immediately
-                if transcript_buffer:
-                    print(f"📋 Transcript already available - Processing now!")
-                    waiting_for_transcript = False
-                    tts_task = asyncio.create_task(process_and_respond())
+                # Check if new speech detected during TTS playback
+                if confidence > vad_service.speech_threshold:
+                    # If TTS is currently playing, interrupt it
+                    if tts_task and not tts_task.done():
+                        print("🛑 Interrupting TTS - New speech detected")
+                        tts_task.cancel()
+                        try:
+                            await tts_task
+                        except asyncio.CancelledError:
+                            pass
+                        tts_task = None
+
+                    speaking = True
+                    silence_chunks = 0
+                    print(f"🎤 VAD: {confidence:.3f} [SPEECH] | Buffer: {len(transcript_buffer)} transcripts")
+                else:
+                    # Silence detected
+                    if speaking:
+                        silence_chunks += 1
+                        print(f"🔇 VAD: {confidence:.3f} [silence {silence_chunks}/{SILENCE_LIMIT_CHUNKS}]")
+
+                # Process immediately after silence threshold (only if not already processing)
+                if speaking and silence_chunks >= SILENCE_LIMIT_CHUNKS and not processing_llm:
+                    print(f"\n🔕 Silence threshold reached - Waiting for transcript...")
+
+                    speaking = False
+                    silence_chunks = 0
+                    waiting_for_transcript = True
+
+                    # If transcript already in buffer, process immediately
+                    if transcript_buffer:
+                        print(f"📋 Transcript already available - Processing now!")
+                        waiting_for_transcript = False
+                        tts_task = asyncio.create_task(process_and_respond())
 
     except WebSocketDisconnect:
         print("✋ Client disconnected")

@@ -44,6 +44,22 @@ export function useVoiceBot(): UseVoiceBotReturn {
     setCallState(prev => ({ ...prev, status, error }));
   }, []);
 
+  // Downsample float32 audio to target sample rate (linear interpolation)
+  const downsample = (input: Float32Array, fromRate: number, toRate: number): Float32Array => {
+    if (fromRate === toRate) return input;
+    const ratio = fromRate / toRate;
+    const outLength = Math.round(input.length / ratio);
+    const result = new Float32Array(outLength);
+    for (let i = 0; i < outLength; i++) {
+      const srcIndex = i * ratio;
+      const idx0 = Math.floor(srcIndex);
+      const idx1 = Math.min(idx0 + 1, input.length - 1);
+      const t = srcIndex - idx0;
+      result[i] = input[idx0] * (1 - t) + input[idx1] * t;
+    }
+    return result;
+  };
+
   // Convert Float32 to Int16 PCM
   const float32ToInt16 = (buffer: Float32Array): ArrayBuffer => {
     const int16 = new Int16Array(buffer.length);
@@ -94,7 +110,8 @@ export function useVoiceBot(): UseVoiceBotReturn {
   const startAudioAnalysis = useCallback((stream: MediaStream) => {
     try {
       if (!audioContextRef.current) {
-        audioContextRef.current = new AudioContext({ sampleRate: INPUT_SAMPLE_RATE });
+        // Use default sample rate so MediaStream and context match (browser requirement)
+        audioContextRef.current = new AudioContext();
       }
 
       const ctx = audioContextRef.current;
@@ -174,14 +191,15 @@ export function useVoiceBot(): UseVoiceBotReturn {
     const ctx = audioContextRef.current;
     const source = ctx.createMediaStreamSource(stream);
     
-    // Create processor for 512 samples (32ms at 16kHz)
+    // Create processor (512 samples per chunk; downsampled to 16kHz before send)
     const processor = ctx.createScriptProcessor(512, 1, 1);
     audioProcessorRef.current = processor;
 
     processor.onaudioprocess = (e) => {
       if (wsRef.current?.readyState === WebSocket.OPEN && !callState.isMuted) {
         const inputData = e.inputBuffer.getChannelData(0);
-        const pcmData = float32ToInt16(inputData);
+        const at16k = downsample(inputData, ctx.sampleRate, INPUT_SAMPLE_RATE);
+        const pcmData = float32ToInt16(at16k);
         wsRef.current.send(pcmData);
       }
     };
