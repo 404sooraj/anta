@@ -2,12 +2,11 @@
 LLM Service - Language Model Processing
 Handles LLM interactions for processing transcripts using the response pipeline
 """
-import os
 import logging
-from dotenv import load_dotenv
+
+from modules.config import ConfigEnv
 from modules.response.response import ResponsePipeline
 
-load_dotenv()
 logger = logging.getLogger(__name__)
 
 
@@ -16,17 +15,16 @@ logger = logging.getLogger(__name__)
 # =========================
 class LLMService:
     """Process transcripts with LLM using the response pipeline"""
-    
+
     def __init__(self):
         """Initialize LLM service with response pipeline"""
-        self.api_key = os.getenv("BEDROCK_API_KEY", "")
+        self.api_key = ConfigEnv.BEDROCK_API_KEY
         # Bedrock uses AWS credentials; keep api_key for backward compatibility only
-        
-        # Initialize the response pipeline (model name from GEMINI_MODEL_NAME in .env)
+
         self.pipeline = ResponsePipeline(
             api_key=self.api_key,
-            model_name=os.getenv("BEDROCK_MODEL_ID"),
-            temperature=float(os.getenv("BEDROCK_TEMPERATURE", "0.7"))
+            model_name=ConfigEnv.BEDROCK_MODEL_ID,
+            temperature=ConfigEnv.BEDROCK_TEMPERATURE,
         )
         logger.info("✓ LLM Service initialized with response pipeline")
     

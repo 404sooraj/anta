@@ -12,6 +12,16 @@ from services.stt import STTService, VADService
 from services.llm import LLMService
 from services.tts import TTSService
 
+from typing import Literal, cast
+
+TTSLanguage = Literal["hi", "en", "auto"]
+
+def normalize_tts_language(lang: str) -> TTSLanguage:
+    if lang in ("hi", "en"):
+        return cast(TTSLanguage, lang)
+    return "auto"
+
+
 # =========================
 # Router Setup
 # =========================
@@ -121,6 +131,7 @@ async def audio_websocket(ws: WebSocket):
         else:
             print(f"⏭️  Skipping duplicate transcript: {text}")
     
+
     def on_error(error: str):
         print(f"❌ STT Error: {error}")
     
@@ -227,11 +238,12 @@ async def audio_websocket(ws: WebSocket):
                             tts_started = True
 
                         try:
+                            tts_language = normalize_tts_language(detected_language)
                             async for audio_chunk in tts_service.stream_tts_chunk(
                                 transcript=text_chunk,
                                 context_id=tts_context_id,
                                 continue_flag=not is_last,
-                                language=detected_language,
+                                language=tts_language,
                             ):
                                 current_task = asyncio.current_task()
                                 if current_task and current_task.cancelled():

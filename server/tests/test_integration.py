@@ -3,7 +3,6 @@
 Note: These tests require valid AWS credentials to run actual Bedrock API calls.
 """
 
-import os
 from pathlib import Path
 from dotenv import load_dotenv
 import pytest
@@ -13,18 +12,19 @@ env_path = Path(__file__).parent.parent / ".env"
 if env_path.exists():
     load_dotenv(env_path)
 
+from modules.config import ConfigEnv
+
 # Skip integration tests if no real API key is available
-# Check if API key exists and is not the test key
-_has_real_api_key = bool(
-    os.getenv("AWS_ACCESS_KEY_ID")
-    and os.getenv("AWS_SECRET_ACCESS_KEY")
-    and (os.getenv("BEDROCK_REGION") or os.getenv("AWS_REGION"))
+_has_aws_credentials = bool(
+    ConfigEnv.AWS_ACCESS_KEY_ID
+    and ConfigEnv.AWS_SECRET_ACCESS_KEY
+    and ConfigEnv.get_bedrock_region()
 )
 
 pytestmark = pytest.mark.skipif(
-    not _has_real_api_key,
-    reason="Integration tests skipped. Set AWS credentials and BEDROCK_REGION/AWS_REGION in .env file to run."
     not _has_aws_credentials,
+    reason="Integration tests skipped. Set AWS credentials and BEDROCK_REGION/AWS_REGION in .env file to run.",
+)
 
 
 @pytest.mark.integration
@@ -32,10 +32,10 @@ pytestmark = pytest.mark.skipif(
 async def test_full_pipeline_with_real_api():
     """Test full pipeline with real Bedrock API (requires AWS credentials)."""
     from modules.response.response import ResponsePipeline
-    
-    if not _has_real_api_key:
+
     if not _has_aws_credentials:
-    
+        pytest.skip("AWS credentials not set")
+
     pipeline = ResponsePipeline()
     
     # Test with a simple prompt
@@ -90,8 +90,6 @@ async def test_all_test_prompts_one_by_one():
     import json
     from pathlib import Path
     if not _has_aws_credentials:
-    
-    if not _has_real_api_key:
         pytest.skip("AWS credentials or region not set for integration test")
     
     # Load test prompts
@@ -104,7 +102,9 @@ async def test_all_test_prompts_one_by_one():
     
     if not prompts:
         pytest.skip("No prompts found in test-prompts.json")
-    
+
+    from modules.response.response import ResponsePipeline
+
     # Initialize pipeline
     pipeline = ResponsePipeline()
     

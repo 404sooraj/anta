@@ -20,16 +20,14 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 from openpyxl import load_workbook
 
-load_dotenv()
-
-# Add server root to path so we can import db
+# Add server root to path so we can import db and config
 SERVER_ROOT = Path(__file__).resolve().parent.parent
 os.chdir(SERVER_ROOT)
 
+from modules.config import ConfigEnv
 from db.connection import DB_NAME
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -211,7 +209,7 @@ async def seed_agents(db, drop: bool) -> None:
 
 
 async def run(drop: bool) -> None:
-    url = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
+    url = ConfigEnv.MONGODB_URL or "mongodb://localhost:27017"
     client = AsyncIOMotorClient(url)
     db = client[DB_NAME]
     try:

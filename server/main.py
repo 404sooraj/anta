@@ -1,15 +1,11 @@
 """Main application entry point for BatterySmart API."""
 
-import os
 import logging
 from contextlib import asynccontextmanager
-from dotenv import load_dotenv
 from fastapi import FastAPI
 
-# Load environment variables first
-load_dotenv()
-
-# Import routers and db
+# Import config first (loads .env); then routers and db
+from modules.config import ConfigEnv
 from routers.stt import router as stt_router
 from routers.text import router as text_router
 from routers.tts import router as tts_router
@@ -34,30 +30,16 @@ async def lifespan(app: FastAPI):
     Handles startup and shutdown events.
     """
     logger.info("Starting up BatterySmart API...")
-    
+        
     # Verify API keys
-    bedrock_model_id = os.getenv("BEDROCK_MODEL_ID")
-    bedrock_region = os.getenv("BEDROCK_REGION") or os.getenv("AWS_REGION")
-    soniox_key = os.getenv("SONIOX_API_KEY")
-    cartesia_key = os.getenv("CARTESIA_API_KEY") or os.getenv("CARTESIAN_PRODUCT_API_KEY")
-    tts_enabled = os.getenv("CARTESIA_TTS_ENABLED", "true").strip().lower() not in {"0", "false", "no", "off"}
-    twilio_account_sid = os.getenv("TWILIO_ACCOUNT_SID")
-    twilio_auth_token = os.getenv("TWILIO_AUTH_TOKEN")
-    twilio_ws_url = os.getenv("TWILIO_WEBSOCKET_URL")
+    # gemini_model_name = ConfigEnv.GEMINI_MODEL_NAME
+    soniox_key = ConfigEnv.SONIOX_API_KEY
+    cartesia_key = ConfigEnv.CARTESIA_API_KEY
+    tts_enabled = ConfigEnv.CARTESIA_TTS_ENABLED
+    twilio_account_sid = ConfigEnv.TWILIO_ACCOUNT_SID
+    twilio_auth_token = ConfigEnv.TWILIO_AUTH_TOKEN
+    twilio_ws_url = ConfigEnv.TWILIO_WEBSOCKET_URL
     
-    if not bedrock_model_id or not bedrock_region:
-        logger.warning("BEDROCK_MODEL_ID or BEDROCK_REGION/AWS_REGION not set - LLM features may not work")
-    if not soniox_key:
-        logger.warning("SONIOX_API_KEY not set - STT features will not work")
-    if not tts_enabled:
-        logger.info("TTS is disabled (CARTESIA_TTS_ENABLED=false)")
-    elif not cartesia_key:
-        logger.warning("CARTESIA_API_KEY not set - TTS features will not work")
-    if not twilio_account_sid or not twilio_auth_token:
-        logger.warning("TWILIO_ACCOUNT_SID or TWILIO_AUTH_TOKEN not set - Twilio features will not work")
-    if not twilio_ws_url:
-        logger.warning("TWILIO_WEBSOCKET_URL not set - using default. Set this to your ngrok/production URL")
-
     # MongoDB: connect and attach db to app state for routes/tools
     db = get_db()
     app.state.db = db

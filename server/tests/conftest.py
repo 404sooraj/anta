@@ -14,14 +14,17 @@ env_path = Path(__file__).parent.parent / ".env"
 if env_path.exists():
     load_dotenv(env_path)
 
-# Set test environment variables (only if not already set from .env)
+# Set test env vars before importing ConfigEnv so it picks them up at load time
 if not os.getenv("GEMINI_API_KEY"):
     os.environ["GEMINI_API_KEY"] = "test_api_key_12345"
 if not os.getenv("GOOGLE_API_KEY"):
     os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY", "test_api_key_12345")
-
 if not os.getenv("BEDROCK_MODEL_ID"):
     os.environ["BEDROCK_MODEL_ID"] = "anthropic.claude-3-haiku-20240307-v1:0"
+if not os.getenv("GEMINI_MODEL_NAME"):
+    os.environ["GEMINI_MODEL_NAME"] = "anthropic.claude-3-haiku-20240307-v1:0"
+
+from modules.config import ConfigEnv
 
 
 @pytest.fixture

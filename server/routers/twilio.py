@@ -10,16 +10,12 @@ import json
 import base64
 import audioop
 import logging
-import os
 import numpy as np
-from dotenv import load_dotenv
 
+from modules.config import ConfigEnv
 from services.stt import STTService, VADService
 from services.llm import LLMService
 from services.tts import TTSService
-
-# Load environment variables
-load_dotenv()
 
 # =========================
 # Router Setup
@@ -30,9 +26,9 @@ logger = logging.getLogger(__name__)
 # =========================
 # Twilio Configuration
 # =========================
-TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "")
-TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "")
-TWILIO_WEBSOCKET_URL = os.getenv("TWILIO_WEBSOCKET_URL", "wss://your-domain.com/twilio/media")
+TWILIO_ACCOUNT_SID = ConfigEnv.TWILIO_ACCOUNT_SID or ""
+TWILIO_AUTH_TOKEN = ConfigEnv.TWILIO_AUTH_TOKEN or ""
+TWILIO_WEBSOCKET_URL = ConfigEnv.TWILIO_WEBSOCKET_URL or "wss://your-domain.com/twilio/media"
 
 # =========================
 # Constants

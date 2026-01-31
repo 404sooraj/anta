@@ -1,7 +1,7 @@
 """Tests for the response pipeline."""
 
-import os
 import pytest
+from modules.config import ConfigEnv
 from modules.response.response import ResponsePipeline
 from modules.response.llm_client import LLMClient
 from modules.response.intent_detector import IntentDetector
@@ -25,7 +25,7 @@ async def test_llm_client_initialization():
     
     assert client is not None
     assert client.api_key == "test_api_key"
-    assert client.model_name == os.getenv("BEDROCK_MODEL_ID")
+    assert client.model_name == ConfigEnv.BEDROCK_MODEL_ID
     assert client.temperature == 0.7
     assert client.model is not None
 

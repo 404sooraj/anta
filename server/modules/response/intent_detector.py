@@ -1,11 +1,12 @@
 """Intent detection module for classifying user intents."""
 
-import os
 import json
 import logging
 from typing import Dict, Any, Optional
 
 from langchain_aws import ChatBedrockConverse
+
+from modules.config import ConfigEnv
 
 logger = logging.getLogger(__name__)
 
@@ -32,17 +33,20 @@ class IntentDetector:
             region_name: AWS region. If not provided, reads from BEDROCK_REGION or AWS_REGION.
         """
         self.api_key = api_key
-        self.model_name = os.getenv("BEDROCK_MODEL_ID")
+        # Use same Bedrock model as pipeline; GEMINI_MODEL_NAME kept for override
+        self.model_name = ConfigEnv.BEDROCK_MODEL_ID
         if not self.model_name:
-            raise ValueError("BEDROCK_MODEL_ID must be set in environment variables")
-        self.region_name = region_name or os.getenv("BEDROCK_REGION") or os.getenv("AWS_REGION")
+            raise ValueError(
+                "Set BEDROCK_MODEL_ID or GEMINI_MODEL_NAME in environment variables"
+            )
+        self.region_name = region_name or ConfigEnv.get_bedrock_region()
         self.model = ChatBedrockConverse(
             model=self.model_name,
             temperature=0,
             max_tokens=512,
             region_name=self.region_name,
         )
-    
+
     def _get_intent_prompt(self, text: str) -> str:
         """Generate the prompt for intent detection."""
         categories_str = ", ".join(self.INTENT_CATEGORIES)
@@ -75,8 +79,15 @@ Only respond with the JSON object, no additional text."""
             prompt = self._get_intent_prompt(text)
             
             response = await self.model.ainvoke(prompt)
-            response_text = (response.content or "").strip()
-            
+            raw = response.content
+            if isinstance(raw, list):
+                response_text = " ".join(
+                    (c.get("text", c) if isinstance(c, dict) else str(c))
+                    for c in raw
+                ).strip()
+            else:
+                response_text = (raw or "").strip()
+
             # Try to extract JSON if wrapped in markdown code blocks
             if "```json" in response_text:
                 response_text = response_text.split("```json")[1].split("```")[0].strip()

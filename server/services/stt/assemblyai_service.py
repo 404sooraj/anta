@@ -12,16 +12,14 @@ from assemblyai.streaming.v3 import (
     StreamingError,
 )
 from typing import Type, Callable, Optional
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
+from modules.config import ConfigEnv
 
 # =========================
 # Configuration
 # =========================
 SAMPLE_RATE = 16000
-aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY", "")
+aai.settings.api_key = ConfigEnv.ASSEMBLYAI_API_KEY or ""
 
 
 # =========================

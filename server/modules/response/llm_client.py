@@ -1,12 +1,13 @@
 """LLM client for LangChain AWS Bedrock with tool calling support."""
 
 import json
-import os
 import logging
 from typing import Dict, Any, List, Optional, AsyncGenerator
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_aws import ChatBedrockConverse
+
+from modules.config import ConfigEnv
 
 logger = logging.getLogger(__name__)
 
@@ -33,12 +34,12 @@ class LLMClient:
             region_name: AWS region. If not provided, reads from BEDROCK_REGION or AWS_REGION.
         """
         self.api_key = api_key
-        self.model_name = model_name or os.getenv("BEDROCK_MODEL_ID")
+        self.model_name = model_name or ConfigEnv.BEDROCK_MODEL_ID
         if not self.model_name:
             raise ValueError("BEDROCK_MODEL_ID must be set in environment variables or provided")
         self.temperature = temperature
-        self.max_tokens = max_tokens
-        self.region_name = region_name or os.getenv("BEDROCK_REGION") or os.getenv("AWS_REGION")
+        self.max_tokens = max_tokens or ConfigEnv.BEDROCK_MAX_TOKENS
+        self.region_name = region_name or ConfigEnv.get_bedrock_region()
 
         self.model = ChatBedrockConverse(
             model=self.model_name,

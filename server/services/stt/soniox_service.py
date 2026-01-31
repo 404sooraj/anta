@@ -6,12 +6,10 @@ import json
 import asyncio
 from typing import Callable, Optional
 from websockets.sync.client import connect, ClientConnection
-import os
-from dotenv import load_dotenv
 import threading
 import logging
 
-load_dotenv()
+from modules.config import ConfigEnv
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +18,7 @@ logger = logging.getLogger(__name__)
 # =========================
 SAMPLE_RATE = 16000
 SONIOX_WEBSOCKET_URL = "wss://stt-rt.soniox.com/transcribe-websocket"
-SONIOX_API_KEY = os.getenv("SONIOX_API_KEY", "")
+SONIOX_API_KEY = ConfigEnv.SONIOX_API_KEY or ""
 
 
 # =========================
