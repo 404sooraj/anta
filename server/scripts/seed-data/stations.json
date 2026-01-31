@@ -6,7 +6,9 @@
       "type": "Point",
       "coordinates": [77.6245, 12.9352]
     },
-    "available_batteries": 12
+    "available_batteries": 12,
+    "total_capacity": 20,
+    "status": "available"
   },
   {
     "station_id": "station_002",
@@ -15,6 +17,30 @@
       "type": "Point",
       "coordinates": [72.871, 19.1197]
     },
-    "available_batteries": 8
+    "available_batteries": 8,
+    "total_capacity": 15,
+    "status": "available"
+  },
+  {
+    "station_id": "station_003",
+    "name": "BatterySmart Connaught Place",
+    "location": {
+      "type": "Point",
+      "coordinates": [77.2167, 28.6315]
+    },
+    "available_batteries": 5,
+    "total_capacity": 12,
+    "status": "available"
+  },
+  {
+    "station_id": "station_004",
+    "name": "BatterySmart Indiranagar",
+    "location": {
+      "type": "Point",
+      "coordinates": [77.6408, 12.9784]
+    },
+    "available_batteries": 0,
+    "total_capacity": 10,
+    "status": "offline"
   }
 ]

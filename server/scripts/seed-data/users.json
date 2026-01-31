@@ -4,32 +4,59 @@
     "name": "Ravi Sharma",
     "phone_number": "+91-90000-00001",
     "password": "Password@123",
-    "language": "en",
     "location": {
       "type": "Point",
       "coordinates": [77.5946, 12.9716]
-    }
+    },
+    "vehicle_id": "vehicle_001",
+    "battery_id": "battery_001"
   },
   {
     "user_id": "user_002",
     "name": "Ananya Iyer",
     "phone_number": "+91-90000-00002",
     "password": "Password@456",
-    "language": "en",
     "location": {
       "type": "Point",
       "coordinates": [72.8777, 19.076]
-    }
+    },
+    "vehicle_id": "vehicle_002",
+    "battery_id": "battery_003"
   },
   {
     "user_id": "user_003",
     "name": "Imran Khan",
     "phone_number": "+91-90000-00003",
     "password": "Password@789",
-    "language": "hi",
     "location": {
       "type": "Point",
       "coordinates": [77.2167, 28.6667]
-    }
+    },
+    "vehicle_id": "vehicle_003",
+    "battery_id": null
+  },
+  {
+    "user_id": "user_004",
+    "name": "Priya Patel",
+    "phone_number": "+91-90000-00004",
+    "password": "Password@101",
+    "location": {
+      "type": "Point",
+      "coordinates": [77.6101, 12.9141]
+    },
+    "vehicle_id": "vehicle_004",
+    "battery_id": "battery_006"
+  },
+  {
+    "user_id": "user_005",
+    "name": "Arjun Reddy",
+    "phone_number": "+91-90000-00005",
+    "password": "Password@202",
+    "location": {
+      "type": "Point",
+      "coordinates": [78.4867, 17.385]
+    },
+    "vehicle_id": null,
+    "battery_id": null
   }
 ]
