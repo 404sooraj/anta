@@ -14,6 +14,7 @@ interface UseVoiceBotReturn {
   response: string;
   streamingResponse: string;
   conversationHistory: Array<{role: string, text: string}>;
+  handoffStatus: 'none' | 'queued' | 'connected';
 }
 
 interface UseVoiceBotOptions {
@@ -51,6 +52,7 @@ export function useVoiceBot(options: UseVoiceBotOptions = {}): UseVoiceBotReturn
   const [streamingResponse, setStreamingResponse] = useState('');
   const [conversationHistory, setConversationHistory] = useState<Array<{role: string, text: string}>>([]);
   const [isNewSpeech, setIsNewSpeech] = useState(true);
+  const [handoffStatus, setHandoffStatus] = useState<'none' | 'queued' | 'connected'>('none');
 
   const wsRef = useRef<WebSocket | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -391,6 +393,29 @@ export function useVoiceBot(options: UseVoiceBotOptions = {}): UseVoiceBotReturn
               isPlayingRef.current = false;
               setStreamingResponse('');  // Clear streaming response on interruption
               setIsNewSpeech(true);  // Ready for next speech
+            } else if (data.type === 'handoff_queued') {
+              // User has been added to the queue for human agent
+              console.log('📞 Handoff queued:', data.session_id);
+              setResponse(data.message || 'You have been added to the queue for a customer service agent.');
+              setStreamingResponse('');
+              setHandoffStatus('queued');
+            } else if (data.type === 'agent_connected') {
+              // Human agent has connected
+              console.log('🎧 Agent connected:', data.agent_id);
+              setResponse(data.message || 'You are now connected to a customer service agent.');
+              setStreamingResponse('');
+              setHandoffStatus('connected');
+            } else if (data.type === 'agent_message') {
+              // Message from human agent
+              console.log('💬 Agent message:', data.text);
+              setResponse(data.text || '');
+              setStreamingResponse('');
+            } else if (data.type === 'call_ended') {
+              // Call with agent ended
+              console.log('📴 Call ended:', data.ended_by);
+              setResponse(data.message || 'The call with the agent has ended.');
+              setStreamingResponse('');
+              setHandoffStatus('none');
             }
           } catch (err) {
             console.error('Failed to parse message:', err);
@@ -507,5 +532,6 @@ export function useVoiceBot(options: UseVoiceBotOptions = {}): UseVoiceBotReturn
     response,
     streamingResponse,
     conversationHistory,
+    handoffStatus,
   };
 }

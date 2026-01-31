@@ -7,6 +7,7 @@ from langchain_core.tools import StructuredTool
 def build_system_prompt(
     user_id: Optional[str] = None,
     tools: Optional[List[StructuredTool]] = None,
+    is_twilio_call: bool = False,
 ) -> str:
     """
     Build a system prompt with user context and tool instructions.
@@ -14,6 +15,7 @@ def build_system_prompt(
     Args:
         user_id: The user's ID for tool calls requiring user identification.
         tools: List of available tools to describe to the LLM.
+        is_twilio_call: Whether this is a phone call via Twilio (no GPS available).
         
     Returns:
         Complete system prompt string.
@@ -33,6 +35,26 @@ def build_system_prompt(
             f"- User ID: {user_id}\n"
             f"- Use this user_id when calling any tool that requires a userId parameter."
         )
+    
+    # Twilio-specific context
+    if is_twilio_call:
+        prompt_parts.append(
+            "\n\nIMPORTANT - PHONE CALL CONTEXT:"
+            "\n- This user is calling via phone (Twilio). GPS/browser location is NOT available."
+            "\n- DO NOT use getCurrentLocation tool - it will not work for phone calls."
+            "\n- If you need the user's location (e.g., to find nearest station):"
+            "\n  1. ASK the user: 'Aap abhi kahan hain?' or 'Can you tell me your current location or nearest landmark?'"
+            "\n  2. Once they provide a location/address, use geocodeAddress tool to convert it to coordinates"
+            "\n  3. Then use getNearestStation with the latitude and longitude parameters"
+            "\n- Be patient and conversational - phone users may take time to respond."
+        )
+        
+        if not user_id:
+            prompt_parts.append(
+                "\n- UNKNOWN CALLER: This phone number is not registered in our system."
+                "\n- You can still help with general queries, station information (if they provide location), etc."
+                "\n- For account-specific queries, politely ask them to provide their registered phone number or user ID."
+            )
     
     # Tool instructions
     if tools:
@@ -62,6 +84,18 @@ def build_system_prompt(
             "\n11. If a tool returns an error or 'not found', inform the user politely."
             "\n12. For critical battery issues (overheating, swelling, leakage), emphasize safety and urgency in your response."
         )
+        
+        # Geocoding instructions for Twilio calls
+        if is_twilio_call:
+            prompt_parts.append(
+                "\n\nLOCATION HANDLING FOR PHONE CALLS:"
+                "\n13. For phone callers, NEVER assume you have their location. Always ask first."
+                "\n14. When user provides a location verbally (e.g., 'Andheri Station', 'Mumbai Central'):"
+                "\n    a. Use geocodeAddress tool with the address they provided"
+                "\n    b. Use the returned latitude/longitude with getNearestStation"
+                "\n    c. Example: geocodeAddress(address='Andheri Station', city='Mumbai') -> getNearestStation(userId='...', latitude=..., longitude=...)"
+                "\n15. If geocoding fails, ask for a more specific location or nearby landmark."
+            )
     
     # Response guidelines
     prompt_parts.append(

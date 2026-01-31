@@ -16,6 +16,7 @@ from modules.config import ConfigEnv
 from services.stt import STTService, VADService
 from services.llm import LLMService
 from services.tts import TTSService
+from services.user_lookup import lookup_user_by_phone, get_user_id_from_phone
 
 # =========================
 # Router Setup
@@ -96,7 +97,7 @@ async def media_stream(ws: WebSocket):
     
     Receives from Twilio:
     - connected: Connection established
-    - start: Stream metadata (callSid, streamSid, etc.)
+    - start: Stream metadata (callSid, streamSid, from number, etc.)
     - media: Audio chunks (mulaw, 8kHz, base64 encoded)
     - stop: Stream ended
     
@@ -110,6 +111,9 @@ async def media_stream(ws: WebSocket):
     # State tracking
     stream_sid = None
     call_sid = None
+    from_number = None  # Caller's phone number
+    user_id = None  # Will be looked up from phone number
+    is_twilio_call = True  # Flag to indicate this is a phone call (no GPS)
     conversation_history = []  # Store conversation: [{"role": "user", "text": "..."}, {"role": "assistant", "text": "..."}]
     tts_task = None
     detected_language = "en"  # Track detected language from STT
@@ -220,7 +224,7 @@ async def media_stream(ws: WebSocket):
 
     async def process_and_respond():
         """Process transcript with LLM and stream TTS response to Twilio"""
-        nonlocal tts_task, stream_sid, conversation_history
+        nonlocal tts_task, stream_sid, conversation_history, user_id, is_twilio_call
         
         # Use lock to prevent concurrent processing
         async with processing_lock:
@@ -231,9 +235,15 @@ async def media_stream(ws: WebSocket):
             
             full_transcript = conversation_history[-1]["text"]
             logger.info(f"📄 Processing: {full_transcript}")
+            logger.info(f"📱 User ID: {user_id}, Is Twilio Call: {is_twilio_call}")
             
-            # Process with LLM
-            llm_result = await llm_service.process(full_transcript, conversation_history)
+            # Process with LLM - pass user_id and is_twilio_call context
+            llm_result = await llm_service.process(
+                full_transcript, 
+                conversation_history,
+                user_id=user_id,
+                is_twilio_call=True,  # This is a Twilio phone call - no GPS available
+            )
             response_text = llm_result.get('response', '')
             
             logger.info(f"💬 LLM Response: {response_text}")
@@ -323,8 +333,22 @@ async def media_stream(ws: WebSocket):
             # Handle stream start - get metadata
             elif event_type == "start":
                 stream_sid = data.get("streamSid")
-                call_sid = data.get("start", {}).get("callSid")
-                logger.info(f"🎬 Stream started - StreamSid: {stream_sid}, CallSid: {call_sid}")
+                start_data = data.get("start", {})
+                call_sid = start_data.get("callSid")
+                
+                # Get caller's phone number from custom parameters
+                custom_params = start_data.get("customParameters", {})
+                from_number = custom_params.get("from", "Unknown")
+                
+                logger.info(f"🎬 Stream started - StreamSid: {stream_sid}, CallSid: {call_sid}, From: {from_number}")
+                
+                # Look up user by phone number
+                if from_number and from_number != "Unknown":
+                    user_id = await get_user_id_from_phone(from_number)
+                    if user_id:
+                        logger.info(f"✅ Identified caller as user: {user_id}")
+                    else:
+                        logger.info(f"⚠️ Unknown caller, phone: {from_number}")
             
             # Handle incoming audio media
             elif event_type == "media":
