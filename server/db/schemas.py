@@ -1,15 +1,46 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from site import USER_BASE
-from typing import Literal
+# from site import USER_BASE
+from typing import Literal, Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
+
+class PyObjectId(ObjectId):
+    """Custom type for handling MongoDB ObjectId in Pydantic models."""
+    
+    @classmethod
+    def __get_pydantic_core_schema__(cls, _source_type, _handler):
+        from pydantic_core import core_schema
+        return core_schema.union_schema([
+            core_schema.is_instance_schema(ObjectId),
+            core_schema.chain_schema([
+                core_schema.str_schema(),
+                core_schema.no_info_plain_validator_function(cls.validate),
+            ])
+        ], serialization=core_schema.plain_serializer_function_ser_schema(str))
+    
+    @classmethod
+    def validate(cls, v):
+        if isinstance(v, ObjectId):
+            return v
+        if isinstance(v, str):
+            return ObjectId(v)
+        raise ValueError("Invalid ObjectId")
 
 
 class MongoModel(BaseModel):
-    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
+    """Base model for MongoDB documents with ObjectId support."""
+    
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
+    
+    id: Optional[PyObjectId] = Field(default=None, alias="_id")
 
 
 # GeoJSON Point for station location (2dsphere index)
@@ -113,6 +144,39 @@ class BatteryIssue(BaseModel):
 
 class Battery(BaseModel):
     battery_id: str
+    station_id: Optional[str] = None
+    issues: list[BatteryIssue] = Field(default_factory=list)
+
+
+class ConversationMessage(BaseModel):
+    """Individual message in a call transcript."""
+    
+    role: Literal["user", "assistant"]
+    text: str
+    timestamp: Optional[datetime] = None
+
+
+class CallTranscript(BaseModel):
+    """Complete call transcript with AI-generated summary and satisfaction score."""
+    
+    call_id: str  # Unique identifier for this call
+    user_id: Optional[str] = None  # User who made the call (if authenticated)
+    start_time: datetime
+    end_time: datetime
+    duration_seconds: int
+    
+    # Conversation data
+    messages: list[ConversationMessage] = Field(default_factory=list)
+    detected_language: str = "en"
+    
+    # AI-generated insights
+    summary: Optional[str] = None  # AI-generated summary of the conversation
+    satisfaction_score: Optional[int] = Field(None, ge=1, le=5)  # 1-5 rating
+    satisfaction_reasoning: Optional[str] = None  # Why this score was given
+    
+    # Call metadata
+    call_source: Literal["web", "twilio"] = "web"  # Where the call came from
+    twilio_call_sid: Optional[str] = None  # Twilio-specific identifier
     station_id: str | None = None
     issues: list[BatteryIssue] = Field(default_factory=list)
     battery_type: str

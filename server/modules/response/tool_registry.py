@@ -15,6 +15,10 @@ from .tools import (
     GetBatteryInfoTool,
     ReportBatteryIssueTool,
     GetCallInsightsTool,
+    RequestHumanAgentTool,
+    GetSubscriptionInfoTool,
+    GeocodeAddressTool,
+    ReverseGeocodeTool,
 )
 from .tools.base import BaseTool
 from .intent_tools_mapping import get_tools_for_intent
@@ -42,6 +46,10 @@ class ToolRegistry:
             GetBatteryInfoTool(),
             ReportBatteryIssueTool(),
             GetCallInsightsTool(),
+            RequestHumanAgentTool(),
+            GetSubscriptionInfoTool(),
+            GeocodeAddressTool(),
+            ReverseGeocodeTool(),
         ]
         
         for tool in tools:

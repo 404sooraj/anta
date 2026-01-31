@@ -21,8 +21,10 @@ class IntentDetector:
         "location_query",  # Asking about location
         "station_query",  # Asking about nearest station or where to swap
         "battery_query",  # Asking about battery status/health/issues
+        "subscription_query",  # Asking about subscription/plan
         "service_center_query",  # Asking about service center visits
         "swap_attempt_query",  # Asking about swap attempts
+        "human_handoff",  # User wants to speak to a human agent
         "general",  # General conversation
     ]
     
@@ -73,8 +75,22 @@ Category definitions:
 - battery_query: User ASKING about their battery (query/question), NOT complaining. Examples:
   * "Meri battery ki health kya hai?" (what is my battery health?) = battery_query
   * "Battery status batao" (tell me battery status) = battery_query
+- subscription_query: User asking about their subscription, plan, validity, or pricing. Examples:
+  * "Mera plan kya hai?" (what is my plan?) = subscription_query
+  * "Subscription kab tak valid hai?" (how long is subscription valid?) = subscription_query
+  * "Plan ki price kya hai?" (what is plan price?) = subscription_query
+  * "Mera plan expire kab hoga?" (when will my plan expire?) = subscription_query
+  * "What is my subscription status?" = subscription_query
 - service_center_query: User asking about service center visits or history
 - swap_attempt_query: User asking about their swap attempts or swap history
+- human_handoff: User wants to speak to a human agent, customer service rep, or real person. Examples:
+  * "Mujhe kisi insaan se baat karni hai" (I want to talk to a human) = human_handoff
+  * "Agent se connect karo" (connect me to agent) = human_handoff
+  * "Customer care se baat karao" (let me talk to customer care) = human_handoff
+  * "Real person se baat karna hai" (want to talk to real person) = human_handoff
+  * "I want to speak to a human" = human_handoff
+  * "Transfer me to an agent" = human_handoff
+  * "Can I talk to someone real?" = human_handoff
 - general: Greetings, thanks, or conversation not fitting other categories
 
 CRITICAL RULES:
@@ -83,6 +99,7 @@ CRITICAL RULES:
 3. "Battery garam hoti hai" (battery gets hot) = problem_report, NOT battery_query
 4. "Battery ki health kya hai?" (what is battery health) = battery_query, NOT problem_report
 5. When in doubt between problem_report and general, prefer problem_report if user mentions any issue
+6. If user explicitly asks for human/agent/customer care/real person → human_handoff
 
 Respond with a JSON object in this exact format:
 {{
