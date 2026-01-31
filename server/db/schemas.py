@@ -1,9 +1,15 @@
 """Pydantic schemas for MongoDB collections."""
 
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Any, List, Literal, Optional, Union
 
 from pydantic import BaseModel, Field
+
+
+# GeoJSON Point for station location (2dsphere index)
+class GeoPoint(BaseModel):
+    type: Literal["Point"] = "Point"
+    coordinates: List[float]  # [longitude, latitude]
 
 
 class User(BaseModel):
@@ -13,7 +19,17 @@ class User(BaseModel):
     name: str
     phone_number: str
     language: str = "en"
-    location: Optional[str] = None  # last known or preferred location for getCurrentLocation
+    location: Optional[Union[str, dict[str, Any]]] = None  # last known or preferred; str or GeoJSON
+    active_plan: Optional["ActivePlan"] = None  # denormalized snapshot; updated when subscription changes
+
+
+class ActivePlan(BaseModel):
+    """Embedded snapshot of active subscription on user document."""
+    plan: str
+    valid_till: datetime
+    status: str
+    renewal_info: Optional[str] = None
+
 
 
 class Station(BaseModel):
@@ -21,7 +37,7 @@ class Station(BaseModel):
 
     station_id: str
     name: str
-    location: str
+    location: Union[GeoPoint, dict[str, Any]]  # GeoJSON Point for 2dsphere
     available_batteries: int = 0
 
 
@@ -72,6 +88,13 @@ class Handoff(BaseModel):
     summary: Optional[str] = None
 
 
+class StationSnapshot(BaseModel):
+    """Embedded snapshot of station on swap document (avoids join at read time)."""
+
+    name: str
+    location: Optional[Union[GeoPoint, dict[str, Any]]] = None
+
+
 class Swap(BaseModel):
     """Swap document."""
 
@@ -80,3 +103,21 @@ class Swap(BaseModel):
     station_id: str
     date: datetime
     amount: int = 1
+    station_snapshot: Optional[StationSnapshot] = None  # denormalized; set when swap is written
+
+
+class BatteryIssue(BaseModel):
+    """Embedded issue on battery document (no separate battery_issues collection)."""
+
+    type: str
+    classification: str
+    reported_at: datetime
+    details: Optional[str] = None
+
+
+class Battery(BaseModel):
+    """Battery document with embedded issues."""
+
+    battery_id: str
+    station_id: Optional[str] = None
+    issues: List[BatteryIssue] = Field(default_factory=list)

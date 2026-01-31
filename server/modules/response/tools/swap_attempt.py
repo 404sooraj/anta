@@ -50,11 +50,15 @@ class GetLastSwapAttemptTool(BaseTool):
                     },
                 }
             data = _serialize_doc(swap)
-            station_id = swap.get("station_id")
-            if station_id:
-                station = await db.stations.find_one({"station_id": station_id})
-                if station:
-                    data["station"] = _serialize_doc(station)
+            # Use embedded station_snapshot when present (single-doc read); else fall back to stations lookup
+            if swap.get("station_snapshot") is not None:
+                data["station"] = _serialize_doc(swap["station_snapshot"])
+            else:
+                station_id = swap.get("station_id")
+                if station_id:
+                    station = await db.stations.find_one({"station_id": station_id})
+                    if station:
+                        data["station"] = _serialize_doc(station)
             return {"status": "ok", "data": data}
         except Exception as e:
             return {

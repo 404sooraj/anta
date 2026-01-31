@@ -14,6 +14,7 @@ from routers.stt import router as stt_router
 from routers.text import router as text_router
 from routers.tts import router as tts_router
 from routers.twilio import router as twilio_router
+from routers.batteries import router as batteries_router
 from db.connection import get_db, close_client
 from db.indexes import create_indexes
 
@@ -86,6 +87,7 @@ app.include_router(stt_router)
 app.include_router(text_router)
 app.include_router(tts_router)
 app.include_router(twilio_router)
+app.include_router(batteries_router)
 
 
 @app.get("/")
@@ -105,6 +107,8 @@ async def root():
             "tts_health": "/tts/health",
             "twilio_voice": "/twilio/voice",
             "twilio_media_stream": "ws://localhost:8000/twilio/media",
+            "batteries_put": "PUT /api/batteries/{battery_id}",
+            "batteries_get": "GET /api/batteries/{battery_id}",
             "docs": "/docs"
         }
     }
