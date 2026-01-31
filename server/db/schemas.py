@@ -113,7 +113,6 @@ class BatteryIssue(BaseModel):
 
 class Battery(BaseModel):
     battery_id: str
-<<<<<<< HEAD
     station_id: Optional[str] = None
     issues: List[BatteryIssue] = Field(default_factory=list)
 
@@ -147,7 +146,6 @@ class CallTranscript(BaseModel):
     # Call metadata
     call_source: Literal["web", "twilio"] = "web"  # Where the call came from
     twilio_call_sid: Optional[str] = None  # Twilio-specific identifier
-=======
     station_id: str | None = None
     issues: list[BatteryIssue] = Field(default_factory=list)
     battery_type: str
@@ -178,4 +176,3 @@ class GlobalPricing(BaseModel):
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime | None = None
->>>>>>> d0479f4641d9a1dfb82d50fb511f3b807293b860
