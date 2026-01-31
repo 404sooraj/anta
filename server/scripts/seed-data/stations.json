@@ -1,0 +1,20 @@
+[
+  {
+    "station_id": "station_001",
+    "name": "BatterySmart Koramangala",
+    "location": {
+      "type": "Point",
+      "coordinates": [77.6245, 12.9352]
+    },
+    "available_batteries": 12
+  },
+  {
+    "station_id": "station_002",
+    "name": "BatterySmart Andheri East",
+    "location": {
+      "type": "Point",
+      "coordinates": [72.871, 19.1197]
+    },
+    "available_batteries": 8
+  }
+]

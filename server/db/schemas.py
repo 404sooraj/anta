@@ -18,6 +18,7 @@ class User(BaseModel):
     user_id: str
     name: str
     phone_number: str
+    password_hash: Optional[str] = None  # bcrypt hashed password
     language: str = "en"
     location: Optional[Union[str, dict[str, Any]]] = None  # last known or preferred; str or GeoJSON
     active_plan: Optional["ActivePlan"] = None  # denormalized snapshot; updated when subscription changes

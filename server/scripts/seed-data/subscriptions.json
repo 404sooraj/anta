@@ -1,0 +1,23 @@
+[
+  {
+    "subscription_id": "sub_001",
+    "user_id": "user_001",
+    "plan": "standard",
+    "status": "active",
+    "valid_till_days": 90
+  },
+  {
+    "subscription_id": "sub_002",
+    "user_id": "user_002",
+    "plan": "premium",
+    "status": "active",
+    "valid_till_days": 90
+  },
+  {
+    "subscription_id": "sub_003",
+    "user_id": "user_003",
+    "plan": "standard",
+    "status": "active",
+    "valid_till_days": 90
+  }
+]

@@ -2,6 +2,8 @@
 
 from typing import Dict, Any
 
+from pydantic import BaseModel, Field
+
 from db.connection import get_db
 from .base import BaseTool
 
@@ -19,13 +21,19 @@ def _serialize_doc(doc: Dict[str, Any]) -> Dict[str, Any]:
     return out
 
 
+class SwapAttemptInput(BaseModel):
+    """Input schema for getLastSwapAttempt tool."""
+    userId: str = Field(..., description="The unique identifier of the user")
+
+
 class GetLastSwapAttemptTool(BaseTool):
     """Get information about the last swap attempt for a user."""
 
     name: str = "getLastSwapAttempt"
-    description: str = "Retrieves details about the user's last swap attempt, including timestamp, status, location, and any errors or issues encountered."
+    description: str = "Retrieves details about the user's last battery swap attempt, including timestamp, status, location, and any errors or issues encountered. Use this when the user asks about their swap history or a recent swap."
+    args_schema = SwapAttemptInput
 
-    async def execute(self, userId: str) -> Dict[str, Any]:
+    async def execute(self, **kwargs) -> Dict[str, Any]:
         """
         Execute getLastSwapAttempt tool.
 
@@ -35,6 +43,12 @@ class GetLastSwapAttemptTool(BaseTool):
         Returns:
             Dictionary containing last swap attempt information.
         """
+        userId = kwargs.get("userId")
+        if not userId:
+            return {
+                "status": "error",
+                "data": {"message": "userId is required"},
+            }
         try:
             db = get_db()
             swap = await db.swaps.find_one(

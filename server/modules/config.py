@@ -59,6 +59,9 @@ class ConfigEnv:
     # ----- MongoDB -----
     MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
 
+    # ----- Auth -----
+    AUTH_JWT_SECRET = os.getenv("AUTH_JWT_SECRET")
+
     # ----- STT -----
     SONIOX_API_KEY = os.getenv("SONIOX_API_KEY")
     ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY", "")

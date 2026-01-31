@@ -1,6 +1,6 @@
 """Tool registry for managing and executing tools."""
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Set
 import logging
 
 from langchain_core.tools import StructuredTool
@@ -13,6 +13,7 @@ from .tools import (
     GetLastSwapAttemptTool,
 )
 from .tools.base import BaseTool
+from .intent_tools_mapping import get_tools_for_intent
 
 logger = logging.getLogger(__name__)
 
@@ -84,14 +85,31 @@ class ToolRegistry:
         """
         return [tool.get_schema() for tool in self._tools.values()]
 
-    def get_langchain_tools(self) -> List[StructuredTool]:
+    def get_langchain_tools(self, intent: Optional[str] = None) -> List[StructuredTool]:
         """
-        Get LangChain tool objects for all registered tools.
+        Get LangChain tool objects for registered tools.
+
+        Args:
+            intent: Optional intent to filter tools by. If None, returns all tools.
 
         Returns:
             List of LangChain StructuredTool instances.
         """
-        return [self._to_langchain_tool(tool) for tool in self._tools.values()]
+        if intent:
+            allowed_tools = get_tools_for_intent(intent)
+            tools_to_convert = [
+                tool for name, tool in self._tools.items() 
+                if name in allowed_tools
+            ]
+            logger.info(f"[ToolRegistry] Filtering tools for intent '{intent}': {allowed_tools}")
+        else:
+            tools_to_convert = list(self._tools.values())
+        
+        tools = [self._to_langchain_tool(tool) for tool in tools_to_convert]
+        logger.info(f"[ToolRegistry] Generated {len(tools)} LangChain tools")
+        for t in tools:
+            logger.info(f"[ToolRegistry] Tool '{t.name}': description='{t.description[:50]}...', args_schema={t.args_schema}")
+        return tools
 
     @staticmethod
     def _to_langchain_tool(tool: BaseTool) -> StructuredTool:
@@ -101,7 +119,8 @@ class ToolRegistry:
             coroutine=tool.execute,
             name=tool.name,
             description=tool.description,
-            infer_schema=True,
+            infer_schema=tool.args_schema is None,
+            args_schema=tool.args_schema,
         )
     
     async def execute_tool(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
