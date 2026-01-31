@@ -10,7 +10,7 @@ import {
 } from "@/components/voicebot";
 
 export function VoiceBotInterface() {
-  const { callState, audioLevel, startCall, endCall, toggleMute, transcript, response } = useVoiceBot();
+  const { callState, audioLevel, startCall, endCall, toggleMute, transcript, partialTranscript, response, streamingResponse, conversationHistory } = useVoiceBot();
 
   const [mounted, setMounted] = useState(false);
 
@@ -75,26 +75,58 @@ export function VoiceBotInterface() {
       </div>
 
       {/* Transcript and Response Display */}
-      {(transcript || response) && (
+      {(transcript || partialTranscript || response || streamingResponse || conversationHistory.length > 0) && (
         <div className="w-full max-w-2xl space-y-4 mt-8">
-          {transcript && (
+          {/* Current Transcript */}
+          {(transcript || partialTranscript) && (
             <div className="p-4 rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400 mb-1">
                 You said:
               </p>
               <p className="text-base text-zinc-900 dark:text-zinc-100">
-                {transcript}
+                {transcript || partialTranscript}
+                {partialTranscript && !transcript && (
+                  <span className="inline-block ml-1 w-1 h-4 bg-zinc-400 animate-pulse" />
+                )}
               </p>
             </div>
           )}
-          {response && (
+          
+          {/* Streaming or Final Response */}
+          {(response || streamingResponse) && (
             <div className="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900/20">
               <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 mb-1">
                 Response:
               </p>
               <p className="text-base text-emerald-900 dark:text-emerald-100">
-                {response}
+                {response || streamingResponse}
+                {streamingResponse && !response && (
+                  <span className="inline-block ml-1 w-1 h-4 bg-emerald-500 animate-pulse" />
+                )}
               </p>
+            </div>
+          )}
+          
+          {/* Conversation History */}
+          {conversationHistory.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-zinc-600 dark:text-zinc-400">
+                Conversation History:
+              </p>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {conversationHistory.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`p-3 rounded-lg text-sm ${
+                      msg.role === 'user'
+                        ? 'bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200'
+                        : 'bg-emerald-50 dark:bg-emerald-900/10 text-emerald-800 dark:text-emerald-200'
+                    }`}
+                  >
+                    <span className="font-semibold">{msg.role === 'user' ? 'You' : 'Agent'}:</span> {msg.text}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>

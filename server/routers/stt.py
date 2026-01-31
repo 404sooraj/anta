@@ -61,6 +61,7 @@ async def audio_websocket(ws: WebSocket):
     speaking = False
     silence_chunks = 0
     transcript_buffer = []
+    conversation_history = []  # Store conversation: [{"role": "user", "text": "..."}, {"role": "assistant", "text": "..."}]
     tts_task = None  # Track active TTS streaming task
     processing_llm = False  # Track if LLM is currently processing
     waiting_for_transcript = False  # Flag to indicate we're waiting for final transcript
@@ -75,12 +76,24 @@ async def audio_websocket(ws: WebSocket):
     tts_service = TTSService()
     
     # STT service with callbacks
+    def on_partial_transcript(text: str):
+        """Handle streaming partial transcripts for real-time feedback"""
+        # Send partial transcripts to client for real-time display
+        # Use call_soon_threadsafe since this callback runs in AssemblyAI's thread
+        async def send_partial():
+            await ws.send_json({
+                "type": "partial_transcript",
+                "text": text
+            })
+        
+        loop.call_soon_threadsafe(lambda: asyncio.create_task(send_partial()))
+    
     def on_transcript(text: str):
         nonlocal waiting_for_transcript, tts_task
         
         # Deduplicate - only add if not already the last item
         if not transcript_buffer or transcript_buffer[-1] != text:
-            print(f"📝 Transcript: {text}")
+            print(f"📝 Final Transcript: {text}")
             transcript_buffer.append(text)
             
             # If we're waiting for transcript after silence, process now
@@ -103,6 +116,7 @@ async def audio_websocket(ws: WebSocket):
     
     stt_service = STTService(
         on_transcript=on_transcript,
+        on_partial_transcript=on_partial_transcript,
         on_error=on_error
     )
     
@@ -127,13 +141,25 @@ async def audio_websocket(ws: WebSocket):
             
             print(f"📄 Full transcript: {full_transcript}")
             
-            # Process with LLM pipeline
-            print(f"🤖 Calling LLM service...")
-            llm_result = await llm_service.process(full_transcript)
+            # Add user message to conversation history
+            conversation_history.append({
+                "role": "user",
+                "text": full_transcript
+            })
+            
+            # Process with LLM pipeline (with conversation history)
+            print(f"🤖 Calling LLM service with conversation context ({len(conversation_history)} turns)...")
+            llm_result = await llm_service.process(full_transcript, conversation_history)
             
             response_text = llm_result.get('response', '')
             print(f"💬 LLM Response: {response_text}")
             print(f"🎯 Intent: {llm_result.get('intent', {}).get('intent', 'unknown')}")
+            
+            # Add assistant response to conversation history
+            conversation_history.append({
+                "role": "assistant",
+                "text": response_text
+            })
             
             # Extract tool names
             tool_calls_raw = llm_result.get('tool_calls', [])
@@ -154,10 +180,23 @@ async def audio_websocket(ws: WebSocket):
                 "response": response_text,
                 "intent": llm_result.get("intent", {}),
                 "tool_calls": tool_names,
-                "tool_results": llm_result.get("tool_results", [])
+                "tool_results": llm_result.get("tool_results", []),
+                "conversation_history": conversation_history[-10:]  # Send last 10 messages
             })
             
             print(f"✅ Sent LLM response metadata to client")
+            
+            # Stream response text word-by-word for live display
+            if response_text and response_text.strip():
+                words = response_text.split()
+                streamed_text = ""
+                for word in words:
+                    streamed_text += word + " "
+                    await ws.send_json({
+                        "type": "response_stream",
+                        "text": streamed_text.strip()
+                    })
+                    await asyncio.sleep(0.05)  # Small delay for word-by-word effect
             
             # Stream TTS Response
             if response_text and response_text.strip():
@@ -201,7 +240,11 @@ async def audio_websocket(ws: WebSocket):
             audio_bytes = await ws.receive_bytes()
 
             # Stream to AssemblyAI immediately (no buffering)
-            await asyncio.to_thread(stt_service.stream, audio_bytes)
+            try:
+                await asyncio.to_thread(stt_service.stream, audio_bytes)
+            except Exception as e:
+                print(f"⚠️  STT streaming error: {e}")
+                # Continue processing, don't crash on STT errors
 
             # Buffer for VAD; Silero requires at least 512 samples (1024 bytes) per chunk
             vad_buffer += audio_bytes
@@ -221,6 +264,12 @@ async def audio_websocket(ws: WebSocket):
                         except asyncio.CancelledError:
                             pass
                         tts_task = None
+
+                    # If this is the START of new speech (wasn't speaking before)
+                    if not speaking:
+                        print("🎤 New speech started - Clearing old transcript buffer")
+                        transcript_buffer.clear()
+                        waiting_for_transcript = False
 
                     speaking = True
                     silence_chunks = 0
@@ -257,8 +306,11 @@ async def audio_websocket(ws: WebSocket):
             tts_task.cancel()
     finally:
         # Cleanup
-        await asyncio.to_thread(stt_service.disconnect)
-        print("🔌 Disconnected from AssemblyAI")
+        try:
+            await asyncio.to_thread(stt_service.disconnect)
+            print("🔌 Disconnected from AssemblyAI")
+        except Exception as e:
+            print(f"⚠️  Error disconnecting from AssemblyAI: {e}")
 
 
 # =========================

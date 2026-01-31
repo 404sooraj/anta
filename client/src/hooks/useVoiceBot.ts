@@ -10,7 +10,10 @@ interface UseVoiceBotReturn {
   endCall: () => void;
   toggleMute: () => void;
   transcript: string;
+  partialTranscript: string;
   response: string;
+  streamingResponse: string;
+  conversationHistory: Array<{role: string, text: string}>;
 }
 
 const WS_URL = 'ws://localhost:8000/stt/ws/audio';
@@ -26,7 +29,11 @@ export function useVoiceBot(): UseVoiceBotReturn {
   });
   const [audioLevel, setAudioLevel] = useState(0);
   const [transcript, setTranscript] = useState('');
+  const [partialTranscript, setPartialTranscript] = useState('');
   const [response, setResponse] = useState('');
+  const [streamingResponse, setStreamingResponse] = useState('');
+  const [conversationHistory, setConversationHistory] = useState<Array<{role: string, text: string}>>([]);
+  const [isNewSpeech, setIsNewSpeech] = useState(true);
 
   const wsRef = useRef<WebSocket | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -254,11 +261,32 @@ export function useVoiceBot(): UseVoiceBotReturn {
           try {
             const data = JSON.parse(event.data);
             
-            if (data.type === 'llm_response') {
+            if (data.type === 'partial_transcript') {
+              // Real-time streaming transcripts
+              // Clear old messages when new speech starts
+              if (isNewSpeech) {
+                setTranscript('');
+                setResponse('');
+                setStreamingResponse('');
+                setIsNewSpeech(false);
+              }
+              setPartialTranscript(data.text || '');
+            } else if (data.type === 'response_stream') {
+              // Streaming response text word-by-word
+              setStreamingResponse(data.text || '');
+            } else if (data.type === 'llm_response') {
               console.log('📄 Transcript:', data.transcript);
               console.log('🤖 Response:', data.response);
               setTranscript(data.transcript || '');
+              // Clear partial after a brief delay to show the final transcript first
+              setTimeout(() => setPartialTranscript(''), 100);
               setResponse(data.response || '');
+              setStreamingResponse('');  // Clear streaming response
+              setIsNewSpeech(true);  // Ready for next speech
+              // Update conversation history if provided
+              if (data.conversation_history) {
+                setConversationHistory(data.conversation_history);
+              }
             } else if (data.type === 'audio_start') {
               console.log('🔊 Receiving TTS audio...');
             } else if (data.type === 'audio_end') {
@@ -268,6 +296,8 @@ export function useVoiceBot(): UseVoiceBotReturn {
               // Clear audio queue on interruption
               audioQueueRef.current = [];
               isPlayingRef.current = false;
+              setStreamingResponse('');  // Clear streaming response on interruption
+              setIsNewSpeech(true);  // Ready for next speech
             }
           } catch (err) {
             console.error('Failed to parse message:', err);
@@ -338,7 +368,11 @@ export function useVoiceBot(): UseVoiceBotReturn {
       isMuted: false,
     });
     setTranscript('');
+    setPartialTranscript('');
     setResponse('');
+    setStreamingResponse('');
+    setConversationHistory([]);
+    setIsNewSpeech(true);
   }, [updateStatus, stopAudioAnalysis, stopDurationTimer]);
 
   // Toggle mute
@@ -376,6 +410,9 @@ export function useVoiceBot(): UseVoiceBotReturn {
     endCall,
     toggleMute,
     transcript,
+    partialTranscript,
     response,
+    streamingResponse,
+    conversationHistory,
   };
 }

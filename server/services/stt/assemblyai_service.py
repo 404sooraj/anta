@@ -33,10 +33,12 @@ class STTService:
     def __init__(
         self,
         on_transcript: Optional[Callable[[str], None]] = None,
+        on_partial_transcript: Optional[Callable[[str], None]] = None,
         on_error: Optional[Callable[[str], None]] = None
     ):
         self.client: Optional[StreamingClient] = None
         self.on_transcript_callback = on_transcript
+        self.on_partial_transcript_callback = on_partial_transcript
         self.on_error_callback = on_error
         self.audio_buffer = bytearray()  # Buffer for accumulating chunks
         self.min_chunk_size = 1600  # 50ms at 16kHz = 800 samples = 1600 bytes
@@ -45,6 +47,7 @@ class STTService:
         """Create and configure AssemblyAI streaming client"""
         # Capture callbacks in closure
         transcript_callback = self.on_transcript_callback
+        partial_transcript_callback = self.on_partial_transcript_callback
         error_callback = self.on_error_callback
         
         client = StreamingClient(
@@ -54,12 +57,18 @@ class STTService:
         )
         
         def on_turn(self: Type[StreamingClient], event: TurnEvent):
-            # Only process final transcripts (not partial updates)
-            # Filter out empty or whitespace-only transcripts
-            if event.transcript and event.end_of_turn and transcript_callback:
+            # Handle both partial and final transcripts
+            if event.transcript:
                 cleaned = event.transcript.strip()
                 if cleaned:
-                    transcript_callback(cleaned)
+                    if event.end_of_turn:
+                        # Final transcript
+                        if transcript_callback:
+                            transcript_callback(cleaned)
+                    else:
+                        # Partial transcript (streaming)
+                        if partial_transcript_callback:
+                            partial_transcript_callback(cleaned)
         
         def on_error(self: Type[StreamingClient], error: StreamingError):
             if error_callback:
@@ -85,26 +94,36 @@ class STTService:
         if not self.client:
             return
         
-        # Add to buffer
-        self.audio_buffer.extend(audio_bytes)
-        
-        # Send when we have at least 50ms worth of audio
-        while len(self.audio_buffer) >= self.min_chunk_size:
-            # Extract chunk (100ms = 3200 bytes for better efficiency)
-            chunk_size = min(3200, len(self.audio_buffer))
-            chunk = bytes(self.audio_buffer[:chunk_size])
-            del self.audio_buffer[:chunk_size]
+        try:
+            # Add to buffer
+            self.audio_buffer.extend(audio_bytes)
             
-            # Send to AssemblyAI
-            self.client.stream(chunk)
+            # Send when we have at least 50ms worth of audio
+            while len(self.audio_buffer) >= self.min_chunk_size:
+                # Extract chunk (100ms = 3200 bytes for better efficiency)
+                chunk_size = min(3200, len(self.audio_buffer))
+                chunk = bytes(self.audio_buffer[:chunk_size])
+                del self.audio_buffer[:chunk_size]
+                
+                # Send to AssemblyAI
+                self.client.stream(chunk)
+        except Exception as e:
+            # Handle connection errors gracefully (keepalive timeout, etc.)
+            print(f"⚠️  AssemblyAI streaming error: {e}")
+            # Don't re-raise, allow processing to continue
     
     def disconnect(self):
         """Disconnect from AssemblyAI"""
         if self.client:
-            # Flush any remaining buffer
-            if len(self.audio_buffer) >= self.min_chunk_size:
-                self.client.stream(bytes(self.audio_buffer))
-            self.audio_buffer.clear()
-            
-            self.client.disconnect(terminate=True)
-            self.client = None
+            try:
+                # Flush any remaining buffer
+                if len(self.audio_buffer) >= self.min_chunk_size:
+                    self.client.stream(bytes(self.audio_buffer))
+                self.audio_buffer.clear()
+                
+                self.client.disconnect(terminate=True)
+            except Exception as e:
+                # Handle keepalive timeout and other disconnect errors gracefully
+                print(f"⚠️  AssemblyAI disconnect error (expected on timeout): {e}")
+            finally:
+                self.client = None

@@ -31,18 +31,19 @@ class LLMService:
         )
         logger.info("✓ LLM Service initialized with response pipeline")
     
-    async def process(self, transcript: str) -> dict:
+    async def process(self, transcript: str, conversation_history: list = None) -> dict:
         """
         Process transcript through the complete pipeline.
         
         Pipeline flow:
         1. Intent Detection
-        2. LLM Processing (with tool definitions)
+        2. LLM Processing (with tool definitions and conversation context)
         3. Tool Execution (if needed)
         4. LLM Response Generation
         
         Args:
             transcript: The transcribed text to process
+            conversation_history: Previous conversation turns for context
             
         Returns:
             Dictionary containing:
@@ -54,7 +55,7 @@ class LLMService:
         logger.info(f"Processing transcript: {transcript[:100]}...")
         
         try:
-            result = await self.pipeline.process_text(transcript)
+            result = await self.pipeline.process_text(transcript, conversation_history)
             
             logger.info(f"LLM processing complete. Response: {result.get('response', '')[:100]}...")
             
