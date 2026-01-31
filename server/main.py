@@ -13,6 +13,7 @@ load_dotenv()
 from routers.stt import router as stt_router
 from routers.text import router as text_router
 from routers.tts import router as tts_router
+from routers.batteries import router as batteries_router
 from db.connection import get_db, close_client
 from db.indexes import create_indexes
 
@@ -52,7 +53,7 @@ async def lifespan(app: FastAPI):
     # MongoDB: connect and attach db to app state for routes/tools
     db = get_db()
     app.state.db = db
-    await create_indexes(db)
+    # await create_indexes(db)
     logger.info("✓ MongoDB connected")
 
     logger.info("✓ Startup complete")
@@ -77,6 +78,7 @@ app = FastAPI(
 app.include_router(stt_router)
 app.include_router(text_router)
 app.include_router(tts_router)
+app.include_router(batteries_router)
 
 
 @app.get("/")
@@ -94,6 +96,8 @@ async def root():
             "text_health": "/api/text/health",
             "tts_websocket": "ws://localhost:8000/tts/ws",
             "tts_health": "/tts/health",
+            "batteries_put": "PUT /api/batteries/{battery_id}",
+            "batteries_get": "GET /api/batteries/{battery_id}",
             "docs": "/docs"
         }
     }

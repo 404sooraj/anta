@@ -43,11 +43,15 @@ class GetUserInfoTool(BaseTool):
                     "status": "not_found",
                     "data": {"userId": userId, "message": "User not found"},
                 }
-            subscriptions = []
-            async for sub in db.subscriptions.find({"user_id": userId}):
-                subscriptions.append(_serialize_doc(sub))
             data = _serialize_doc(user)
-            data["subscriptions"] = subscriptions
+            # Prefer embedded active_plan (single-doc read); fall back to subscriptions collection
+            if data.get("active_plan") is not None:
+                data.setdefault("subscriptions", [data["active_plan"]])
+            else:
+                subscriptions = []
+                async for sub in db.subscriptions.find({"user_id": userId}):
+                    subscriptions.append(_serialize_doc(sub))
+                data["subscriptions"] = subscriptions
             return {"status": "ok", "data": data}
         except Exception as e:
             return {

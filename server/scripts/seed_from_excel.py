@@ -154,9 +154,14 @@ async def seed_swaps(db, drop: bool) -> None:
         return
     if drop:
         await db.swaps.delete_many({})
-    # Get first station for FK
+    # Get first station for FK and station_snapshot (denormalized for single-doc read)
     first_station = await db.stations.find_one({})
     station_id = first_station["station_id"] if first_station else "unknown"
+    station_snapshot = (
+        {"name": first_station["name"], "location": first_station["location"]}
+        if first_station
+        else None
+    )
     wb = load_workbook(path, read_only=True)
     sheet = wb["result"]
     rows = list(sheet.iter_rows(min_row=2, values_only=True))
@@ -175,13 +180,16 @@ async def seed_swaps(db, drop: bool) -> None:
         if dt_val is None:
             dt_val = datetime.now(timezone.utc)
         swap_id = str(uuid.uuid4())
-        await db.swaps.insert_one({
+        swap_doc = {
             "swap_id": swap_id,
             "user_id": device_id,
             "station_id": station_id,
             "date": dt_val,
             "amount": 1,
-        })
+        }
+        if station_snapshot is not None:
+            swap_doc["station_snapshot"] = station_snapshot
+        await db.swaps.insert_one(swap_doc)
         count += 1
     wb.close()
     logger.info("Inserted %d swaps from ChargingEvents.xlsx", count)
