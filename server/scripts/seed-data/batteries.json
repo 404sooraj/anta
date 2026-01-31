@@ -2,33 +2,71 @@
   {
     "battery_id": "battery_001",
     "station_id": "station_001",
+    "battery_type": "lithium-ion",
+    "capacity": 2000,
+    "status": "available",
+    "battery_health": 0.95,
     "issues": []
   },
   {
     "battery_id": "battery_002",
     "station_id": "station_001",
+    "battery_type": "lithium-ion",
+    "capacity": 2000,
+    "status": "available",
+    "battery_health": 0.88,
     "issues": []
   },
   {
     "battery_id": "battery_003",
     "station_id": "station_002",
+    "battery_type": "lithium-ion",
+    "capacity": 2500,
+    "status": "available",
+    "battery_health": 0.92,
     "issues": []
   },
   {
     "battery_id": "battery_004",
     "station_id": "station_002",
+    "battery_type": "lithium-ion",
+    "capacity": 2500,
+    "status": "available",
+    "battery_health": 0.97,
     "issues": []
   },
   {
     "battery_id": "battery_005",
     "station_id": "station_002",
+    "battery_type": "lithium-ion",
+    "capacity": 2500,
+    "status": "offline",
+    "battery_health": 0.65,
     "issues": [
       {
-        "type": "health",
-        "classification": "warning",
+        "classification": "health_warning",
         "reported_at": "2026-01-15T09:30:00Z",
-        "details": "Charge cycle imbalance detected"
+        "details": "Charge cycle imbalance detected",
+        "status": "pending"
       }
     ]
+  },
+  {
+    "battery_id": "battery_006",
+    "station_id": "station_001",
+    "battery_type": "lithium-polymer",
+    "capacity": 3000,
+    "status": "available",
+    "battery_health": 0.99,
+    "issues": []
+  },
+  {
+    "battery_id": "battery_007",
+    "station_id": null,
+    "battery_type": "lithium-ion",
+    "capacity": 2000,
+    "status": "available",
+    "battery_health": 0.85,
+    "issues": []
   }
 ]

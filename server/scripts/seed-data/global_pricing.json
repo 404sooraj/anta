@@ -1,0 +1,11 @@
+[
+  {
+    "pricing_id": "GLOBAL_V1",
+    "base_swap_price": 170,
+    "secondary_swap_price": 70,
+    "service_charge_per_swap": 40,
+    "free_leave_days_per_month": 4,
+    "leave_penalty_amount": 120,
+    "penalty_recovery_per_swap": 60
+  }
+]

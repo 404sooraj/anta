@@ -64,6 +64,7 @@ class GetLastSwapAttemptTool(BaseTool):
                     },
                 }
             data = _serialize_doc(swap)
+            
             # Use embedded station_snapshot when present (single-doc read); else fall back to stations lookup
             if swap.get("station_snapshot") is not None:
                 data["station"] = _serialize_doc(swap["station_snapshot"])
@@ -73,6 +74,47 @@ class GetLastSwapAttemptTool(BaseTool):
                     station = await db.stations.find_one({"station_id": station_id})
                     if station:
                         data["station"] = _serialize_doc(station)
+            
+            # Fetch battery info for batteries involved in the swap
+            battery_taken_id = swap.get("battery_id_taken")
+            if battery_taken_id:
+                battery_taken = await db.batteries.find_one({"battery_id": battery_taken_id})
+                if battery_taken:
+                    data["battery_taken"] = {
+                        "battery_id": battery_taken.get("battery_id"),
+                        "battery_type": battery_taken.get("battery_type"),
+                        "capacity": battery_taken.get("capacity"),
+                        "health_percent": int(battery_taken.get("battery_health", 0) * 100),
+                    }
+            
+            battery_returned_id = swap.get("battery_id_returned")
+            if battery_returned_id:
+                battery_returned = await db.batteries.find_one({"battery_id": battery_returned_id})
+                if battery_returned:
+                    data["battery_returned"] = {
+                        "battery_id": battery_returned.get("battery_id"),
+                        "battery_type": battery_returned.get("battery_type"),
+                        "capacity": battery_returned.get("capacity"),
+                        "health_percent": int(battery_returned.get("battery_health", 0) * 100),
+                    }
+            
+            # Build a friendly message about the swap
+            status = swap.get("status", "unknown")
+            date_str = data.get("date", "unknown date")
+            station_name = data.get("station", {}).get("name", "a station")
+            
+            if status == "completed":
+                message = f"Your last swap was completed on {date_str} at {station_name}."
+            elif status == "pending":
+                message = f"You have a pending swap at {station_name} from {date_str}."
+            elif status == "cancelled":
+                message = f"Your swap at {station_name} on {date_str} was cancelled."
+                if swap.get("battery_available_count", 0) == 0:
+                    message += " No batteries were available at that time."
+            else:
+                message = f"Your last swap was on {date_str} at {station_name} with status: {status}."
+            
+            data["message"] = message
             return {"status": "ok", "data": data}
         except Exception as e:
             return {

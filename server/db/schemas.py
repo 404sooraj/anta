@@ -1,15 +1,29 @@
-"""Pydantic schemas for MongoDB collections."""
+from __future__ import annotations
 
-from datetime import datetime
-from typing import Any, List, Literal, Optional, Union
+from datetime import datetime, timezone
+from site import USER_BASE
+from typing import Literal
 
+from bson import ObjectId
 from pydantic import BaseModel, Field
+
+
+class MongoModel(BaseModel):
+    id: ObjectId = Field(default_factory=ObjectId, alias="_id")
 
 
 # GeoJSON Point for station location (2dsphere index)
 class GeoPoint(BaseModel):
     type: Literal["Point"] = "Point"
-    coordinates: List[float]  # [longitude, latitude]
+    coordinates: list[float]  # [longitude, latitude]
+
+
+class ActivePlan(BaseModel):
+    """Embedded snapshot of active subscription on user document."""
+
+    plan: str
+    valid_till: datetime
+    status: Literal["active", "expired", "cancelled"]
 
 
 class User(BaseModel):
@@ -18,19 +32,14 @@ class User(BaseModel):
     user_id: str
     name: str
     phone_number: str
-    password_hash: Optional[str] = None  # bcrypt hashed password
-    language: str = "en"
-    location: Optional[Union[str, dict[str, Any]]] = None  # last known or preferred; str or GeoJSON
-    active_plan: Optional["ActivePlan"] = None  # denormalized snapshot; updated when subscription changes
-
-
-class ActivePlan(BaseModel):
-    """Embedded snapshot of active subscription on user document."""
-    plan: str
-    valid_till: datetime
-    status: str
-    renewal_info: Optional[str] = None
-
+    password_hash: str | None = None
+    location: GeoPoint | None = None
+    active_plan: ActivePlan | None = None
+    vehicle_id: str | None = None
+    battery_id: str | None = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime | None = None
+    deleted_at: datetime | None = None  # soft delete
 
 
 class Station(BaseModel):
@@ -38,8 +47,13 @@ class Station(BaseModel):
 
     station_id: str
     name: str
-    location: Union[GeoPoint, dict[str, Any]]  # GeoJSON Point for 2dsphere
+    location: GeoPoint
     available_batteries: int = 0
+    total_capacity: int = 0
+    status: Literal["available", "offline"] = "available"
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime | None = None
+    deleted_at: datetime | None = None  # soft delete
 
 
 class Conversation(BaseModel):
@@ -47,79 +61,59 @@ class Conversation(BaseModel):
 
     session_id: str
     user_id: str
+    agent_id: str | None = None
     language: str = "en"
     start_time: datetime
-    end_time: Optional[datetime] = None
-    outcome: Optional[Literal["resolved", "handoff"]] = None
+    end_time: datetime | None = None
+    outcome: Literal["resolved", "handoff"] | None = None
+    summary: str | None = None
+    handoff_reason: str | None = None
+    score: int = 0
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime | None = None
+    deleted_at: datetime | None = None  # soft delete
 
 
 class Agent(BaseModel):
-    """Agent document."""
-
     agent_id: str
     name: str
-
-
-class IntentLog(BaseModel):
-    """Intent log document (per turn)."""
-
-    intent_id: str
-    session_id: str
-    intent_name: str
-    confidence: float = Field(ge=0, le=1)
 
 
 class Subscription(BaseModel):
-    """Subscription document."""
-
-    subscription_id: str
     user_id: str
+    subscription_id: str
     plan: str
-    valid_till: datetime
-    status: str
-
-
-class Handoff(BaseModel):
-    """Handoff document."""
-
-    handoff_id: str
-    session_id: str
-    agent_id: str
-    reason: str
-    summary: Optional[str] = None
-
-
-class StationSnapshot(BaseModel):
-    """Embedded snapshot of station on swap document (avoids join at read time)."""
-
-    name: str
-    location: Optional[Union[GeoPoint, dict[str, Any]]] = None
+    price: float
+    validity: datetime
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime | None = None
+    deleted_at: datetime | None = None  # soft delete
 
 
 class Swap(BaseModel):
-    """Swap document."""
-
     swap_id: str
     user_id: str
     station_id: str
     date: datetime
     amount: int = 1
-    station_snapshot: Optional[StationSnapshot] = None  # denormalized; set when swap is written
+    battery_available_count: (
+        int  # available count of batteries at the station during the swap
+    )
+    battery_id_taken: str | None = None
+    battery_id_returned: str | None = None
+    status: Literal["pending", "completed", "cancelled"] = "pending"
 
 
 class BatteryIssue(BaseModel):
-    """Embedded issue on battery document (no separate battery_issues collection)."""
-
-    type: str
     classification: str
     reported_at: datetime
-    details: Optional[str] = None
+    details: str | None = None
+    status: Literal["pending", "resolved", "cancelled"] = "pending"
 
 
 class Battery(BaseModel):
-    """Battery document with embedded issues."""
-
     battery_id: str
+<<<<<<< HEAD
     station_id: Optional[str] = None
     issues: List[BatteryIssue] = Field(default_factory=list)
 
@@ -153,3 +147,35 @@ class CallTranscript(BaseModel):
     # Call metadata
     call_source: Literal["web", "twilio"] = "web"  # Where the call came from
     twilio_call_sid: Optional[str] = None  # Twilio-specific identifier
+=======
+    station_id: str | None = None
+    issues: list[BatteryIssue] = Field(default_factory=list)
+    battery_type: str
+    capacity: int = 0
+    status: Literal["available", "offline"] = "available"
+    battery_health: float = Field(ge=0, le=1)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime | None = None
+    deleted_at: datetime | None = None  # soft delete
+
+
+# from datetime import datetime, timezone
+
+# from pydantic import BaseModel, Field
+
+
+class GlobalPricing(BaseModel):
+    pricing_id: str = "GLOBAL_V1"
+
+    base_swap_price: int = 170
+    secondary_swap_price: int = 70
+
+    service_charge_per_swap: int = 40
+
+    free_leave_days_per_month: int = 4
+    leave_penalty_amount: int = 120
+    penalty_recovery_per_swap: int = 60
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime | None = None
+>>>>>>> d0479f4641d9a1dfb82d50fb511f3b807293b860

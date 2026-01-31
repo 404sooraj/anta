@@ -9,8 +9,11 @@ from .tools import (
     GetUserInfoTool,
     GetCurrentLocationTool,
     GetLastServiceCenterVisitTool,
+    GetNearestStationTool,
     GetProblemContextTool,
     GetLastSwapAttemptTool,
+    GetBatteryInfoTool,
+    ReportBatteryIssueTool,
 )
 from .tools.base import BaseTool
 from .intent_tools_mapping import get_tools_for_intent
@@ -32,8 +35,11 @@ class ToolRegistry:
             GetUserInfoTool(),
             GetCurrentLocationTool(),
             GetLastServiceCenterVisitTool(),
+            GetNearestStationTool(),
             GetProblemContextTool(),
             GetLastSwapAttemptTool(),
+            GetBatteryInfoTool(),
+            ReportBatteryIssueTool(),
         ]
         
         for tool in tools:

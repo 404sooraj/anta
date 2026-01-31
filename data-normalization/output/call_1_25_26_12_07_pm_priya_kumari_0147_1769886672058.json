@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "date": "1/25/26 12:07 PM",
+    "name": "Priya Kumari",
+    "issueType": "Navigation Details Shared",
+    "callingNumber": "8941050147",
+    "recordingLink": "https://drive.google.com/file/d/14HsPPHDkBPp7ThAHjh6PzlQxzAPnIGmb/view?usp=drive_link",
+    "processedAt": "2026-01-31T19:11:12.058Z",
+    "callDuration": 121
+  },
+  "transcription": {
+    "agentConversation": [
+      {
+        "text": "नमस्कार, बैटरी स्मार्ट में आपका स्वागत है। बैटरी स्मार्ट में प्रिया बात कर रही हूँ। मैं आपकी किस प्रकार की सहायता कर सकती हूँ? आपको बात आ रही है?",
+        "timestamp": 2.1,
+        "speaker": "agent"
+      },
+      {
+        "text": "बैटरी स्मार्ट में प्रिया बात कर रही हूँ। ड्राइवर आईडी बता दीजिए।",
+        "timestamp": 17.34,
+        "speaker": "agent"
+      },
+      {
+        "text": "आपकी ड्राइवर आईडी 31992। नाम बताइए।",
+        "timestamp": 25.26,
+        "speaker": "agent"
+      },
+      {
+        "text": "स्टेशन आईडी बताइए, आप कहाँ पे हैं?",
+        "timestamp": 31.14,
+        "speaker": "agent"
+      },
+      {
+        "text": "09 75।",
+        "timestamp": 42,
+        "speaker": "agent"
+      },
+      {
+        "text": "बात कराइए, बैटरी देने से मना क्यों कर रहे हैं आपसे? बात कराइए।",
+        "timestamp": 47.04,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, बैटरी स्मार्ट में प्रिया बात कर रही हूँ। 09 75 से बात हो रही है मेरी।",
+        "timestamp": 60,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, मुझे बता देंगे, आपके पास बैटरी नहीं है?",
+        "timestamp": 65.7,
+        "speaker": "agent"
+      },
+      {
+        "text": "बात कराइए ड्राइवर से।",
+        "timestamp": 74.4,
+        "speaker": "agent"
+      },
+      {
+        "text": "सर, यहाँ पे बैटरी अवेलेबल नहीं है, उसके लिए माफी चाहेंगे। आप इसके नियर एस्ट, आपका 3307 है। आप यहाँ पे चली जाइए, बैटरी मिल जाएंगी आपको।",
+        "timestamp": 78.9,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी, 3307।",
+        "timestamp": 90,
+        "speaker": "agent"
+      },
+      {
+        "text": "मैं आपको लोकेशन शेयर कर रही हूँ। जहाँ पे आप खड़े हैं ना, उसी के नियर एस्ट है आपका ये।",
+        "timestamp": 98.28,
+        "speaker": "agent"
+      },
+      {
+        "text": "जी। मैंने आपको लोकेशन शेयर कर दी, चले जाइए। और कोई सहायता चाहिए?",
+        "timestamp": 105.48,
+        "speaker": "agent"
+      },
+      {
+        "text": "आपकी कॉल फीडबैक के लिए आईवीआर पर ट्रांसफर कर रहे हैं। हमारी दी गई जानकारी सहायता से संतुष्ट हो तो एक दबाइए, अन्यथा दो दबाइए। बैटरी स्मार्ट में कीमती समय देने के लिए धन्यवाद।",
+        "timestamp": 111.9,
+        "speaker": "agent"
+      }
+    ],
+    "partnerConversation": [
+      {
+        "text": "हेलो?",
+        "timestamp": 14.94,
+        "speaker": "partner"
+      },
+      {
+        "text": "फिर उम्मीदवार, मैडम जी, ये तो मना कर रहे हैं। भाई, अपना वो।",
+        "timestamp": 21.42,
+        "speaker": "partner"
+      },
+      {
+        "text": "फिर फिर।",
+        "timestamp": 29.52,
+        "speaker": "partner"
+      },
+      {
+        "text": "मैं स्टेशन आईडी है क्या है? आपने ये डाला है ना, जी- जीरो 9 75।",
+        "timestamp": 34.26,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ जी।",
+        "timestamp": 44.16,
+        "speaker": "partner"
+      },
+      {
+        "text": "लो, बात कर लो। बात करेंगे। बात करने क्या आए हैं दोस्तों? यहाँ पे बैटरी ही नहीं है हमारे पास। पास तो कर ले यार, तुम ज़ोर कर रहे हो। हेलो?",
+        "timestamp": 50.88,
+        "speaker": "partner"
+      },
+      {
+        "text": "हाँ जी।",
+        "timestamp": 64.92,
+        "speaker": "partner"
+      },
+      {
+        "text": "नहीं है जी, हमारे पास डीएसपी की बैटरी नहीं है।",
+        "timestamp": 68.7,
+        "speaker": "partner"
+      },
+      {
+        "text": "जी मैडम?",
+        "timestamp": 77.82,
+        "speaker": "partner"
+      },
+      {
+        "text": "कौन सी जगह?",
+        "timestamp": 87.36,
+        "speaker": "partner"
+      },
+      {
+        "text": "ये कहाँ पे है?",
+        "timestamp": 97.44,
+        "speaker": "partner"
+      },
+      {
+        "text": "करो।",
+        "timestamp": 104.34,
+        "speaker": "partner"
+      },
+      {
+        "text": "नहीं।",
+        "timestamp": 111.18,
+        "speaker": "partner"
+      },
+      {
+        "text": "अगर आप हम आपकी प्रतिक्रिया हमारे लिए।",
+        "timestamp": 119.88,
+        "speaker": "partner"
+      }
+    ],
+    "fullTranscript": "Agent: नमस्कार, बैटरी स्मार्ट में आपका स्वागत है। बैटरी स्मार्ट में प्रिया बात कर रही हूँ। मैं आपकी किस प्रकार की सहायता कर सकती हूँ? आपको बात आ रही है?\n\nPartner: हेलो?\n\nAgent: बैटरी स्मार्ट में प्रिया बात कर रही हूँ। ड्राइवर आईडी बता दीजिए।\n\nPartner: फिर उम्मीदवार, मैडम जी, ये तो मना कर रहे हैं। भाई, अपना वो।\n\nAgent: आपकी ड्राइवर आईडी 31992। नाम बताइए।\n\nPartner: फिर फिर।\n\nAgent: स्टेशन आईडी बताइए, आप कहाँ पे हैं?\n\nPartner: मैं स्टेशन आईडी है क्या है? आपने ये डाला है ना, जी- जीरो 9 75।\n\nAgent: 09 75।\n\nPartner: हाँ जी।\n\nAgent: बात कराइए, बैटरी देने से मना क्यों कर रहे हैं आपसे? बात कराइए।\n\nPartner: लो, बात कर लो। बात करेंगे। बात करने क्या आए हैं दोस्तों? यहाँ पे बैटरी ही नहीं है हमारे पास। पास तो कर ले यार, तुम ज़ोर कर रहे हो। हेलो?\n\nAgent: जी, बैटरी स्मार्ट में प्रिया बात कर रही हूँ। 09 75 से बात हो रही है मेरी।\n\nPartner: हाँ जी।\n\nAgent: जी, मुझे बता देंगे, आपके पास बैटरी नहीं है?\n\nPartner: नहीं है जी, हमारे पास डीएसपी की बैटरी नहीं है।\n\nAgent: बात कराइए ड्राइवर से।\n\nPartner: जी मैडम?\n\nAgent: सर, यहाँ पे बैटरी अवेलेबल नहीं है, उसके लिए माफी चाहेंगे। आप इसके नियर एस्ट, आपका 3307 है। आप यहाँ पे चली जाइए, बैटरी मिल जाएंगी आपको।\n\nPartner: कौन सी जगह?\n\nAgent: जी, 3307।\n\nPartner: ये कहाँ पे है?\n\nAgent: मैं आपको लोकेशन शेयर कर रही हूँ। जहाँ पे आप खड़े हैं ना, उसी के नियर एस्ट है आपका ये।\n\nPartner: करो।\n\nAgent: जी। मैंने आपको लोकेशन शेयर कर दी, चले जाइए। और कोई सहायता चाहिए?\n\nPartner: नहीं।\n\nAgent: आपकी कॉल फीडबैक के लिए आईवीआर पर ट्रांसफर कर रहे हैं। हमारी दी गई जानकारी सहायता से संतुष्ट हो तो एक दबाइए, अन्यथा दो दबाइए। बैटरी स्मार्ट में कीमती समय देने के लिए धन्यवाद।\n\nPartner: अगर आप हम आपकी प्रतिक्रिया हमारे लिए।"
+  },
+  "analysis": {
+    "summary": "The customer, a driver, was experiencing difficulty obtaining a battery for his vehicle at his current location. The agent helped by identifying an alternative nearby station (3307) where the battery would be available and shared the location details. The call concluded with the driver being directed to the new location and an invitation to provide feedback on the service.",
+    "problemFaced": "The partner (driver) was facing an issue of not having a battery available at their current station (09 75), and needed assistance in locating an alternative station where they could obtain a battery for their vehicle.",
+    "solutionPresented": "The agent identified an alternative battery location (station 3307) near the partner's current location and shared the specific location details with them. She advised the partner to go to this nearby station to obtain the battery, since their current location did not have a battery available. The agent also offered to share the location and asked if the partner needed any additional assistance.",
+    "agentSentiment": {
+      "overall": "neutral",
+      "confidence": 0.85,
+      "details": "The agent speaks in a professional, matter-of-fact tone, providing information and guidance without showing strong emotional fluctuations. She remains composed while helping the customer find an alternative battery location, using a calm and service-oriented approach typical of customer support interactions."
+    },
+    "partnerSentiment": {
+      "overall": "frustrated",
+      "confidence": 0.85,
+      "details": "The speaker sounds increasingly agitated, with repeated interruptions, mentions of lacking battery, and a tone that suggests impatience and difficulty communicating effectively. The fragmented speech and repeated phrases like 'हाँ जी' (yes sir) and multiple attempts to clarify something indicate mounting frustration."
+    },
+    "partnerSatisfactionScore": {
+      "score": 5,
+      "maxScore": 10,
+      "reasoning": "The customer service interaction was mixed. The agent attempted to help the driver find a battery at a nearby location (station 3307), but the communication seemed somewhat unclear and frustrating. The driver appeared confused about the location and seemed somewhat irritated throughout the call. While a solution was proposed, the interaction was not entirely smooth. The agent tried to be helpful by sharing a location and offering assistance, but the customer's tone suggested limited satisfaction. The call ended with a standard feedback request, but the overall experience appears to be just average."
+    }
+  }
+}

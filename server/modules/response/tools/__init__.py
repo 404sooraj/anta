@@ -3,15 +3,20 @@
 from .base import BaseTool
 from .user_info import GetUserInfoTool
 from .location import GetCurrentLocationTool
-from .service_center import GetLastServiceCenterVisitTool
+from .service_center import GetLastServiceCenterVisitTool, GetNearestStationTool
 from .problem_context import GetProblemContextTool
 from .swap_attempt import GetLastSwapAttemptTool
+from .battery_info import GetBatteryInfoTool
+from .battery_issue_reporter import ReportBatteryIssueTool
 
 __all__ = [
     "BaseTool",
     "GetUserInfoTool",
     "GetCurrentLocationTool",
     "GetLastServiceCenterVisitTool",
+    "GetNearestStationTool",
     "GetProblemContextTool",
     "GetLastSwapAttemptTool",
+    "GetBatteryInfoTool",
+    "ReportBatteryIssueTool",
 ]

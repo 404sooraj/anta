@@ -60,6 +60,7 @@ class GetUserInfoTool(BaseTool):
                 }
             data = _serialize_doc(user)
             data.pop("password_hash", None)
+            
             # Prefer embedded active_plan (single-doc read); fall back to subscriptions collection
             if data.get("active_plan") is not None:
                 data.setdefault("subscriptions", [data["active_plan"]])
@@ -68,6 +69,30 @@ class GetUserInfoTool(BaseTool):
                 async for sub in db.subscriptions.find({"user_id": user_id}):
                     subscriptions.append(_serialize_doc(sub))
                 data["subscriptions"] = subscriptions
+            
+            # Fetch vehicle info if user has one
+            vehicle_id = user.get("vehicle_id")
+            if vehicle_id:
+                vehicle = await db.vehicles.find_one({"vehicle_id": vehicle_id})
+                if vehicle:
+                    data["vehicle"] = _serialize_doc(vehicle)
+            
+            # Fetch current battery info if user has one assigned
+            battery_id = user.get("battery_id")
+            if battery_id:
+                battery = await db.batteries.find_one({"battery_id": battery_id})
+                if battery:
+                    battery_data = _serialize_doc(battery)
+                    # Include health percentage for easy reading
+                    battery_data["health_percent"] = int(battery.get("battery_health", 0) * 100)
+                    # Check for any pending issues
+                    issues = battery.get("issues", [])
+                    battery_data["pending_issues"] = [
+                        _serialize_doc(i) for i in issues 
+                        if isinstance(i, dict) and i.get("status") == "pending"
+                    ]
+                    data["current_battery"] = battery_data
+            
             return {"status": "ok", "data": data}
         except Exception as e:
             return {

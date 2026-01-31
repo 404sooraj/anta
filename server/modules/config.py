@@ -62,6 +62,9 @@ class ConfigEnv:
     # ----- Auth -----
     AUTH_JWT_SECRET = os.getenv("AUTH_JWT_SECRET")
 
+    # ----- Geocoding -----
+    GEOCODING_API_KEY = os.getenv("GEOCODING_API_KEY")
+
     # ----- STT -----
     SONIOX_API_KEY = os.getenv("SONIOX_API_KEY")
     ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY", "")
