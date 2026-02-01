@@ -1,5 +1,6 @@
 """Main response pipeline orchestrator."""
 
+import asyncio
 import json
 import logging
 from typing import Dict, Any, Optional, AsyncGenerator
@@ -87,38 +88,45 @@ class ResponsePipeline:
                 context_prompt = f"Previous conversation:\n{history_text}\n\nUSER: {text}"
                 logger.info(f"Added conversation context ({len(conversation_history)} turns)")
 
-            # Step 1: Intent Detection
-            logger.info("Step 1: Intent Detection")
-            intent_result = await self.intent_detector.detect_intent(text)
-            logger.info(f"Detected intent: {intent_result.get('intent')}")
+            # Step 1: Intent Detection (skip when disabled to save one Bedrock round-trip)
+            intent_detection_enabled = ConfigEnv.INTENT_DETECTION_ENABLED
+            if intent_detection_enabled:
+                logger.info("Step 1: Intent Detection")
+                intent_result = await self.intent_detector.detect_intent(text)
+                logger.info(f"Detected intent: {intent_result.get('intent')}")
+            else:
+                logger.info("Step 1: Intent Detection skipped (INTENT_DETECTION_ENABLED=false)")
+                intent_result = {"intent": "general", "confidence": 0.0, "reasoning": "disabled"}
 
-            # Persist conversation and intent_log when session_id is provided
+            # Persist conversation and intent_log in background (don't block pipeline)
             if session_id:
-                try:
-                    db = get_db()
-                    now = datetime.now(timezone.utc)
-                    await db.conversations.update_one(
-                        {"session_id": session_id},
-                        {
-                            "$setOnInsert": {
-                                "session_id": session_id,
-                                "user_id": user_id or "unknown",
-                                "language": "en",
-                                "start_time": now,
-                                "end_time": None,
-                                "outcome": None,
-                            }
-                        },
-                        upsert=True,
-                    )
-                    await db.intent_logs.insert_one({
-                        "intent_id": str(uuid.uuid4()),
-                        "session_id": session_id,
-                        "intent_name": intent_result.get("intent", "general"),
-                        "confidence": float(intent_result.get("confidence", 0)),
-                    })
-                except Exception as e:
-                    logger.warning(f"Failed to persist conversation/intent_log: {e}")
+                async def _persist_conversation_and_intent():
+                    try:
+                        db = get_db()
+                        now = datetime.now(timezone.utc)
+                        await db.conversations.update_one(
+                            {"session_id": session_id},
+                            {
+                                "$setOnInsert": {
+                                    "session_id": session_id,
+                                    "user_id": user_id or "unknown",
+                                    "language": "en",
+                                    "start_time": now,
+                                    "end_time": None,
+                                    "outcome": None,
+                                }
+                            },
+                            upsert=True,
+                        )
+                        await db.intent_logs.insert_one({
+                            "intent_id": str(uuid.uuid4()),
+                            "session_id": session_id,
+                            "intent_name": intent_result.get("intent", "general"),
+                            "confidence": float(intent_result.get("confidence", 0)),
+                        })
+                    except Exception as e:
+                        logger.warning(f"Failed to persist conversation/intent_log: {e}")
+                asyncio.create_task(_persist_conversation_and_intent())
             
             # Step 2: LLM Processing with tool definitions (filtered by intent)
             logger.info("Step 2: LLM Processing with tools")
@@ -141,39 +149,38 @@ class ResponsePipeline:
                 conversation_history=tool_conversation,
             )
             
-            # Step 3: Tool Execution (if LLM requested tools)
+            # Step 3: Tool Execution (if LLM requested tools) — run in parallel
             tool_results = []
             if llm_response.get("tool_calls"):
-                logger.info(f"Step 3: Executing {len(llm_response['tool_calls'])} tool(s)")
-                
-                for tool_call in llm_response["tool_calls"]:
+                logger.info(f"Step 3: Executing {len(llm_response['tool_calls'])} tool(s) in parallel")
+                tool_calls = llm_response["tool_calls"]
+
+                async def _run_one_tool(tool_call: Dict[str, Any]) -> Dict[str, Any]:
                     tool_name = tool_call.get("name")
                     tool_args = tool_call.get("arguments", {})
                     call_id = tool_call.get("call_id")
-                    
                     try:
                         result = await self.tool_registry.execute_tool(
                             name=tool_name,
                             arguments=tool_args,
                         )
-                        tool_results.append({
+                        logger.info(f"Tool {tool_name} executed successfully")
+                        return {
                             "tool_name": tool_name,
                             "arguments": tool_args,
                             "call_id": call_id,
                             "result": result,
-                        })
-                        logger.info(f"Tool {tool_name} executed successfully")
+                        }
                     except Exception as e:
                         logger.error(f"Error executing tool {tool_name}: {e}")
-                        tool_results.append({
+                        return {
                             "tool_name": tool_name,
                             "arguments": tool_args,
                             "call_id": call_id,
-                            "result": {
-                                "status": "error",
-                                "error": str(e),
-                            },
-                        })
+                            "result": {"status": "error", "error": str(e)},
+                        }
+
+                tool_results = await asyncio.gather(*[_run_one_tool(tc) for tc in tool_calls])
             
             # Step 4: Generate final LLM response
             logger.info("Step 4: Generating final response")
@@ -270,39 +277,38 @@ class ResponsePipeline:
                 conversation_history=tool_conversation,
             )
 
-            # Step 3: Tool Execution (if LLM requested tools)
+            # Step 3: Tool Execution (if LLM requested tools) — run in parallel
             tool_results = []
             if llm_response.get("tool_calls"):
-                logger.info(f"Step 3: Executing {len(llm_response['tool_calls'])} tool(s)")
+                logger.info(f"Step 3: Executing {len(llm_response['tool_calls'])} tool(s) in parallel")
+                tool_calls = llm_response["tool_calls"]
 
-                for tool_call in llm_response["tool_calls"]:
+                async def _run_one_tool_stream(tool_call: Dict[str, Any]) -> Dict[str, Any]:
                     tool_name = tool_call.get("name")
                     tool_args = tool_call.get("arguments", {})
                     call_id = tool_call.get("call_id")
-
                     try:
                         result = await self.tool_registry.execute_tool(
                             name=tool_name,
                             arguments=tool_args,
                         )
-                        tool_results.append({
+                        logger.info(f"Tool {tool_name} executed successfully")
+                        return {
                             "tool_name": tool_name,
                             "arguments": tool_args,
                             "call_id": call_id,
                             "result": result,
-                        })
-                        logger.info(f"Tool {tool_name} executed successfully")
+                        }
                     except Exception as e:
                         logger.error(f"Error executing tool {tool_name}: {e}")
-                        tool_results.append({
+                        return {
                             "tool_name": tool_name,
                             "arguments": tool_args,
                             "call_id": call_id,
-                            "result": {
-                                "status": "error",
-                                "error": str(e),
-                            },
-                        })
+                            "result": {"status": "error", "error": str(e)},
+                        }
+
+                tool_results = await asyncio.gather(*[_run_one_tool_stream(tc) for tc in tool_calls])
 
             # Step 4: Stream final LLM response
             logger.info("Step 4: Streaming final response")

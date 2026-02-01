@@ -21,6 +21,7 @@ from modules.config import ConfigEnv
 from modules.response.tool_registry import get_registry
 from db.connection import get_db
 from routers.agent import get_handoff_manager
+from services.greeting_audio import get_greeting_float32_44100_chunks
 
 TTSLanguage = Literal["hi", "en", "auto"]
 
@@ -364,6 +365,12 @@ async def audio_websocket(ws: WebSocket):
     # Connect to Soniox
     await asyncio.to_thread(stt_service.connect)
     print("🎙️  Connected to Soniox - Ready to receive audio")
+
+    # Play greeting audio (float32 44100 Hz) at call start
+    await ws.send_json({"type": "audio_start"})
+    for chunk in get_greeting_float32_44100_chunks(chunk_size=4096):
+        await ws.send_bytes(chunk)
+    await ws.send_json({"type": "audio_end"})
 
     async def process_and_respond():
         """Process transcript with LLM and stream TTS response"""
