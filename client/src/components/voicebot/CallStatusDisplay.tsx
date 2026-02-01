@@ -40,7 +40,7 @@ export function CallStatusDisplay({
       case "connected":
         return {
           text: formatDuration(duration),
-          color: "text-emerald-500",
+          color: "text-[#B19EEF]",
           subtext: "Connected • Speak now",
         };
       case "disconnecting":

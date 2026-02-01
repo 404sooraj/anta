@@ -1,6 +1,23 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { RequireAuth } from "@/components/auth/RequireAuth";
+import {
+  Phone,
+  Headphones,
+  Users,
+  Mic,
+  MicOff,
+  PhoneOff,
+  Send,
+  Circle,
+  CheckCircle2,
+  Clock,
+  MessageSquare,
+  Volume2,
+  AlertCircle,
+  LogOut,
+} from "lucide-react";
 
 // Types
 interface PendingCall {
@@ -520,249 +537,281 @@ export default function AgentPage() {
   }, [disconnect]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          📞 Call Center Agent Dashboard
-        </h1>
+    <RequireAuth>
+      <div className="min-h-screen bg-zinc-950 p-6">
+        <div className="max-w-6xl mx-auto">
+          <h1 className="text-2xl font-bold text-zinc-100 mb-6 flex items-center gap-3">
+            <span className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
+              <Phone className="w-5 h-5 text-violet-400" />
+            </span>
+            Call Center Agent Dashboard
+          </h1>
 
-        {/* Connection Panel */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Agent ID
-              </label>
-              <input
-                type="text"
-                value={agentId}
-                onChange={(e) => setAgentId(e.target.value)}
-                placeholder="Enter your agent ID"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                disabled={isConnected}
-              />
+          {/* Connection Panel */}
+          <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 mb-6 backdrop-blur-sm">
+            <div className="flex items-end gap-4 flex-wrap">
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-sm font-medium text-zinc-400 mb-2">
+                  Agent ID
+                </label>
+                <input
+                  type="text"
+                  value={agentId}
+                  onChange={(e) => setAgentId(e.target.value)}
+                  placeholder="Enter your agent ID"
+                  className="w-full px-4 py-2.5 bg-zinc-800/50 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition"
+                  disabled={isConnected}
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                {!isConnected ? (
+                  <button
+                    onClick={connect}
+                    className="px-5 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg font-medium transition flex items-center gap-2"
+                  >
+                    <Phone className="w-4 h-4" />
+                    Connect
+                  </button>
+                ) : (
+                  <button
+                    onClick={disconnect}
+                    className="px-5 py-2.5 bg-zinc-700 hover:bg-red-600/90 text-zinc-100 rounded-lg font-medium transition flex items-center gap-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Disconnect
+                  </button>
+                )}
+              </div>
             </div>
-            <div className="pt-6">
-              {!isConnected ? (
-                <button
-                  onClick={connect}
-                  className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition"
-                >
-                  Connect
-                </button>
+            <div className="mt-3 flex items-center gap-2">
+              <span
+                className={`flex items-center gap-1.5 text-sm ${
+                  isConnected
+                    ? "text-emerald-400"
+                    : "text-zinc-500"
+                }`}
+              >
+                {isConnected ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                ) : (
+                  <Circle className="w-2.5 h-2.5 fill-current" />
+                )}
+                {status}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Pending Calls Queue */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 backdrop-blur-sm">
+              <h2 className="text-lg font-semibold text-zinc-100 mb-4 flex items-center gap-2">
+                <Users className="w-5 h-5 text-violet-400" />
+                Pending Calls
+                <span className="text-sm font-normal text-zinc-500">
+                  ({pendingCalls.length})
+                </span>
+              </h2>
+              {pendingCalls.length === 0 ? (
+                <p className="text-zinc-500 text-center py-10 text-sm">
+                  No calls waiting
+                </p>
               ) : (
-                <button
-                  onClick={disconnect}
-                  className="px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
-                >
-                  Disconnect
-                </button>
+                <div className="space-y-3">
+                  {pendingCalls.map((call) => (
+                    <div
+                      key={call.session_id}
+                      className="border border-zinc-700/80 rounded-lg p-4 hover:bg-zinc-800/50 transition"
+                    >
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-zinc-100 truncate">
+                            {call.user_id}
+                          </p>
+                          <p className="text-sm text-zinc-400 mt-0.5">
+                            {call.reason}
+                          </p>
+                          <p className="text-xs text-amber-400/90 mt-1.5 flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5" />
+                            Waiting: {formatWaitTime(call.wait_time_seconds)}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => acceptCall(call.session_id)}
+                          disabled={!!activeCall}
+                          className={`shrink-0 px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition ${
+                            activeCall
+                              ? "bg-zinc-700 text-zinc-500 cursor-not-allowed"
+                              : "bg-violet-600 hover:bg-violet-500 text-white"
+                          }`}
+                        >
+                          <Phone className="w-4 h-4" />
+                          Accept
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <span
-              className={`w-3 h-3 rounded-full ${
-                isConnected ? "bg-green-500" : "bg-gray-400"
-              }`}
-            />
-            <span className="text-sm text-gray-600">{status}</span>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Pending Calls Queue */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              📋 Pending Calls ({pendingCalls.length})
-            </h2>
-            {pendingCalls.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">No calls waiting</p>
-            ) : (
-              <div className="space-y-3">
-                {pendingCalls.map((call) => (
-                  <div
-                    key={call.session_id}
-                    className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"
-                  >
-                    <div className="flex justify-between items-start">
+            {/* Active Call Panel */}
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-5 backdrop-blur-sm">
+              <h2 className="text-lg font-semibold text-zinc-100 mb-4 flex items-center gap-2">
+                <Headphones className="w-5 h-5 text-violet-400" />
+                Active Voice Call
+              </h2>
+              {!activeCall ? (
+                <p className="text-zinc-500 text-center py-10 text-sm">
+                  No active call
+                </p>
+              ) : (
+                <div>
+                  {/* Call Info & Controls */}
+                  <div className="bg-violet-500/10 border border-violet-500/20 rounded-lg p-4 mb-4">
+                    <div className="flex justify-between items-start gap-4 flex-wrap">
                       <div>
-                        <p className="font-medium text-gray-800">
-                          User: {call.user_id}
+                        <p className="font-medium text-zinc-100 flex items-center gap-2">
+                          <Volume2 className="w-4 h-4 text-violet-400" />
+                          {activeCall.user_id}
                         </p>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Reason: {call.reason}
-                        </p>
-                        <p className="text-sm text-orange-600 mt-1">
-                          ⏱️ Waiting: {formatWaitTime(call.wait_time_seconds)}
+                        <p className="text-sm text-zinc-400 mt-0.5">
+                          {activeCall.reason}
                         </p>
                       </div>
-                      <button
-                        onClick={() => acceptCall(call.session_id)}
-                        disabled={!!activeCall}
-                        className={`px-4 py-2 rounded-md text-white ${
-                          activeCall
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-blue-500 hover:bg-blue-600"
-                        }`}
-                      >
-                        Accept
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Active Call Panel */}
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              🎧 Active Voice Call
-            </h2>
-            {!activeCall ? (
-              <p className="text-gray-500 text-center py-8">No active call</p>
-            ) : (
-              <div>
-                {/* Call Info & Controls */}
-                <div className="bg-blue-50 rounded-lg p-4 mb-4">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-gray-800">
-                        🔊 Connected to: {activeCall.user_id}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        Reason: {activeCall.reason}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {/* Audio Level Indicator */}
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">Mic:</span>
-                        <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-zinc-500">Mic</span>
+                        <div className="w-16 h-2 bg-zinc-700 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-green-500 transition-all duration-75"
-                            style={{ width: `${audioLevel * 100}%` }}
+                            className="h-full bg-violet-500 transition-all duration-75 rounded-full"
+                            style={{ width: `${Math.min(100, audioLevel * 100)}%` }}
                           />
                         </div>
                       </div>
                     </div>
+
+                    <div className="flex gap-2 mt-4">
+                      <button
+                        onClick={toggleMute}
+                        className={`px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition ${
+                          isMuted
+                            ? "bg-amber-500/20 text-amber-400 hover:bg-amber-500/30 border border-amber-500/30"
+                            : "bg-zinc-700 text-zinc-300 hover:bg-zinc-600 border border-zinc-600"
+                        }`}
+                      >
+                        {isMuted ? (
+                          <MicOff className="w-4 h-4" />
+                        ) : (
+                          <Mic className="w-4 h-4" />
+                        )}
+                        {isMuted ? "Unmute" : "Mute"}
+                      </button>
+                      <button
+                        onClick={endCall}
+                        className="px-4 py-2 bg-red-600/90 hover:bg-red-600 text-white rounded-lg font-medium text-sm flex items-center gap-2 transition"
+                      >
+                        <PhoneOff className="w-4 h-4" />
+                        End Call
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Call Controls */}
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      onClick={toggleMute}
-                      className={`px-4 py-2 rounded-md text-white ${
-                        isMuted
-                          ? "bg-yellow-500 hover:bg-yellow-600"
-                          : "bg-gray-500 hover:bg-gray-600"
-                      }`}
-                    >
-                      {isMuted ? "🔇 Unmute" : "🎤 Mute"}
-                    </button>
-                    <button
-                      onClick={endCall}
-                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
-                    >
-                      📴 End Call
-                    </button>
-                  </div>
-                </div>
+                  {/* Live User Transcript */}
+                  {userTranscript && (
+                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-4">
+                      <p className="text-xs font-medium text-amber-400/90 mb-1 flex items-center gap-1">
+                        <Volume2 className="w-3.5 h-3.5" />
+                        User is saying
+                      </p>
+                      <p className="text-sm text-zinc-300 italic">
+                        &quot;{userTranscript}&quot;
+                      </p>
+                    </div>
+                  )}
 
-                {/* Live User Transcript */}
-                {userTranscript && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                    <p className="text-xs font-medium text-yellow-700 mb-1">
-                      🎧 User is saying:
+                  {/* Conversation History */}
+                  <div className="mb-4">
+                    <h3 className="font-medium text-zinc-400 mb-2 flex items-center gap-2 text-sm">
+                      <MessageSquare className="w-4 h-4 text-violet-400" />
+                      Conversation (AI)
+                    </h3>
+                    <div className="bg-zinc-800/50 rounded-lg p-3 max-h-48 overflow-y-auto space-y-2 border border-zinc-700/50">
+                      {conversationHistory.length === 0 ? (
+                        <p className="text-zinc-500 text-sm">No messages yet</p>
+                      ) : (
+                        conversationHistory.map((msg, idx) => (
+                          <div
+                            key={idx}
+                            className={`p-2.5 rounded-lg text-sm ${
+                              msg.role === "user"
+                                ? "bg-violet-500/10 text-violet-200 border border-violet-500/20"
+                                : "bg-zinc-700/50 text-zinc-200 border border-zinc-600/50"
+                            }`}
+                          >
+                            <span className="font-medium text-xs text-zinc-400">
+                              {msg.role === "user" ? "User" : "AI"}:
+                            </span>{" "}
+                            {msg.text}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Text Message Input */}
+                  <div className="border-t border-zinc-800 pt-4">
+                    <p className="text-xs text-zinc-500 mb-2">
+                      Send a message (read aloud to user)
                     </p>
-                    <p className="text-sm text-yellow-900 italic">
-                      &quot;{userTranscript}&quot;
-                    </p>
-                  </div>
-                )}
-
-                {/* Conversation History */}
-                <div className="mb-4">
-                  <h3 className="font-medium text-gray-700 mb-2">
-                    Conversation History (with AI)
-                  </h3>
-                  <div className="bg-gray-50 rounded-lg p-3 max-h-48 overflow-y-auto space-y-2">
-                    {conversationHistory.length === 0 ? (
-                      <p className="text-gray-500 text-sm">No messages yet</p>
-                    ) : (
-                      conversationHistory.map((msg, idx) => (
-                        <div
-                          key={idx}
-                          className={`p-2 rounded ${
-                            msg.role === "user"
-                              ? "bg-blue-100 text-blue-900"
-                              : "bg-green-100 text-green-900"
-                          }`}
-                        >
-                          <span className="font-medium text-xs">
-                            {msg.role === "user" ? "User" : "AI"}:
-                          </span>{" "}
-                          {msg.text}
-                        </div>
-                      ))
-                    )}
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+                        placeholder="Type a message..."
+                        className="flex-1 px-3 py-2.5 bg-zinc-800/50 border border-zinc-700 rounded-lg text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500 text-sm"
+                      />
+                      <button
+                        onClick={sendMessage}
+                        className="px-4 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg transition text-sm flex items-center gap-2"
+                      >
+                        <Send className="w-4 h-4" />
+                        Send
+                      </button>
+                    </div>
                   </div>
                 </div>
+              )}
+            </div>
+          </div>
 
-                {/* Optional Text Message Input */}
-                <div className="border-t pt-4">
-                  <p className="text-xs text-gray-500 mb-2">
-                    Optional: Send a text message (will be read aloud to user)
-                  </p>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={messageInput}
-                      onChange={(e) => setMessageInput(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && sendMessage()}
-                      placeholder="Type a message..."
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                    />
-                    <button
-                      onClick={sendMessage}
-                      className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm"
-                    >
-                      Send
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+          {/* Instructions */}
+          <div className="mt-6 bg-zinc-900/60 border border-zinc-800 rounded-xl p-4">
+            <h3 className="font-semibold text-zinc-300 mb-2 flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-violet-400" />
+              Voice Call Instructions
+            </h3>
+            <ul className="text-sm text-zinc-400 space-y-1.5 list-none">
+              <li className="flex items-start gap-2">
+                <span className="text-violet-400 mt-0.5">•</span>
+                Enter your Agent ID and click Connect to receive calls
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-violet-400 mt-0.5">•</span>
+                Accepting a call activates your microphone for voice
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-violet-400 mt-0.5">•</span>
+                Real-time two-way audio; &quot;User is saying&quot; shows live transcription
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-violet-400 mt-0.5">•</span>
+                Use Mute to silence your mic; End Call to disconnect
+              </li>
+            </ul>
           </div>
         </div>
-
-        {/* Instructions */}
-        <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <h3 className="font-semibold text-yellow-800 mb-2">
-            📝 Voice Call Instructions
-          </h3>
-          <ul className="text-sm text-yellow-700 list-disc list-inside space-y-1">
-            <li>
-              Enter your Agent ID and click Connect to start receiving calls
-            </li>
-            <li>
-              When you accept a call, your microphone will be activated for
-              voice communication
-            </li>
-            <li>
-              You&apos;ll hear the user speaking and they&apos;ll hear you in
-              real-time
-            </li>
-            <li>
-              The &quot;User is saying&quot; box shows real-time transcription
-              of user&apos;s speech
-            </li>
-            <li>Use the Mute button to temporarily mute your microphone</li>
-            <li>Click End Call when finished to disconnect</li>
-          </ul>
-        </div>
       </div>
-    </div>
+    </RequireAuth>
   );
 }

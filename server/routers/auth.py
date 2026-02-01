@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from db.connection import get_db
 from modules.config import ConfigEnv
 
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 class LoginRequest(BaseModel):

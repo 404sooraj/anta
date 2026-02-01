@@ -42,7 +42,7 @@ export function CallButton({
         ${
           isActive
             ? "bg-red-500 hover:bg-red-600 focus-visible:ring-red-400 shadow-lg shadow-red-500/30"
-            : "bg-emerald-500 hover:bg-emerald-600 focus-visible:ring-emerald-400 shadow-lg shadow-emerald-500/30"
+            : "bg-[#B19EEF] hover:opacity-90 focus-visible:ring-[#B19EEF]/50 shadow-lg shadow-[#B19EEF]/30"
         }
         ${isLoading ? "animate-pulse" : ""}
         hover:scale-105 active:scale-95

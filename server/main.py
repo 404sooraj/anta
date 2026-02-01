@@ -14,6 +14,7 @@ from routers.tts import router as tts_router
 from routers.twilio import router as twilio_router
 from routers.batteries import router as batteries_router
 from routers.auth import router as auth_router
+from routers.user import router as user_router
 from routers.call_transcripts import router as call_transcripts_router
 from routers.location import router as location_router
 from routers.agent import router as agent_router
@@ -86,6 +87,7 @@ app.include_router(tts_router)
 app.include_router(twilio_router)
 app.include_router(batteries_router)
 app.include_router(auth_router)
+app.include_router(user_router)
 app.include_router(call_transcripts_router)
 app.include_router(location_router)
 app.include_router(agent_router)

@@ -73,7 +73,7 @@ export function AudioVisualizer({
             w-2 rounded-full transition-colors duration-200
             ${
               isActive
-                ? "bg-gradient-to-t from-emerald-500 to-emerald-300"
+                ? "bg-gradient-to-t from-[#B19EEF] to-[#C4B4F5]"
                 : "bg-zinc-300 dark:bg-zinc-700"
             }
           `}
@@ -102,7 +102,7 @@ export function RingVisualizer({ audioLevel, isActive }: AudioVisualizerProps) {
             key={i}
             className={`
               absolute inset-0 rounded-full border-2 transition-all duration-150
-              ${isActive ? "border-emerald-500" : "border-zinc-300 dark:border-zinc-700"}
+              ${isActive ? "border-[#B19EEF]" : "border-zinc-300 dark:border-zinc-700"}
             `}
             style={{
               transform: `scale(${scale})`,
