@@ -93,13 +93,13 @@ export default function Ps2AnalysisResultsPage() {
   }, [list, issueTypeFilter, sort]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-linear-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
-      <header className="w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm">
+    <div className="min-h-screen flex flex-col bg-zinc-950">
+      <header className="w-full border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/"
-              className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              className="text-zinc-400 hover:text-zinc-100"
               aria-label="Back to home"
             >
               <svg
@@ -116,7 +116,7 @@ export default function Ps2AnalysisResultsPage() {
                 />
               </svg>
             </Link>
-            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            <h1 className="text-lg font-semibold text-zinc-100">
               PS2 Analysis Results
             </h1>
           </div>
@@ -126,21 +126,21 @@ export default function Ps2AnalysisResultsPage() {
       <main className="flex-1 max-w-5xl mx-auto w-full px-6 py-6">
         {loading && (
           <div className="flex items-center justify-center py-16">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-zinc-400">
               Loading analysis results…
             </p>
           </div>
         )}
 
         {error && (
-          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3 text-sm text-red-800 dark:text-red-200">
+          <div className="rounded-xl border border-red-900/50 bg-red-950/30 px-4 py-3 text-sm text-red-300">
             {error}
           </div>
         )}
 
         {!loading && !error && list.length === 0 && (
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 text-center">
-            <p className="text-zinc-500 dark:text-zinc-400">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/95 p-8 text-center">
+            <p className="text-zinc-400">
               No analysis results found. Ensure data-normalization output is
               available.
             </p>
@@ -150,14 +150,14 @@ export default function Ps2AnalysisResultsPage() {
         {!loading && !error && list.length > 0 && (
           <>
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+              <label className="flex items-center gap-2 text-sm text-zinc-400">
                 <span>Sort:</span>
                 <select
                   value={sort}
                   onChange={(e) =>
                     setSort(e.target.value as SortOption)
                   }
-                  className="rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-1.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#B19EEF]/50 focus:border-[#B19EEF]/50"
                 >
                   <option value="satisfaction-low">Satisfaction: Low first</option>
                   <option value="satisfaction-high">
@@ -167,12 +167,12 @@ export default function Ps2AnalysisResultsPage() {
                   <option value="date-oldest">Date: Oldest first</option>
                 </select>
               </label>
-              <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+              <label className="flex items-center gap-2 text-sm text-zinc-400">
                 <span>Issue type:</span>
                 <select
                   value={issueTypeFilter}
                   onChange={(e) => setIssueTypeFilter(e.target.value)}
-                  className="rounded-lg border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-900 px-3 py-1.5 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="rounded-lg border border-zinc-700 bg-zinc-800/50 px-3 py-1.5 text-zinc-100 focus:outline-none focus:ring-2 focus:ring-[#B19EEF]/50 focus:border-[#B19EEF]/50"
                 >
                   <option value="">All</option>
                   {issueTypes.map((t) => (
@@ -182,7 +182,7 @@ export default function Ps2AnalysisResultsPage() {
                   ))}
                 </select>
               </label>
-              <span className="text-sm text-zinc-500 dark:text-zinc-400">
+              <span className="text-sm text-zinc-500">
                 {filteredList.length} result{filteredList.length !== 1 ? "s" : ""}
               </span>
             </div>
@@ -195,28 +195,28 @@ export default function Ps2AnalysisResultsPage() {
                   <li key={item.id}>
                     <Link
                       href={`/ps2-analysis-results/${encodeURIComponent(item.id)}`}
-                      className="block rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:shadow-md transition-all"
+                      className="block rounded-xl border border-zinc-800 bg-zinc-900/95 p-4 hover:border-[#B19EEF]/50 transition-all"
                     >
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <h2 className="font-medium text-zinc-900 dark:text-zinc-100 line-clamp-2">
+                        <h2 className="font-medium text-zinc-100 line-clamp-2">
                           {item.metadata.name}
                         </h2>
                         <span
                           className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
                             ratio < 0.4
-                              ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+                              ? "bg-red-900/40 text-red-300"
                               : ratio < 0.7
-                                ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
-                                : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+                                ? "bg-amber-900/40 text-amber-300"
+                                : "bg-emerald-900/40 text-emerald-300"
                           }`}
                         >
                           {score}/{maxScore}
                         </span>
                       </div>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+                      <p className="text-xs text-zinc-500 mb-1">
                         {item.metadata.date}
                       </p>
-                      <p className="text-sm text-zinc-600 dark:text-zinc-300 line-clamp-2">
+                      <p className="text-sm text-zinc-400 line-clamp-2">
                         {item.metadata.issueType}
                       </p>
                     </Link>
@@ -228,9 +228,9 @@ export default function Ps2AnalysisResultsPage() {
         )}
       </main>
 
-      <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 py-4">
+      <footer className="w-full border-t border-zinc-800 py-4">
         <div className="max-w-5xl mx-auto px-6 flex items-center justify-center">
-          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+          <p className="text-xs text-zinc-500">
             Built for Hackathon 2026
           </p>
         </div>

@@ -68,8 +68,8 @@ export function VoiceBotInterface() {
       {/* Auth status indicator */}
       <div className="text-center">
         {isLoggedIn ? (
-          <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <div className="flex items-center gap-2 text-sm text-[#B19EEF]">
+            <span className="w-2 h-2 rounded-full bg-[#B19EEF]"></span>
             <span>
               Logged in as <strong>{userName || authUserId}</strong>
             </span>
@@ -84,7 +84,7 @@ export function VoiceBotInterface() {
             </div>
             <a
               href="/login"
-              className="text-xs text-emerald-600 hover:underline"
+              className="text-xs text-[#B19EEF] hover:underline"
             >
               Login to enable personalized responses
             </a>
@@ -122,8 +122,8 @@ export function VoiceBotInterface() {
         {isConnected && (
           <div className="absolute inset-0 -z-10 flex items-center justify-center">
             <div
-              className="w-40 h-40 rounded-full bg-emerald-500/20 blur-3xl transition-opacity duration-500"
-              style={{ opacity: 0.3 + audioLevel * 0.7 }}
+              className="w-40 h-40 rounded-full blur-3xl transition-opacity duration-500"
+              style={{ backgroundColor: "rgba(177, 158, 239, 0.2)", opacity: 0.3 + audioLevel * 0.7 }}
             />
           </div>
         )}
@@ -204,14 +204,14 @@ export function VoiceBotInterface() {
 
           {/* Streaming or Final Response */}
           {(response || streamingResponse) && (
-            <div className="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900/20">
-              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400 mb-1">
+            <div className="p-4 rounded-lg bg-[#B19EEF]/10 border border-[#B19EEF]/20">
+              <p className="text-sm font-semibold text-[#B19EEF] mb-1">
                 Response:
               </p>
-              <p className="text-base text-emerald-900 dark:text-emerald-100">
+              <p className="text-base text-zinc-100">
                 {response || streamingResponse}
                 {streamingResponse && !response && (
-                  <span className="inline-block ml-1 w-1 h-4 bg-emerald-500 animate-pulse" />
+                  <span className="inline-block ml-1 w-1 h-4 bg-[#B19EEF] animate-pulse" />
                 )}
               </p>
             </div>
@@ -230,7 +230,7 @@ export function VoiceBotInterface() {
                     className={`p-3 rounded-lg text-sm ${
                       msg.role === "user"
                         ? "bg-zinc-50 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200"
-                        : "bg-emerald-50 dark:bg-emerald-900/10 text-emerald-800 dark:text-emerald-200"
+                        : "bg-[#B19EEF]/10 text-[#C4B4F5] border border-[#B19EEF]/20"
                     }`}
                   >
                     <span className="font-semibold">
@@ -269,7 +269,7 @@ function AnimatedRings({ isActive, audioLevel }: AnimatedRingsProps) {
             absolute rounded-full border transition-all duration-300
             ${
               isActive
-                ? "border-emerald-500/30 scale-100"
+                ? "border-[#B19EEF]/30 scale-100"
                 : "border-zinc-200 dark:border-zinc-800 scale-90"
             }
             ${ring.size}

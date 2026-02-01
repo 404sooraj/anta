@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
+import { QueryProvider } from "./providers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,23 +29,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <nav className="w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm">
-          <div className="max-w-5xl mx-auto px-6 py-2 flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100"
-            >
-              Antaryami
-            </Link>
-            <Link
-              href="/ps2-analysis-results"
-              className="text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100"
-            >
-              PS2 Analysis Results
-            </Link>
-          </div>
-        </nav>
-        {children}
+        <QueryProvider>
+          {children}
+          <Toaster richColors position="top-right" closeButton />
+        </QueryProvider>
       </body>
     </html>
   );
