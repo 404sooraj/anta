@@ -45,11 +45,12 @@ export default function Ps2AnalysisDetailPage() {
 
   if (!id) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6">
-        <p className="text-zinc-500 dark:text-zinc-400">Invalid analysis id.</p>
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 bg-zinc-950">
+        <p className="text-zinc-400">Invalid analysis id.</p>
         <Link
           href="/ps2-analysis-results"
-          className="mt-4 text-sm text-emerald-600 dark:text-emerald-400 hover:underline"
+          className="mt-4 text-sm hover:underline"
+          style={{ color: "#B19EEF" }}
         >
           Back to list
         </Link>
@@ -58,13 +59,13 @@ export default function Ps2AnalysisDetailPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-linear-to-b from-zinc-50 to-white dark:from-zinc-950 dark:to-zinc-900">
-      <header className="w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-sm">
+    <div className="min-h-screen flex flex-col bg-zinc-950">
+      <header className="w-full border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
               href="/ps2-analysis-results"
-              className="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100"
+              className="text-zinc-400 hover:text-zinc-100"
               aria-label="Back to list"
             >
               <svg
@@ -81,17 +82,17 @@ export default function Ps2AnalysisDetailPage() {
                 />
               </svg>
             </Link>
-            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            <h1 className="text-lg font-semibold text-zinc-100">
               Call analysis
             </h1>
           </div>
           {data && (
-            <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <label className="flex items-center gap-2 text-sm text-zinc-400">
               <input
                 type="checkbox"
                 checked={showRawJson}
                 onChange={(e) => setShowRawJson(e.target.checked)}
-                className="rounded border-zinc-300 dark:border-zinc-600 text-emerald-600 focus:ring-emerald-500"
+                className="rounded border-zinc-600 bg-zinc-800 text-[#B19EEF] focus:ring-[#B19EEF]/50"
               />
               Show raw JSON
             </label>
@@ -102,20 +103,20 @@ export default function Ps2AnalysisDetailPage() {
       <main className="flex-1 max-w-4xl mx-auto w-full px-6 py-6">
         {loading && (
           <div className="flex items-center justify-center py-16">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="text-sm text-zinc-400">
               Loading analysis…
             </p>
           </div>
         )}
 
         {error && (
-          <div className="rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3 text-sm text-red-800 dark:text-red-200">
+          <div className="rounded-xl border border-red-900/50 bg-red-950/30 px-4 py-3 text-sm text-red-300">
             {error}
           </div>
         )}
 
         {!loading && !error && data && showRawJson && (
-          <pre className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 p-4 overflow-auto text-xs font-mono text-zinc-800 dark:text-zinc-200 max-h-[80vh]">
+          <pre className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 overflow-auto text-xs font-mono text-zinc-200 max-h-[80vh]">
             {JSON.stringify(data, null, 2)}
           </pre>
         )}
@@ -123,43 +124,44 @@ export default function Ps2AnalysisDetailPage() {
         {!loading && !error && data && !showRawJson && (
           <div className="space-y-8">
             {/* Metadata */}
-            <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-4">
+            <section className="rounded-xl border border-zinc-800 bg-zinc-900/95 p-6">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 mb-4">
                 Metadata
               </h2>
               <dl className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Name</dt>
-                  <dd className="text-zinc-900 dark:text-zinc-100">{data.metadata.name}</dd>
+                  <dt className="text-xs text-zinc-500">Name</dt>
+                  <dd className="text-zinc-100">{data.metadata.name}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Date</dt>
-                  <dd className="text-zinc-900 dark:text-zinc-100">{data.metadata.date}</dd>
+                  <dt className="text-xs text-zinc-500">Date</dt>
+                  <dd className="text-zinc-100">{data.metadata.date}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Issue type</dt>
-                  <dd className="text-zinc-900 dark:text-zinc-100">{data.metadata.issueType}</dd>
+                  <dt className="text-xs text-zinc-500">Issue type</dt>
+                  <dd className="text-zinc-100">{data.metadata.issueType}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Calling number</dt>
-                  <dd className="text-zinc-900 dark:text-zinc-100">{data.metadata.callingNumber}</dd>
+                  <dt className="text-xs text-zinc-500">Calling number</dt>
+                  <dd className="text-zinc-100">{data.metadata.callingNumber}</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Call duration</dt>
-                  <dd className="text-zinc-900 dark:text-zinc-100">{data.metadata.callDuration}s</dd>
+                  <dt className="text-xs text-zinc-500">Call duration</dt>
+                  <dd className="text-zinc-100">{data.metadata.callDuration}s</dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Processed at</dt>
-                  <dd className="text-zinc-900 dark:text-zinc-100">{data.metadata.processedAt}</dd>
+                  <dt className="text-xs text-zinc-500">Processed at</dt>
+                  <dd className="text-zinc-100">{data.metadata.processedAt}</dd>
                 </div>
                 <div className="sm:col-span-2">
-                  <dt className="text-xs text-zinc-500 dark:text-zinc-400">Recording link</dt>
+                  <dt className="text-xs text-zinc-500">Recording link</dt>
                   <dd>
                     <a
                       href={data.metadata.recordingLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-emerald-600 dark:text-emerald-400 hover:underline break-all"
+                      className="hover:underline break-all"
+                      style={{ color: "#B19EEF" }}
                     >
                       {data.metadata.recordingLink}
                     </a>
@@ -169,60 +171,60 @@ export default function Ps2AnalysisDetailPage() {
             </section>
 
             {/* Analysis */}
-            <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-4">
+            <section className="rounded-xl border border-zinc-800 bg-zinc-900/95 p-6">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 mb-4">
                 Analysis
               </h2>
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Summary</h3>
-                  <p className="text-zinc-900 dark:text-zinc-100 leading-relaxed">
+                  <h3 className="text-xs font-medium text-zinc-500 mb-1">Summary</h3>
+                  <p className="text-zinc-100 leading-relaxed">
                     {data.analysis.summary}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Problem faced</h3>
-                  <p className="text-zinc-900 dark:text-zinc-100 leading-relaxed">
+                  <h3 className="text-xs font-medium text-zinc-500 mb-1">Problem faced</h3>
+                  <p className="text-zinc-100 leading-relaxed">
                     {data.analysis.problemFaced}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-1">Solution presented</h3>
-                  <p className="text-zinc-900 dark:text-zinc-100 leading-relaxed">
+                  <h3 className="text-xs font-medium text-zinc-500 mb-1">Solution presented</h3>
+                  <p className="text-zinc-100 leading-relaxed">
                     {data.analysis.solutionPresented}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-4 pt-2">
-                  <div className="rounded-lg bg-zinc-100 dark:bg-zinc-800 px-3 py-2">
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">Partner satisfaction</span>
-                    <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                  <div className="rounded-lg bg-zinc-800/50 border border-zinc-700 px-3 py-2">
+                    <span className="text-xs text-zinc-500">Partner satisfaction</span>
+                    <p className="font-medium text-zinc-100">
                       {data.analysis.partnerSatisfactionScore.score} / {data.analysis.partnerSatisfactionScore.maxScore}
                     </p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1 max-w-xl">
+                    <p className="text-sm text-zinc-400 mt-1 max-w-xl">
                       {data.analysis.partnerSatisfactionScore.reasoning}
                     </p>
                   </div>
-                  <div className="rounded-lg bg-zinc-100 dark:bg-zinc-800 px-3 py-2">
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">Agent sentiment</span>
-                    <p className="font-medium text-zinc-900 dark:text-zinc-100 capitalize">
+                  <div className="rounded-lg bg-zinc-800/50 border border-zinc-700 px-3 py-2">
+                    <span className="text-xs text-zinc-500">Agent sentiment</span>
+                    <p className="font-medium text-zinc-100 capitalize">
                       {data.analysis.agentSentiment.overall}
                     </p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    <p className="text-xs text-zinc-500">
                       Confidence: {Math.round(data.analysis.agentSentiment.confidence * 100)}%
                     </p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1 max-w-xl">
+                    <p className="text-sm text-zinc-400 mt-1 max-w-xl">
                       {data.analysis.agentSentiment.details}
                     </p>
                   </div>
-                  <div className="rounded-lg bg-zinc-100 dark:bg-zinc-800 px-3 py-2">
-                    <span className="text-xs text-zinc-500 dark:text-zinc-400">Partner sentiment</span>
-                    <p className="font-medium text-zinc-900 dark:text-zinc-100 capitalize">
+                  <div className="rounded-lg bg-zinc-800/50 border border-zinc-700 px-3 py-2">
+                    <span className="text-xs text-zinc-500">Partner sentiment</span>
+                    <p className="font-medium text-zinc-100 capitalize">
                       {data.analysis.partnerSentiment.overall}
                     </p>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    <p className="text-xs text-zinc-500">
                       Confidence: {Math.round(data.analysis.partnerSentiment.confidence * 100)}%
                     </p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-300 mt-1 max-w-xl">
+                    <p className="text-sm text-zinc-400 mt-1 max-w-xl">
                       {data.analysis.partnerSentiment.details}
                     </p>
                   </div>
@@ -231,20 +233,21 @@ export default function Ps2AnalysisDetailPage() {
             </section>
 
             {/* Transcription */}
-            <section className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400 mb-4">
+            <section className="rounded-xl border border-zinc-800 bg-zinc-900/95 p-6">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400 mb-4">
                 Transcription
               </h2>
               <div className="grid gap-6 sm:grid-cols-2">
                 <div>
-                  <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">Agent</h3>
+                  <h3 className="text-xs font-medium text-zinc-500 mb-2">Agent</h3>
                   <ul className="space-y-2 max-h-64 overflow-y-auto">
                     {data.transcription.agentConversation.map((seg, i) => (
                       <li
                         key={i}
-                        className="text-sm text-zinc-700 dark:text-zinc-300 border-l-2 border-emerald-500/50 pl-2"
+                        className="text-sm text-zinc-300 border-l-2 pl-2"
+                        style={{ borderColor: "rgba(177, 158, 239, 0.5)" }}
                       >
-                        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                        <span className="text-xs text-zinc-500">
                           {seg.timestamp.toFixed(1)}s
                         </span>{" "}
                         {seg.text}
@@ -253,14 +256,14 @@ export default function Ps2AnalysisDetailPage() {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">Partner</h3>
+                  <h3 className="text-xs font-medium text-zinc-500 mb-2">Partner</h3>
                   <ul className="space-y-2 max-h-64 overflow-y-auto">
                     {data.transcription.partnerConversation.map((seg, i) => (
                       <li
                         key={i}
-                        className="text-sm text-zinc-700 dark:text-zinc-300 border-l-2 border-amber-500/50 pl-2"
+                        className="text-sm text-zinc-300 border-l-2 border-amber-500/50 pl-2"
                       >
-                        <span className="text-xs text-zinc-500 dark:text-zinc-400">
+                        <span className="text-xs text-zinc-500">
                           {seg.timestamp.toFixed(1)}s
                         </span>{" "}
                         {seg.text}
@@ -270,10 +273,10 @@ export default function Ps2AnalysisDetailPage() {
                 </div>
               </div>
               <details className="mt-4">
-                <summary className="cursor-pointer text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100">
+                <summary className="cursor-pointer text-sm font-medium text-zinc-400 hover:text-zinc-100">
                   Full transcript
                 </summary>
-                <pre className="mt-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 p-4 text-xs font-mono text-zinc-800 dark:text-zinc-200 whitespace-pre-wrap max-h-64 overflow-y-auto">
+                <pre className="mt-2 rounded-lg bg-zinc-800 p-4 text-xs font-mono text-zinc-200 whitespace-pre-wrap max-h-64 overflow-y-auto">
                   {data.transcription.fullTranscript}
                 </pre>
               </details>
@@ -282,9 +285,9 @@ export default function Ps2AnalysisDetailPage() {
         )}
       </main>
 
-      <footer className="w-full border-t border-zinc-200 dark:border-zinc-800 py-4">
+      <footer className="w-full border-t border-zinc-800 py-4">
         <div className="max-w-4xl mx-auto px-6 flex items-center justify-center">
-          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+          <p className="text-xs text-zinc-500">
             Built for Hackathon 2026
           </p>
         </div>
