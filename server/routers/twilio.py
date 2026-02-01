@@ -21,6 +21,7 @@ from services.tts import TTSService
 from services.call_analytics import CallAnalyticsService
 from db.connection import get_db
 from services.user_lookup import lookup_user_by_phone, get_user_id_from_phone
+from services.greeting_audio import get_greeting_mulaw_8k_chunks
 
 # =========================
 # Router Setup
@@ -75,11 +76,9 @@ async def voice_webhook(request: Request):
     # Use WebSocket URL from environment or default
     ws_url = TWILIO_WEBSOCKET_URL
     
-    # Generate TwiML to connect bidirectional media stream
+    # Generate TwiML to connect bidirectional media stream (greeting plays over WebSocket)
     twiml = f'''<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-    <Say>Hello! I'm your voice assistant. Please speak after the beep.</Say>
-    <Pause length="1"/>
     <Connect>
         <Stream url="{ws_url}">
             <Parameter name="callSid" value="{call_sid}"/>
@@ -132,6 +131,26 @@ async def media_stream(ws: WebSocket):
     
     # Get event loop for thread-safe task creation
     loop = asyncio.get_event_loop()
+
+    async def send_greeting_twilio(websocket: WebSocket, sid: str) -> None:
+        """Stream greeting WAV as Twilio media (mulaw 8kHz) then send mark."""
+        try:
+            chunks = get_greeting_mulaw_8k_chunks()
+            for chunk in chunks:
+                payload = base64.b64encode(chunk).decode("utf-8")
+                await websocket.send_json({
+                    "event": "media",
+                    "streamSid": sid,
+                    "media": {"payload": payload},
+                })
+            await websocket.send_json({
+                "event": "mark",
+                "streamSid": sid,
+                "mark": {"name": "greeting_complete"},
+            })
+            logger.info("✅ Greeting audio sent to Twilio")
+        except Exception as e:
+            logger.warning("Failed to send greeting to Twilio: %s", e)
     
     # Initialize services
     vad_service = VADService()
@@ -409,6 +428,10 @@ async def media_stream(ws: WebSocket):
                         logger.info(f"✅ Identified caller as user: {user_id}")
                     else:
                         logger.info(f"⚠️ Unknown caller, phone: {from_number}")
+
+                # Play greeting audio (mulaw 8kHz) without blocking receive loop
+                if stream_sid:
+                    asyncio.create_task(send_greeting_twilio(ws, stream_sid))
             
             # Handle incoming audio media
             elif event_type == "media":

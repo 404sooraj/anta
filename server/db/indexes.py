@@ -72,10 +72,16 @@ async def create_indexes(db: AsyncIOMotorDatabase) -> None:
     """
     total_created = 0
 
-    # users: unique on user_id
+    # users: unique on user_id; phone_number for Twilio user lookup
+    c = 0
     if await _ensure_index(db.users, [("user_id", 1)], unique=True, name="user_id_unique"):
+        c += 1
         total_created += 1
-        logger.info("Index users.user_id created")
+    if await _ensure_index(db.users, [("phone_number", 1)], name="phone_number_1"):
+        c += 1
+        total_created += 1
+    if c:
+        logger.info("Index users.* created")
 
     # stations: unique on station_id; 2dsphere on location for nearest-station queries
     c = 0

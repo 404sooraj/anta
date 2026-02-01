@@ -1,5 +1,6 @@
 """Tool for retrieving similar past call scenarios, response patterns, and policy from Pinecone."""
 
+import asyncio
 import logging
 import os
 from typing import Any, Dict, List, Optional
@@ -119,7 +120,8 @@ class GetCallInsightsTool(BaseTool):
             query_text = f"{issue_type}: {situation_summary}"
 
         try:
-            vector = _get_embedding(query_text)
+            # Run sync embedding in thread pool to avoid blocking the event loop
+            vector = await asyncio.to_thread(_get_embedding, query_text)
         except Exception as e:
             logger.exception("Embedding failed")
             return {"status": "error", "data": {"message": str(e)}}
@@ -127,9 +129,12 @@ class GetCallInsightsTool(BaseTool):
         pc = Pinecone(api_key=pinecone_key)
         filter_meta = {"issue_type": {"$eq": issue_type}} if issue_type else None
 
-        similar_scenarios = _query_index(pc, index_scenarios, vector, TOP_K, filter_meta)
-        response_patterns = _query_index(pc, index_patterns, vector, TOP_K, filter_meta)
-        policy_snippets = _query_index(pc, index_policy, vector, TOP_K)
+        # Run sync Pinecone queries in thread pool; run all three in parallel
+        similar_scenarios, response_patterns, policy_snippets = await asyncio.gather(
+            asyncio.to_thread(_query_index, pc, index_scenarios, vector, TOP_K, filter_meta),
+            asyncio.to_thread(_query_index, pc, index_patterns, vector, TOP_K, filter_meta),
+            asyncio.to_thread(_query_index, pc, index_policy, vector, TOP_K),
+        )
 
         if not similar_scenarios and not response_patterns and not policy_snippets:
             return {

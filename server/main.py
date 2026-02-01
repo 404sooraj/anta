@@ -49,7 +49,7 @@ async def lifespan(app: FastAPI):
     # MongoDB: connect and attach db to app state for routes/tools
     db = get_db()
     app.state.db = db
-    # await create_indexes(db)
+    await create_indexes(db)
     logger.info("✓ MongoDB connected")
 
     logger.info("✓ Startup complete")
